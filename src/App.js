@@ -3,7 +3,10 @@ import { TracksContext } from './Context/TracksContext';
 import AudioControl from './Components/AudioControl';
 import TrackList from './Components/TrackList';
 
+import { Eleven, Twelve, Thirteen } from './testTracks';
+
 function App() {
+  console.log(Eleven, Twelve, Thirteen);
   return (
     <TracksContext>
       <main
