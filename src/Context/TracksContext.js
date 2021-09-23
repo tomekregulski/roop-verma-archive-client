@@ -10,10 +10,6 @@ export const TracksContext = (props) => {
   useEffect(() => {
     axios
       .get('https://roop-verma-archive.herokuapp.com/api/tracks', {
-        // 'http://localhost:5000/api/tracks', {
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // },
       })
       .then((response) => {
         setTrackList(response.data); // update your state

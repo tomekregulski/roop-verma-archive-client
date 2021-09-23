@@ -1,13 +1,9 @@
 import React from 'react';
 import { TracksContext } from './Context/TracksContext';
-
-import { trackOne, trackTwo } from './testTracks';
-
 import AudioControl from './Components/AudioControl';
 import TrackList from './Components/TrackList';
 
 function App() {
-  console.log(trackOne);
   return (
     <TracksContext>
       <main
@@ -25,6 +21,7 @@ function App() {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
+            paddingBottom: '50px',
           }}
         >
           <AudioControl />

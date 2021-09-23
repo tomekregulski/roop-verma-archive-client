@@ -1,0 +1,47 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100%;
+  line-height: 1;
+  font-family: 'Montserrat', sans-serif;
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  background-color: rgba(0, 180, 249, 0.872);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  /* font-size: 100%; */
+}
+
+input,
+select,
+option,
+optgroup,
+textarea,
+button,
+pre,
+code {
+  /* font-size: 100%; */
+  font-family: inherit;
+}
+
+ol,
+ul {
+  list-style: none;
+}
