@@ -9,7 +9,8 @@ export const TracksContext = (props) => {
 
   useEffect(() => {
     axios
-      .get('http://localhost:5000/api/tracks', {
+      .get('https://roop-verma-archive.herokuapp.com/api/tracks', {
+        // 'http://localhost:5000/api/tracks', {
         // headers: {
         //   Authorization: `Bearer ${token}`,
         // },
@@ -31,28 +32,3 @@ export const TracksContext = (props) => {
     </TracksContextData.Provider>
   );
 };
-// export const TracksContext = createContext();
-
-// export const TracksProvider = ({ children }) => {
-//   const [trackList, setTrackList] = useState([]);
-//   const [selectedTrack, setSelectedTrack] = useState({});
-
-//   useEffect(() => {
-//     async function fetchData() {
-//       const apiResponse = await axios.get(
-//         // 'https://roop-verma-archive.herokuapp.com/api/raags'
-//         'http://localhost:5000/api/tracks'
-//       );
-//       setTrackList(apiResponse.data);
-//     }
-//     fetchData();
-//   }, []);
-
-//   return (
-//     <TracksContext.Provider value={{ selectedTrack, setSelectedTrack }}>
-//       {children}
-//     </TracksContext.Provider>
-//   );
-// };
-
-// export { TracksContext, TracksContextProvider };
