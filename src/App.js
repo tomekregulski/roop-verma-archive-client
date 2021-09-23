@@ -1,37 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
+import { TracksContext } from './Context/TracksContext';
+
+import { trackOne, trackTwo } from './testTracks';
+
+import AudioControl from './Components/AudioControl';
+import TrackList from './Components/TrackList';
 
 function App() {
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get('https://roop-verma-archive.herokuapp.com/api/raags')
-      .then((response) => {
-        const res = response.data;
-        setData(res);
-      });
-  }, []);
-
-  const dataMap = () => {
-    console.log('mapping data');
-    data.map((item, index) => {
-      console.log(item.name);
-      return <li key={index}>{item.name}</li>;
-    });
-  };
-
+  console.log(trackOne);
   return (
-    <div>
-      <h1>Welcome to the Roop Verma Digital Archive</h1>
-      <p>Some names of raags:</p>
-      <ul>
-        {data.map((item, index) => {
-          console.log(item.name);
-          return <li key={index}>{item.name}</li>;
-        })}
-      </ul>
-    </div>
+    <TracksContext>
+      <main
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <h1 style={{ marginTop: '80px' }}>
+          Welcome to the Roop Verma Digital Archive
+        </h1>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <AudioControl />
+          <TrackList />
+        </div>
+      </main>
+    </TracksContext>
   );
 }
 
