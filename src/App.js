@@ -1,6 +1,5 @@
 import React from 'react';
 import { TracksContext } from './Context/TracksContext';
-
 import AudioControl from './Components/AudioControl';
 import TrackList from './Components/TrackList';
 
@@ -12,12 +11,9 @@ function App() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-
-          height: '100vh',
-          margin: 0,
         }}
       >
-        <h1 style={{ marginTop: '80px', textAlign: 'center' }}>
+        <h1 style={{ marginTop: '80px' }}>
           Welcome to the Roop Verma Digital Archive
         </h1>
         <div
