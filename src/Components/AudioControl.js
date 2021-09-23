@@ -10,7 +10,6 @@ import 'react-h5-audio-player/lib/styles.css';
 
 const AudioControl = () => {
   const { selectedTrack, setSelectedTrack } = useContext(TracksContextData);
-
   const [trackUrl, setTrackUrl] = useState(null);
   const [width, setWidth] = useState(window.innerWidth);
 
