@@ -15,14 +15,13 @@ const AudioPlayer = () => {
   const { trackList, selectedTrack, setSelectedTrack } =
     useContext(TracksContextData);
 
-  // console.log(selectedTrack.artists[0].name);
   // State
   const [trackIndex, setTrackIndex] = useState(0);
   const [trackProgress, setTrackProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [trackSrc, setTrackSrc] = useState('');
   const [currentTrack, setCurrentTrack] = useState({});
-  // const [track]
+
   const artist = 'Roop Verma';
   // Destructure for conciseness
 
@@ -33,6 +32,13 @@ const AudioPlayer = () => {
       setTrackIndex(selectedTrack[0].id - 1);
     }
   }, [selectedTrack]);
+
+  const changeTrack = (id) => {
+    console.log(id);
+    const newTrack = trackList.filter((track) => track.id === id);
+    console.log(newTrack);
+    setSelectedTrack(newTrack);
+  };
 
   // Refs
   const audioRef = useRef(new Audio(trackSrc));
@@ -79,15 +85,18 @@ const AudioPlayer = () => {
 
   const toPrevTrack = () => {
     if (trackIndex - 1 < 0) {
-      setTrackIndex(tracks.length - 1);
+      const id = trackList.length;
+      changeTrack(id);
     } else {
-      setTrackIndex(trackIndex - 1);
+      const id = trackIndex;
+      changeTrack(id);
     }
   };
 
   const toNextTrack = () => {
-    if (trackIndex < tracks.length - 1) {
-      setTrackIndex(trackIndex + 1);
+    if (trackIndex < trackList.length - 1) {
+      const id = trackIndex + 2;
+      changeTrack(id);
     } else {
       setTrackIndex(0);
     }
@@ -130,7 +139,9 @@ const AudioPlayer = () => {
   return (
     <div className='audio-player'>
       <div className='track-info'>
-        <h2 className='title'>TITLE</h2>
+        <h2 className='title'>
+          {currentTrack[0] ? currentTrack[0].raag.name : ''}
+        </h2>
         <h3 className='artist'>{artist}</h3>
         <AudioControls
           isPlaying={isPlaying}
