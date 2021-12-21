@@ -1,14 +1,13 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { TracksContext } from './Context/TracksContext';
 
-const Navbar = lazy(() => import('./Components/Navbar'));
+const Navbar = lazy(() => import('./Components/Navbar/Navbar'));
 
 const AudioPlayerContainer = lazy(() =>
-  import('./Components/AudioPlayerContainer')
+  import('./Components/AudioPlayerContainer/AudioPlayerContainer')
 );
-const TrackList = lazy(() => import('./Components/TrackList'));
 
-const TrackTable = lazy(() => import('./Components/TrackTable'));
+const TrackTable = lazy(() => import('./Components/TrackTable/TrackTable'));
 
 function App() {
   const [width, setWidth] = useState(window.innerWidth);
