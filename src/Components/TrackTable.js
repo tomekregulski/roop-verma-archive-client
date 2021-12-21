@@ -29,9 +29,7 @@ const TrackTable = () => {
   }, [setTrackList, trackList]);
 
   const clickHandle = (id) => {
-    console.log(id);
     const newTrack = trackList.filter((track) => track.id === id);
-    console.log(newTrack);
     setSelectedTrack(newTrack);
   };
 
