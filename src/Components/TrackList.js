@@ -38,14 +38,14 @@ const TrackList = () => {
     <div
       style={{
         height: 400,
-        minWidth: '200px',
+        // minWidth: '200px',
         maxWidth: '800px',
         marginTop: '80px',
         backgroundColor: 'white',
       }}
     >
       <div style={{ display: 'flex', height: '100%' }}>
-        <div style={{ flexGrow: 1 }}>
+        <div>
           <DataGrid
             onRowClick={(e) => clickHandle(e)}
             columns={[

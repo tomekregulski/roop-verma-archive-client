@@ -1,24 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { TracksContext } from './Context/TracksContext';
-import AudioControl from './Components/AudioControl';
-import TrackList from './Components/TrackList';
 
-import { Eleven, Twelve, Thirteen } from './testTracks';
+const Navbar = lazy(() => import('./Components/Navbar'));
+
+const AudioPlayerContainer = lazy(() =>
+  import('./Components/AudioPlayerContainer')
+);
+const TrackList = lazy(() => import('./Components/TrackList'));
+
+const TrackTable = lazy(() => import('./Components/TrackTable'));
 
 function App() {
-  console.log(Eleven, Twelve, Thirteen);
+  const [width, setWidth] = useState(window.innerWidth);
+
+  const breakpoint = 650;
+
+  useEffect(() => {
+    const handleResizeWindow = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResizeWindow);
+    return () => {
+      window.removeEventListener('resize', handleResizeWindow);
+    };
+  }, []);
+
   return (
     <TracksContext>
-      <main
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <h1 style={{ marginTop: '80px' }}>
-          Welcome to the Roop Verma Digital Archive
-        </h1>
+      {/* add background image with overlay at top level? */}
+      <main>
+        <Suspense fallback={<div>Loading Navigation...</div>}>
+          <Navbar />
+        </Suspense>
         <div
           style={{
             display: 'flex',
@@ -27,8 +38,12 @@ function App() {
             paddingBottom: '50px',
           }}
         >
-          <AudioControl />
-          <TrackList />
+          <Suspense fallback={<div>Loading Audio Player...</div>}>
+            <AudioPlayerContainer width={width} breakpoint={breakpoint} />
+          </Suspense>
+          <Suspense fallback={<div>Loading Track List...</div>}>
+            <TrackTable />
+          </Suspense>
         </div>
       </main>
     </TracksContext>
