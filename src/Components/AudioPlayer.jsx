@@ -5,25 +5,15 @@ import AudioControls from './AudioControls';
 import Backdrop from './Backdrop';
 import './audioPlayer.css';
 
-import tracks from './tracks';
-
-/*
- * Read the blog post here:
- * https://letsbuildui.dev/articles/building-an-audio-player-with-react-hooks
- */
 const AudioPlayer = () => {
   const { trackList, selectedTrack, setSelectedTrack } =
     useContext(TracksContextData);
 
-  // State
-  const [trackIndex, setTrackIndex] = useState(0);
+  const [trackIndex, setTrackIndex] = useState();
   const [trackProgress, setTrackProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [trackSrc, setTrackSrc] = useState('');
   const [currentTrack, setCurrentTrack] = useState({});
-
-  const artist = 'Roop Verma';
-  // Destructure for conciseness
 
   useEffect(() => {
     if (selectedTrack !== null) {
@@ -40,12 +30,10 @@ const AudioPlayer = () => {
     setSelectedTrack(newTrack);
   };
 
-  // Refs
   const audioRef = useRef(new Audio(trackSrc));
   const intervalRef = useRef();
   const isReady = useRef(false);
 
-  // Destructure for conciseness
   const { duration } = audioRef.current;
 
   const currentPercentage = duration
@@ -98,7 +86,7 @@ const AudioPlayer = () => {
       const id = trackIndex + 2;
       changeTrack(id);
     } else {
-      setTrackIndex(0);
+      changeTrack(1);
     }
   };
 
@@ -142,7 +130,11 @@ const AudioPlayer = () => {
         <h2 className='title'>
           {currentTrack[0] ? currentTrack[0].raag.name : ''}
         </h2>
-        <h3 className='artist'>{artist}</h3>
+        <h3 className='artist'>
+          {currentTrack[0]
+            ? currentTrack[0].artists[0].name
+            : 'Select a track to begin'}
+        </h3>
         <AudioControls
           isPlaying={isPlaying}
           onPrevClick={toPrevTrack}
