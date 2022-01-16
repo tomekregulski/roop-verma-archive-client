@@ -1,0 +1,43 @@
+.cardContainer {
+  margin: auto;
+  overflow: hidden;
+  width: 320px;
+  height: 85px;
+  background: white;
+  border: solid 1px grey;
+  box-shadow: 5px 5px 15px rgba(gray);
+  border-radius: 2px;
+}
+
+.cardContainerPlaying {
+  background: rgba(81, 152, 157, 0.194);
+}
+
+.cardBody {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+.cardBodyLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.cardBodyRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.track-title {
+  font-size: 20px;
+}
+
+.track-detail-item {
+  font-size: 14px;
+}
+
+.cardContainer:active {
+} /* click???? */

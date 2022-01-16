@@ -7,7 +7,10 @@ const AudioPlayerContainer = lazy(() =>
   import('./Components/AudioPlayerContainer/AudioPlayerContainer')
 );
 
-const TrackTable = lazy(() => import('./Components/TrackTable/TrackTable'));
+// const TrackTable = lazy(() => import('./Components/TrackTable/TrackTable'));
+const TrackContainer = lazy(() =>
+  import('./Components/TrackContainer/TrackContainer')
+);
 
 function App() {
   const [width, setWidth] = useState(window.innerWidth);
@@ -41,7 +44,8 @@ function App() {
             <AudioPlayerContainer width={width} breakpoint={breakpoint} />
           </Suspense>
           <Suspense fallback={<div>Loading Track List...</div>}>
-            <TrackTable />
+            {/* <TrackTable /> */}
+            <TrackContainer />
           </Suspense>
         </div>
       </main>
