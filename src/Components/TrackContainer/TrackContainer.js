@@ -38,7 +38,7 @@ const TrackContainer = () => {
   };
 
   return (
-    <div>
+    <div style={{ marginTop: '30px' }}>
       {trackRows.length ? (
         trackRows.map((track, index) => {
           return <TrackCard key={index} callback={clickHandle} track={track} />;

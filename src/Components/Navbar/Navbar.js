@@ -9,7 +9,7 @@ const Navbar = () => {
         color: 'white',
       }}
     >
-      <h1>Welcome to the Roop Verma Digital Archive</h1>
+      <h1>Welcome to the Acharya Roop Verma Digital Library</h1>
       <div style={{ marginTop: '10px' }}>
         <a href='#' style={{ marginRight: '20px' }}>
           About Roopji
