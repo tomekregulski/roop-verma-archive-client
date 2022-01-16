@@ -17,6 +17,7 @@ const AudioPlayer = () => {
 
   useEffect(() => {
     if (selectedTrack !== null) {
+      // console.log(selectedTrack);
       setCurrentTrack(selectedTrack);
       setTrackSrc(selectedTrack[0].url);
       setTrackIndex(selectedTrack[0].id - 1);
@@ -130,11 +131,13 @@ const AudioPlayer = () => {
         <h2 className='title'>
           {currentTrack[0] ? currentTrack[0].raag.name : ''}
         </h2>
-        <h3 className='artist'>
-          {currentTrack[0]
-            ? currentTrack[0].artists[0].name
-            : 'Select a track to begin'}
-        </h3>
+        <p className='trackMarquee'>
+          <span className='trackMarqueeSpan'>
+            {currentTrack[0]
+              ? 'This is placeholder text. Eventually this field will display information about the currently playing track, and scroll it if it does not all fit within the space.'
+              : 'Select a track to begin'}
+          </span>
+        </p>
         <AudioControls
           isPlaying={isPlaying}
           onPrevClick={toPrevTrack}

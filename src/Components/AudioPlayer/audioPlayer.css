@@ -50,10 +50,37 @@ button {
   margin-bottom: 15px;
 }
 
-.artist {
+.trackMarquee {
   font-weight: 300;
-  margin-top: 0;
-  margin-bottom: 25px;
+  /* margin-top: 0; */
+  /* margin-bottom: 25px; */
+  width: 450px;
+  margin: 0 auto 25px;
+  overflow: hidden;
+  /* box-sizing: border-box; */
+}
+
+.trackMarqueeSpan {
+  display: inline-block;
+  width: max-content;
+
+  padding-left: 100%;
+  /* show the marquee just outside the paragraph */
+  will-change: transform;
+  animation: marquee 30s linear infinite;
+}
+
+.marquee span:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-100%, 0);
+  }
 }
 
 input[type='range'] {
