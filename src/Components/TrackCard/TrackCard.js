@@ -29,16 +29,19 @@ const TrackCard = (props) => {
         <div className='cardBodyLeft'>
           <span className='track-title'>{name}</span>
 
-          <span className='track-detail-item'>{id}</span>
-          <span className='track-detail-item'>{tape}</span>
-          <span className='track-detail-item'>{performance_type}</span>
+          <span className='track-detail-item'>Track ID: {id}</span>
+          <span className='track-detail-item'>Tape ID: {tape}</span>
+          <span className='track-detail-item'>
+            Category: {performance_type}
+          </span>
         </div>
         <div className='cardBodyRight'>
           <span className='track-detail-item'>{location}</span>
           <span className='track-detail-item'>{date}</span>
-          <span className='track-detail-item'>{time_of_day}</span>
+          <span className='track-detail-item'>Time of Day: {time_of_day}</span>
           <span className='track-detail-item'>
-            {accompanied === true ? 'with tabla' : 'solo'}
+            Solo/Accomanied:{' '}
+            {accompanied === true ? 'with tabla' : 'solo sitar'}
           </span>
         </div>
       </div>
