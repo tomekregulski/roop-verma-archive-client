@@ -1,19 +1,29 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect, lazy, Suspense, useContext } from 'react';
 import { TracksContext } from './Context/TracksContext';
+import { AuthContext } from './Context/AuthContext';
+import { Routes, Route } from 'react-router-dom';
 
-const Navbar = lazy(() => import('./Components/Navbar/Navbar'));
+import Navbar from './Components/Navbar/Navbar';
 
-const AudioPlayerContainer = lazy(() =>
-  import('./Components/AudioPlayerContainer/AudioPlayerContainer')
-);
+import LoggedOutView from './Views/LoggedOutView';
 
-// const TrackTable = lazy(() => import('./Components/TrackTable/TrackTable'));
-const TrackContainer = lazy(() =>
-  import('./Components/TrackContainer/TrackContainer')
-);
+import AudioView from './Views/AudioView';
+import AboutRoopji from './Views/AboutRoopji';
+import AboutLibrary from './Views/AboutLibrary';
+import Login from './Views/Login';
+import Register from './Views/Register';
+
+// import ProtectedRoute from './Components/ProtectedRoute/ProtectedRoute';
+// const Navbar = lazy(() => import('./Components/Navbar/Navbar'));
+// const AboutRoopji = lazy(() => import('./Views/AboutRoopji'));
+// const AboutLibrary = lazy(() => import('./Views/AboutLibrary'));
 
 function App() {
   const [width, setWidth] = useState(window.innerWidth);
+
+  const { auth } = useContext(AuthContext);
+  // eslint-disable-next-line no-unused-vars
+  const [isAuth, setIsAuth] = auth;
 
   const breakpoint = 650;
 
@@ -26,30 +36,27 @@ function App() {
   }, []);
 
   return (
-    <TracksContext>
-      {/* add background image with overlay at top level? */}
-      <main>
-        <Suspense fallback={<div>Loading Navigation...</div>}>
-          <Navbar />
-        </Suspense>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            paddingBottom: '50px',
-          }}
-        >
-          <Suspense fallback={<div>Loading Audio Player...</div>}>
-            <AudioPlayerContainer width={width} breakpoint={breakpoint} />
-          </Suspense>
-          <Suspense fallback={<div>Loading Track List...</div>}>
-            {/* <TrackTable /> */}
-            <TrackContainer />
-          </Suspense>
-        </div>
-      </main>
-    </TracksContext>
+    <>
+      <Navbar />
+      <TracksContext>
+        <Routes>
+          <Route
+            path='/'
+            element={
+              isAuth === true ? (
+                <AudioView width={width} breakpoint={breakpoint} />
+              ) : (
+                <LoggedOutView />
+              )
+            }
+          />
+          <Route path='roopji' element={<AboutRoopji />} />
+          <Route path='library' element={<AboutLibrary />} />
+          <Route path='login' element={<Login />} />
+          <Route path='register' element={<Register />} />
+        </Routes>
+      </TracksContext>
+    </>
   );
 }
 

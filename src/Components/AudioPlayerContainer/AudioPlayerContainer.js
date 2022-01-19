@@ -1,9 +1,8 @@
-import React, { lazy, Suspense } from 'react';
+import React from 'react';
 
 import sitar from '../../assets/sitar.png';
 import sitarReverse from '../../assets/sitar-reverse.png';
-
-const AudioPlayer = lazy(() => import('../AudioPlayer/AudioPlayer'));
+import AudioPlayer from '../AudioPlayer/AudioPlayer';
 
 const AudioPlayerContainer = (props) => {
   return (
@@ -21,9 +20,7 @@ const AudioPlayerContainer = (props) => {
           style={{ height: '200px', marginRight: '50px' }}
         />
       )}
-      <Suspense fallback={<div>Loading...</div>}>
-        <AudioPlayer />
-      </Suspense>
+      <AudioPlayer />
       {props.width > props.breakpoint && (
         <img
           src={sitar}
