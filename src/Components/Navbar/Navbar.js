@@ -14,7 +14,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     axios
-      .get('http://localhost:5000/api/users/logout', {})
+      .get('https://roop-verma-archive.herokuapp.com/api/users/logout', {})
       .then((response) => {
         console.log(response);
         setIsAuth(false);

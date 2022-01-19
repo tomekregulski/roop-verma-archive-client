@@ -34,7 +34,7 @@ const Register = () => {
     console.log(userInfo);
     const { first_name, last_name, email, password } = userInfo;
     axios
-      .post('http://localhost:5000/api/users/register', {
+      .post('https://roop-verma-archive.herokuapp.com/api/users/register', {
         first_name,
         last_name,
         email,

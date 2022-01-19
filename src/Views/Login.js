@@ -31,7 +31,10 @@ const Login = () => {
     console.log(userInfo);
     const { email, password } = userInfo;
     axios
-      .get('/api/users/login', { email, password })
+      .get('https://roop-verma-archive.herokuapp.com/api/users/login', {
+        email,
+        password,
+      })
       .then((response) => {
         console.log(response);
         setIsAuth(true);
