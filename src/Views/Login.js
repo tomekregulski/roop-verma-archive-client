@@ -36,7 +36,9 @@ const Login = () => {
         password,
       })
       .then((response) => {
-        console.log(response);
+        console.log(response.data.token);
+        const token = response.data.token;
+        document.cookie = `roop-verma-library=${token}`;
         setIsAuth(true);
         navigate('/');
       })
