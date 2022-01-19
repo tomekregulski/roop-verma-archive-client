@@ -9,8 +9,7 @@ export const TracksContext = (props) => {
 
   useEffect(() => {
     axios
-      .get('https://roop-verma-archive.herokuapp.com/api/tracks', {
-      })
+      .get('/api/tracks', {})
       .then((response) => {
         setTrackList(response.data); // update your state
       })

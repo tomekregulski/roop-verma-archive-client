@@ -128,9 +128,7 @@ const AudioPlayer = () => {
   return (
     <div className='audio-player'>
       <div className='track-info'>
-        <h2 className='title'>
-          {currentTrack[0] ? currentTrack[0].raag.name : ''}
-        </h2>
+        <h2 className='title'>{currentTrack[0] ? currentTrack[0].raag : ''}</h2>
         <p className='trackMarquee'>
           <span className='trackMarqueeSpan'>
             {currentTrack[0]
