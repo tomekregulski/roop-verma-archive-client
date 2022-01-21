@@ -6,9 +6,10 @@ import { AuthContext } from '../../Context/AuthContext';
 import axios from 'axios';
 
 const Navbar = () => {
-  const { auth } = useContext(AuthContext);
+  const { auth, jsonwt } = useContext(AuthContext);
   // eslint-disable-next-line no-unused-vars
   const [isAuth, setIsAuth] = auth;
+  const [jwt, setJwt] = jsonwt;
 
   let navigate = useNavigate();
 
@@ -18,10 +19,12 @@ const Navbar = () => {
       .then((response) => {
         console.log(response);
         setIsAuth(false);
+        setJwt('');
+        document.cookie =
+          'roop-verma-library= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
         navigate('/login');
       })
       .catch((error) => {
-        // handle errors
         console.log(error);
       });
     setIsAuth(false);
