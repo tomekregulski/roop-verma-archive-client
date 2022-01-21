@@ -8,27 +8,28 @@ export const AuthProvider = (props) => {
   const [jwt, setJwt] = useState('');
 
   useEffect(() => {
-    console.log('cookies');
     const allCookies = document.cookie.split('; ');
     let cookies = {};
     for (let i = 0; i < allCookies.length; i++) {
       const currentCookie = allCookies[i].split('=');
       cookies[currentCookie[0]] = currentCookie[1];
     }
-    console.log(allCookies);
-    console.log(cookies);
     const jwtKey = 'roop-verma-library';
     let currentJwt;
     if (Object.keys(cookies).includes(jwtKey)) {
       currentJwt = cookies[jwtKey];
       setJwt(currentJwt);
-      console.log(currentJwt);
+      setIsAuth(true);
     }
-  }, []);
+  }, [isAuth]);
 
   return (
     <AuthContext.Provider
-      value={{ auth: [isAuth, setIsAuth], user: [userData, setUserData] }}
+      value={{
+        auth: [isAuth, setIsAuth],
+        jsonwt: [jwt, setJwt],
+        user: [userData, setUserData],
+      }}
     >
       {props.children}
     </AuthContext.Provider>

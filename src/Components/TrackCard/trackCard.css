@@ -15,9 +15,17 @@
 
 .cardBody {
   padding: 10px;
+}
+
+.track-name {
+  display: block;
+}
+
+.cardColumns {
   display: flex;
   justify-content: space-between;
 }
+
 .cardBodyLeft {
   display: flex;
   flex-direction: column;
@@ -38,6 +46,3 @@
 .track-detail-item {
   font-size: 14px;
 }
-
-.cardContainer:active {
-} /* click???? */

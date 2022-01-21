@@ -15,7 +15,7 @@ const TrackContainer = () => {
       trackList.map((item) => {
         return rows.push({
           id: item.id,
-          name: item.name,
+          name: item.raga.name,
           tape: item.tape.id,
           date: item.tape.date,
           performance_type: item.performance_type,
