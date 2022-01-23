@@ -1,0 +1,31 @@
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+
+import CheckoutForm from '../Components/CheckoutForm';
+
+const PUBLIC_KEY =
+  'pk_test_51Jg7jKBlr8UFcXJymPB8I3ZU4z3vD7fIdgoWXQS3hDZsDCD98MMFDUozMO3C0hlCUL6stRdUbehbFZA7h7whWoDj00Q2mfpRZw';
+
+const stripeTestPromise = loadStripe(PUBLIC_KEY);
+
+const Subscribe = () => {
+  let navigate = useNavigate();
+
+  const handleFormSubmit = () => {
+    console.log('success!');
+  };
+
+  return (
+    <>
+      <h1>Enter Card Info</h1>
+      <Elements stripe={stripeTestPromise}>
+        <CheckoutForm />
+      </Elements>
+    </>
+  );
+};
+
+export default Subscribe;

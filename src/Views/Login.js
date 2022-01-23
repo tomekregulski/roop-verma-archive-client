@@ -13,8 +13,9 @@ const Login = () => {
     password: '',
   });
 
-  const { auth } = useContext(AuthContext);
+  const { auth, user } = useContext(AuthContext);
   const [isAuth, setIsAuth] = auth;
+  const [userData, setUserData] = user;
 
   let navigate = useNavigate();
 
@@ -31,15 +32,18 @@ const Login = () => {
     console.log(userInfo);
     const { email, password } = userInfo;
     axios
-      .get('https://roop-verma-archive.herokuapp.com/api/users/login', {
+      // .get('https://roop-verma-archive.herokuapp.com/api/users/login', {
+      .post('http://localhost:5000/api/users/login', {
         email,
         password,
       })
       .then((response) => {
         console.log(response.data.token);
+        console.log(response.data);
         const token = response.data.token;
         document.cookie = `roop-verma-library=${token}`;
         setIsAuth(true);
+        setUserData(response.data.userData);
         navigate('/');
       })
       .catch((error) => {
