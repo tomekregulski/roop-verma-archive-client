@@ -3,7 +3,7 @@ import React from 'react';
 const Select = (props) => {
   return (
     <>
-      <label for={props.name}>{props.actions}</label>
+      <label htmlFor={props.name}>{props.actions}</label>
 
       <select
         name={props.name}
@@ -12,8 +12,12 @@ const Select = (props) => {
       >
         <option value=''>--{props.item}--</option>
         {props.values &&
-          props.values.map((value) => {
-            return <option value={value}>{value}</option>;
+          props.values.map((value, index) => {
+            return (
+              <option key={index} value={value}>
+                {value}
+              </option>
+            );
           })}
       </select>
     </>

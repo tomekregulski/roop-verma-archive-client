@@ -1,34 +1,12 @@
 import React, { useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { AuthContext } from '../../Context/AuthContext';
-
-import axios from 'axios';
-
 const Navbar = () => {
   const { auth, jsonwt } = useContext(AuthContext);
   // eslint-disable-next-line no-unused-vars
   const [isAuth, setIsAuth] = auth;
   const [jwt, setJwt] = jsonwt;
-
-  let navigate = useNavigate();
-
-  const handleLogout = () => {
-    axios
-      .get('https://roop-verma-archive.herokuapp.com/api/users/logout', {})
-      .then((response) => {
-        console.log(response);
-        setIsAuth(false);
-        setJwt('');
-        document.cookie =
-          'roop-verma-library= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
-        navigate('/login');
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    setIsAuth(false);
-  };
 
   return (
     <nav
@@ -50,17 +28,16 @@ const Navbar = () => {
           About the Library
         </Link>
         {isAuth === true ? (
-          <button onClick={handleLogout} style={{ color: 'white' }}>
-            Logout
-          </button>
+          <>
+            <Link to='account' style={{ marginRight: '20px' }}>
+              Account Info
+            </Link>
+          </>
         ) : (
           <Link to='login' style={{ marginRight: '20px' }}>
             Login / Register
           </Link>
         )}
-        {/* <a href='#' style={{ marginRight: '20px' }}>
-          Support the Project
-        </a> */}
       </div>
     </nav>
   );

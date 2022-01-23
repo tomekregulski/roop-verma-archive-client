@@ -12,6 +12,8 @@ import AboutRoopji from './Views/AboutRoopji';
 import AboutLibrary from './Views/AboutLibrary';
 import Login from './Views/Login';
 import Register from './Views/Register';
+import Subscribe from './Views/Subscribe';
+import UserAccount from './Views/UserAccount';
 
 // import ProtectedRoute from './Components/ProtectedRoute/ProtectedRoute';
 // const Navbar = lazy(() => import('./Components/Navbar/Navbar'));
@@ -54,6 +56,8 @@ function App() {
           <Route path='library' element={<AboutLibrary />} />
           <Route path='login' element={<Login />} />
           <Route path='register' element={<Register />} />
+          <Route path='subscribe' element={<Subscribe />} />
+          <Route path='account' element={<UserAccount />} />
         </Routes>
       </TracksContext>
     </>
