@@ -1,10 +1,9 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { AuthContext } from '../Context/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import axios from 'axios';
 
-import Input from './Input/Input';
 import Button from './Button/Button';
 
 const CARD_ELEMENT_OPTIONS = {
@@ -74,9 +73,8 @@ export const CheckoutForm = () => {
         }
       );
 
-      console.log(res.data);
-
-      const { client_secret, status, token } = res.data;
+      const { userData, client_secret, status, token } = res.data;
+      console.log(userData);
 
       if (status === 'requires_action') {
         stripe.confirmCardPayment(client_secret).then(function (result) {

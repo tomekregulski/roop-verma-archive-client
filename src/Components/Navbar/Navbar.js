@@ -6,7 +6,6 @@ const Navbar = () => {
   const { auth, jsonwt } = useContext(AuthContext);
   // eslint-disable-next-line no-unused-vars
   const [isAuth, setIsAuth] = auth;
-  const [jwt, setJwt] = jsonwt;
 
   return (
     <nav

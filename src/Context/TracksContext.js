@@ -20,10 +20,9 @@ export const TracksContext = (props) => {
           headers: { jwt: trackJwt },
         })
         .then((response) => {
-          setTrackList(response.data); // update your state
+          setTrackList(response.data);
         })
         .catch((error) => {
-          // handle errors
           console.log(error);
         });
     }
@@ -32,10 +31,14 @@ export const TracksContext = (props) => {
   useEffect(() => {
     if (categoryFilter !== '') {
       console.log(categoryFilter);
-      const newTracks = trackList.filter(
-        (track) => track.raga.name === 'Bhupali'
-      );
-      setFilteredTracks(newTracks);
+      if (categoryFilter === 'all') {
+        setFilteredTracks(trackList);
+      } else {
+        const newTracks = trackList.filter(
+          (track) => track.raga.name === 'Bhupali'
+        );
+        setFilteredTracks(newTracks);
+      }
     }
   }, [categoryFilter]);
 
@@ -52,7 +55,9 @@ export const TracksContext = (props) => {
         setProceed,
         categoryFilter,
         setCategoryFilter,
-      }} // value of your context
+        filteredTracks,
+        setFilteredTracks,
+      }}
     >
       {props.children}
     </TracksContextData.Provider>
