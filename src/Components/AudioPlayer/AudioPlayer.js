@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { TracksContextData } from '../../Context/TracksContext';
+import { AuthContext } from '../../Context/AuthContext';
 
 import AudioControls from '../AudioControls/AudioControls';
 import Backdrop from '../Backdrop/Backdrop';
@@ -9,11 +10,15 @@ const AudioPlayer = () => {
   const { trackList, selectedTrack, setSelectedTrack } =
     useContext(TracksContextData);
 
+  const { user } = useContext(AuthContext);
+
   const [trackIndex, setTrackIndex] = useState();
   const [trackProgress, setTrackProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [trackSrc, setTrackSrc] = useState('');
   const [currentTrack, setCurrentTrack] = useState({});
+
+  const [userData, setUserData] = user;
 
   useEffect(() => {
     if (selectedTrack !== null) {
@@ -125,8 +130,15 @@ const AudioPlayer = () => {
     };
   }, []);
 
+  const printDuration = (duration) => {
+    const minutes = Math.floor(duration / 60);
+    const seconds = duration % 60;
+    console.log(`${minutes}:${seconds}`);
+  };
+
   return (
     <div className='audio-player'>
+      <p>{userData.subscription_active ? 'Active' : 'Inactive'}</p>
       <div className='track-info'>
         <h2 className='title'>{currentTrack[0] ? currentTrack[0].raag : ''}</h2>
         <p className='trackMarquee'>
@@ -142,6 +154,13 @@ const AudioPlayer = () => {
           onNextClick={toNextTrack}
           onPlayPauseClick={setIsPlaying}
         />
+        <p>
+          {duration
+            ? `${Math.floor(trackProgress / 60)}:${Math.floor(
+                trackProgress % 60
+              )} / ${Math.floor(duration / 60)}:${Math.floor(duration % 60)}`
+            : ''}
+        </p>
         <input
           type='range'
           value={trackProgress}

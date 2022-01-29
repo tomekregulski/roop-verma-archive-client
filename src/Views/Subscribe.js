@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
@@ -12,12 +11,6 @@ const PUBLIC_KEY =
 const stripeTestPromise = loadStripe(PUBLIC_KEY);
 
 const Subscribe = () => {
-  let navigate = useNavigate();
-
-  const handleFormSubmit = () => {
-    console.log('success!');
-  };
-
   return (
     <>
       <h1>Enter Card Info</h1>

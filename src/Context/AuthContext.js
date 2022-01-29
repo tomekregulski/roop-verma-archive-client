@@ -1,11 +1,11 @@
 import React, { useState, createContext, useEffect } from 'react';
+import jwt_decode from 'jwt-decode';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = (props) => {
   const [isAuth, setIsAuth] = useState(false);
   const [userData, setUserData] = useState({});
-  const [jwt, setJwt] = useState('');
 
   useEffect(() => {
     const allCookies = document.cookie.split('; ');
@@ -18,7 +18,10 @@ export const AuthProvider = (props) => {
     let currentJwt;
     if (Object.keys(cookies).includes(jwtKey)) {
       currentJwt = cookies[jwtKey];
-      setJwt(currentJwt);
+      const decoded = jwt_decode(currentJwt);
+      // console.log(decoded);
+      setUserData(decoded);
+      // setJwt(currentJwt);
       setIsAuth(true);
     }
   }, [isAuth]);
@@ -27,7 +30,6 @@ export const AuthProvider = (props) => {
     <AuthContext.Provider
       value={{
         auth: [isAuth, setIsAuth],
-        jsonwt: [jwt, setJwt],
         user: [userData, setUserData],
       }}
     >

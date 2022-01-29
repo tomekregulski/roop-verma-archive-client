@@ -1,7 +1,5 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
-import { AuthContext } from '../Context/AuthContext';
 
 import axios from 'axios';
 
@@ -17,15 +15,10 @@ const Register = () => {
     confirm_password: '',
   });
 
-  const { auth } = useContext(AuthContext);
-  const [isAuth, setIsAuth] = auth;
-
   let navigate = useNavigate();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    console.log(name);
-    // console.log(name)
     if (name === 'confirm_password') {
       if (userInfo.password !== '' && userInfo.confirm_password !== '') {
         if (userInfo.password !== userInfo.confirm_password) {
@@ -51,7 +44,6 @@ const Register = () => {
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    // navigate('/subscribe');
     // check all fields filled
 
     if (userInfo.password === userInfo.confirm_password) {
@@ -71,44 +63,13 @@ const Register = () => {
           password,
         })
         .then((response) => {
-          console.log(response);
-          // setIsAuth(true);
           navigate('/subscribe', { state: response.data });
         })
         .catch((error) => {
-          // handle errors
           console.log(error);
         });
     }
   };
-
-  // const handleFormSubmit = (event) => {
-  //   event.preventDefault();
-  //   console.log(userInfo);
-  //   const { first_name, last_name, email, password } = userInfo;
-  //   axios
-  //     // .post('https://roop-verma-archive.herokuapp.com/api/users/register', {
-  //     //   first_name,
-  //     //   last_name,
-  //     //   email,
-  //     //   password,
-  //     // })
-  //     .post('http://localhost:5000/api/users/register', {
-  //       first_name,
-  //       last_name,
-  //       email,
-  //       password,
-  //     })
-  //     .then((response) => {
-  //       console.log(response);
-  //       setIsAuth(true);
-  //       navigate('/subscribe');
-  //     })
-  //     .catch((error) => {
-  //       // handle errors
-  //       console.log(error);
-  //     });
-  // };
 
   return (
     <>
@@ -155,7 +116,7 @@ const Register = () => {
         <p>
           or
           <Link to='/login' style={{ marginRight: '20px' }}>
-            log in
+            Sign In
           </Link>
         </p>
       </div>

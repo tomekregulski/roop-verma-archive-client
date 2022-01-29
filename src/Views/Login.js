@@ -14,7 +14,9 @@ const Login = () => {
   });
 
   const { auth, user } = useContext(AuthContext);
+  // eslint-disable-next-line no-unused-vars
   const [isAuth, setIsAuth] = auth;
+  // eslint-disable-next-line no-unused-vars
   const [userData, setUserData] = user;
 
   let navigate = useNavigate();
@@ -38,8 +40,6 @@ const Login = () => {
         password,
       })
       .then((response) => {
-        console.log(response.data.token);
-        console.log(response.data);
         const token = response.data.token;
         document.cookie = `roop-verma-library=${token}`;
         setIsAuth(true);
@@ -52,18 +52,6 @@ const Login = () => {
       });
   };
 
-  const refresh = () => {
-    console.log('protected');
-    axios
-      .get('http://localhost:5000/api/users/protected', {})
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        // handle errors
-        console.log(error);
-      });
-  };
   return (
     <>
       <h1>Log in through the form below</h1>
@@ -82,7 +70,6 @@ const Login = () => {
         />
         <Button name='Submit' />
       </form>
-      <Button name='Protected' callback={refresh} />
       <div>
         <p>
           or
