@@ -13,14 +13,49 @@ const YesNoModal = (props) => {
   };
 
   return (
-    <div>
-      <Button callback={handleOpen} name={props.action} />
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      {open === false && (
+        <Button
+          width={props.buttonWidth}
+          margin={props.buttonMargin}
+          callback={handleOpen}
+          name={props.action}
+        />
+      )}
       {open === true && (
         <div onClose={handleClose}>
-          <div>
-            <p>{props.message}</p>
-            <Button name='Yes' callback={handleOk} />
-            <Button callback={handleClose} name='No' />
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: 'solid 2px white',
+              borderRadius: '10px',
+              padding: '20px',
+              margin: '20px 0 10px 0',
+            }}
+          >
+            <p style={{ color: 'white' }}>{props.message}</p>
+            <Button
+              width={props.buttonWidth}
+              margin={props.buttonMargin}
+              name='Yes'
+              callback={handleOk}
+            />
+            <Button
+              margin={props.buttonMargin}
+              width={props.buttonWidth}
+              callback={handleClose}
+              name='No'
+            />
           </div>
         </div>
       )}

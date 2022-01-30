@@ -58,15 +58,19 @@ const AudioView = (props) => {
         ) : null}
         <AudioPlayerContainer width={width} breakpoint={breakpoint} />
         {isAuth === true && (
-          <>
+          <div style={{ display: 'flex', marginTop: '20px' }}>
+            <Button
+              margin='0 15px 0 0'
+              name='Surprise Me'
+              callback={() => supriseMe}
+            />
             <Select
               callback={filterSelect}
               name='category-filter'
               item='Category'
               values={categories}
             />
-            <Button name='Surprise Me' callback={() => supriseMe} />
-          </>
+          </div>
         )}
         <TrackContainer />
       </div>

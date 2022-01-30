@@ -93,61 +93,83 @@ const Register = () => {
   };
 
   return (
-    <>
-      <h1>Register a new account</h1>
-      <form onSubmit={(event) => handleFormSubmit(event)}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: '40px',
+      }}
+    >
+      <form
+        style={{ width: '300px' }}
+        onSubmit={(event) => handleFormSubmit(event)}
+      >
         <Input
+          label='First Name'
+          name='first_name'
           value={userInfo.first_name}
           type='text'
           callback={handleChange}
-          name='first_name'
-          label='First Name'
+          labelColor='white'
+          margin='20px 0 0 0'
         />
         <Input
+          label='Last Name'
+          name='last_name'
           value={userInfo.last_name}
           type='text'
           callback={handleChange}
-          name='last_name'
-          label='Last Name'
+          labelColor='white'
+          margin='20px 0 0 0'
         />
-        {emailMessage !== '' && (
-          <span style={{ color: 'red' }}>{emailMessage}</span>
-        )}
+
         <Input
+          label='Email'
+          name='email'
           value={userInfo.email}
           type='email'
           callback={handleChange}
-          name='email'
-          label='Email'
+          labelColor='white'
+          margin='20px 0 0 0'
         />
+        {emailMessage !== '' && (
+          <p style={{ color: 'red', marginTop: '20px', textAlign: 'center' }}>
+            {emailMessage}
+          </p>
+        )}
+
         <Input
+          label='Password'
+          name='password'
           value={userInfo.password}
           type='password'
           callback={handleChange}
-          name='password'
-          label='Password'
+          labelColor='white'
+          margin='20px 0 0 0'
         />
         <Input
+          label='Confirm Password'
+          name='confirm_password'
           value={userInfo.confirm_password}
           type='password'
           callback={handleChange}
-          name='confirm_password'
-          label='Confirm Password'
+          labelColor='white'
+          margin='20px 0 0 0'
         />
         {passwordMessage !== '' && (
-          <span style={{ color: 'red' }}>{passwordMessage}</span>
+          <p style={{ color: 'red', marginTop: '20px' }}>{passwordMessage}</p>
         )}
-        <Button name='Submit' />
-      </form>
-      <div>
-        <p>
-          or
+        <Button margin='20px 0 0 0' width='100%' name='Submit' />
+        <div style={{ margin: '20px 0 0 0', width: '100%' }}>
+          <p style={{ color: 'white', textAlign: 'center' }}>or</p>
           <Link to='/login' style={{ marginRight: '20px' }}>
-            Sign In
+            <Button margin='20px 0 0 0' width='100%' name='Sign in' />
           </Link>
-        </p>
-      </div>
-    </>
+        </div>
+      </form>
+    </div>
   );
 };
 
