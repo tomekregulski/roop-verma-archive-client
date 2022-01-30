@@ -13,7 +13,7 @@ const Input = (props) => {
       <label htmlFor={props.name}>{props.label}</label>
       <input
         value={props.value}
-        type='text'
+        type={props.type}
         id={props.id}
         name={props.name}
         onChange={(event) => props.callback(event, props.id)}

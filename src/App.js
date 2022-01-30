@@ -1,11 +1,8 @@
-import React, { useState, useEffect, lazy, Suspense, useContext } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { TracksContext } from './Context/TracksContext';
-import { AuthContext } from './Context/AuthContext';
 import { Routes, Route } from 'react-router-dom';
 
 import Navbar from './Components/Navbar/Navbar';
-
-import LoggedOutView from './Views/LoggedOutView';
 
 import AudioView from './Views/AudioView';
 import AboutRoopji from './Views/AboutRoopji';
@@ -22,10 +19,6 @@ import UserAccount from './Views/UserAccount';
 
 function App() {
   const [width, setWidth] = useState(window.innerWidth);
-
-  const { auth } = useContext(AuthContext);
-  // eslint-disable-next-line no-unused-vars
-  const [isAuth, setIsAuth] = auth;
 
   const breakpoint = 650;
 
@@ -44,13 +37,7 @@ function App() {
         <Routes>
           <Route
             path='/'
-            element={
-              isAuth === true ? (
-                <AudioView width={width} breakpoint={breakpoint} />
-              ) : (
-                <LoggedOutView />
-              )
-            }
+            element={<AudioView width={width} breakpoint={breakpoint} />}
           />
           <Route path='roopji' element={<AboutRoopji />} />
           <Route path='library' element={<AboutLibrary />} />

@@ -156,9 +156,17 @@ const AudioPlayer = () => {
         />
         <p>
           {duration
-            ? `${Math.floor(trackProgress / 60)}:${Math.floor(
-                trackProgress % 60
-              )} / ${Math.floor(duration / 60)}:${Math.floor(duration % 60)}`
+            ? Math.floor(trackProgress / 60) < 10
+              ? `0${Math.floor(trackProgress / 60)}:`
+              : `${Math.floor(trackProgress / 60)}:`
+            : ''}
+          {duration
+            ? Math.floor(trackProgress % 60) < 10
+              ? `0${Math.floor(trackProgress % 60)}`
+              : `${Math.floor(trackProgress % 60)}`
+            : ''}
+          {duration
+            ? ` / ${Math.floor(duration / 60)}:${Math.floor(duration % 60)}`
             : ''}
         </p>
         <input

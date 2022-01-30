@@ -63,7 +63,8 @@ export const CheckoutForm = () => {
     } else {
       console.log(result.paymentMethod);
       const res = await axios.post(
-        'http://localhost:5000/api/payments/subscribe/',
+        'https://roop-verma-archive.herokuapp.com/api/payments/subscribe',
+        // 'http://localhost:5000/api/payments/subscribe/',
         {
           payment_method: result.paymentMethod.id,
           first_name: first_name,

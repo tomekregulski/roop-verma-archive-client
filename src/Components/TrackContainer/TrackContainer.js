@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { TracksContextData } from '../../Context/TracksContext';
+import { AuthContext } from '../../Context/AuthContext';
 
 import TrackCard from '../TrackCard/TrackCard';
 
@@ -9,9 +10,13 @@ const TrackContainer = () => {
   const { trackList, setTrackList, setSelectedTrack } =
     useContext(TracksContextData);
 
+  const { auth } = useContext(AuthContext);
+  // eslint-disable-next-line no-unused-vars
+  const [isAuth, setIsAuth] = auth;
+
   useEffect(() => {
     let rows = [];
-    trackList &&
+    if (trackList) {
       trackList.map((item) => {
         return rows.push({
           id: item.id,
@@ -28,7 +33,8 @@ const TrackContainer = () => {
           ]),
         });
       });
-    console.log(rows);
+    }
+    // console.log(rows);
     setTrackRows(rows);
   }, [setTrackList, trackList]);
 

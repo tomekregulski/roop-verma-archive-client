@@ -15,10 +15,22 @@ export const TracksContext = (props) => {
   useEffect(() => {
     if (proceed === true) {
       axios
-        .get('http://localhost:5000/api/tracks', {
-          // .get('https://roop-verma-archive.herokuapp.com/api/tracks', {
+        // .get('http://localhost:5000/api/tracks', {
+        .get('https://roop-verma-archive.herokuapp.com/api/tracks', {
           headers: { jwt: trackJwt },
         })
+        .then((response) => {
+          setTrackList(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else if (proceed === false) {
+      axios
+        .get(
+          // 'http://localhost:5000/api/tracks/public'
+          'https://roop-verma-archive.herokuapp.com/api/tracks/public'
+        )
         .then((response) => {
           setTrackList(response.data);
         })

@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 
 import { TracksContextData } from '../Context/TracksContext';
+import { AuthContext } from '../Context/AuthContext';
 
 import Select from '../Components/Select/Select';
 import Button from '../Components/Button/Button';
@@ -13,6 +14,10 @@ const AudioView = (props) => {
 
   const { setCategoryFilter, setSelectedTrack, trackList } =
     useContext(TracksContextData);
+
+  const { auth } = useContext(AuthContext);
+  // eslint-disable-next-line no-unused-vars
+  const [isAuth, setIsAuth] = auth;
 
   const categories = ['all', 'concert', 'meditation'];
 
@@ -37,14 +42,32 @@ const AudioView = (props) => {
           paddingBottom: '50px',
         }}
       >
+        {isAuth === false ? (
+          <div>
+            <p
+              style={{
+                color: 'white',
+                textAlign: 'center',
+                marginBottom: '50px',
+              }}
+            >
+              Please enjoy this limited public selection of Roopji's work. For
+              full access, please log in or register through the link in above.
+            </p>
+          </div>
+        ) : null}
         <AudioPlayerContainer width={width} breakpoint={breakpoint} />
-        <Select
-          callback={filterSelect}
-          name='category-filter'
-          item='Category'
-          values={categories}
-        />
-        <Button name='Surprise Me' callback={supriseMe} />
+        {isAuth === true && (
+          <>
+            <Select
+              callback={filterSelect}
+              name='category-filter'
+              item='Category'
+              values={categories}
+            />
+            <Button name='Surprise Me' callback={() => supriseMe} />
+          </>
+        )}
         <TrackContainer />
       </div>
     </>
