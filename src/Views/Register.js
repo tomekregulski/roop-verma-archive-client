@@ -14,6 +14,8 @@ const Register = () => {
     password: '',
     confirm_password: '',
   });
+  const [emailMessage, setEmailMessage] = useState('');
+  const [passwordlMessage, setPasswordMessage] = useState('');
 
   let navigate = useNavigate();
 
@@ -96,6 +98,7 @@ const Register = () => {
           name='email'
           label='Email'
         />
+        {emailMessage !== '' && <span>{emailMessage}</span>}
         <Input
           value={userInfo.password}
           type='text'
@@ -110,6 +113,7 @@ const Register = () => {
           name='confirm_password'
           label='Confirm Password'
         />
+        {emailMessage !== '' && <span>{emailMessage}</span>}
         <Button name='Submit' />
       </form>
       <div>
