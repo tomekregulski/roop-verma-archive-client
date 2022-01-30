@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
-import { AuthContext } from '../Context/AuthContext';
+import { AuthContext } from '../../Context/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import axios from 'axios';
 
-import Button from './Button/Button';
+import Button from '../Button/Button';
 
 const CARD_ELEMENT_OPTIONS = {
   style: {
@@ -24,7 +24,7 @@ const CARD_ELEMENT_OPTIONS = {
   },
 };
 
-export const CheckoutForm = () => {
+export const PaymentForm = () => {
   const { auth } = useContext(AuthContext);
   const [isAuth, setIsAuth] = auth;
 
@@ -104,4 +104,4 @@ export const CheckoutForm = () => {
   );
 };
 
-export default CheckoutForm;
+export default PaymentForm;

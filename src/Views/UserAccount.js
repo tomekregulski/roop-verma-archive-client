@@ -68,7 +68,7 @@ const UserAccount = () => {
 
   return (
     <>
-      <h2 style={{ textAlign: 'center' }}>Your Account Info</h2>
+      <h2 style={{ textAlign: 'center', color: 'white' }}>Your Account Info</h2>
       <div
         style={{
           display: 'flex',
@@ -76,13 +76,14 @@ const UserAccount = () => {
           alignItems: 'center',
         }}
       >
-        <span>
-          Name: {userData.first_name} {userData.last_name}
+        <span style={{ marginTop: '10px', color: 'white' }}>
+          {`${userData.first_name} ${userData.last_name} - ${userData.email}`}
         </span>
-        <span>Email: {userData.email}</span>
 
         <span>
           <YesNoModal
+            buttonWidth='250px'
+            buttonMargin='15px 0 0 0'
             action={'Change Password'}
             message={'Are you sure that you want to change your password?'}
             callback={changePassword}
@@ -90,6 +91,8 @@ const UserAccount = () => {
         </span>
         <span>
           <YesNoModal
+            buttonWidth='250px'
+            buttonMargin='15px 0 0 0'
             action={'Change Payment Method'}
             message={
               'Are you sure that you want to change your payment method?'
@@ -97,13 +100,15 @@ const UserAccount = () => {
             callback={changePaymentMethod}
           />
         </span>
-        <span>
+        {/* <span style={{ marginTop: '15px', color: 'white' }}>
           Subscription Status:{' '}
           {userData.subscription_active ? 'Active' : 'Inactive'}
-        </span>
+        </span> */}
         <span>
           {userData.subscription_active ? (
             <YesNoModal
+              buttonWidth='250px'
+              buttonMargin='15px 0 0 0'
               action={'Cancel Subscription'}
               message={
                 'Are you sure that you want to cancel your subscription?'
@@ -112,6 +117,8 @@ const UserAccount = () => {
             />
           ) : (
             <YesNoModal
+              buttonWidth='250px'
+              buttonMargin='15px 0 0 0'
               action={'Resume Subscription'}
               message={
                 'Are you sure that you want to resume your subscription?'
@@ -122,6 +129,8 @@ const UserAccount = () => {
         </span>
         <Button
           name='Logout'
+          width='250px'
+          margin='15px 0 0 0'
           callback={handleLogout}
           style={{ color: 'white' }}
         />

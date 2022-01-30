@@ -57,35 +57,48 @@ const Login = () => {
   };
 
   return (
-    <>
-      <h1>Log in through the form below</h1>
-      <form onSubmit={(event) => handleFormSubmit(event)}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: '100px',
+      }}
+    >
+      <form
+        style={{ width: '300px' }}
+        onSubmit={(event) => handleFormSubmit(event)}
+      >
         <Input
+          label='Email'
           value={userInfo.email}
-          type='text'
+          type='email'
           callback={handleChange}
           name='email'
+          labelColor='white'
         />
         <Input
+          label='Password'
           value={userInfo.password}
           type='password'
           callback={handleChange}
           name='password'
+          labelColor='white'
+          margin='20px 0 0 0'
         />
-        <Button name='Submit' />
+        <Button margin='20px 0 0 0' width='100%' name='Log in' />
         {message !== '' ? (
           <span style={{ color: 'red' }}>{message}</span>
         ) : null}
-      </form>
-      <div>
-        <p>
-          or
-          <Link to='/register' style={{ marginRight: '20px' }}>
-            sign up
+        <div style={{ margin: '20px 0 0 0', width: '100%' }}>
+          <p style={{ color: 'white', textAlign: 'center' }}>or</p>
+          <Link to='/register'>
+            <Button margin='20px 0 0 0' width='100%' name='Sign up' />
           </Link>
-        </p>
-      </div>
-    </>
+        </div>
+      </form>
+    </div>
   );
 };
 
