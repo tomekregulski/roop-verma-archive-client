@@ -36,7 +36,7 @@ const Login = () => {
     console.log(userInfo);
     const { email, password } = userInfo;
     axios
-      .get('https://roop-verma-archive.herokuapp.com/api/users/login', {
+      .post('https://roop-verma-archive.herokuapp.com/api/users/login', {
         // .post('http://localhost:5000/api/users/login', {
         email,
         password,
