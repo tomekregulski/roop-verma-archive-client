@@ -13,6 +13,8 @@ const Login = () => {
     password: '',
   });
 
+  const [message, setMessage] = useState('');
+
   const { auth, user } = useContext(AuthContext);
   // eslint-disable-next-line no-unused-vars
   const [isAuth, setIsAuth] = auth;
@@ -34,8 +36,8 @@ const Login = () => {
     console.log(userInfo);
     const { email, password } = userInfo;
     axios
-      // .get('https://roop-verma-archive.herokuapp.com/api/users/login', {
-      .post('http://localhost:5000/api/users/login', {
+      .get('https://roop-verma-archive.herokuapp.com/api/users/login', {
+        // .post('http://localhost:5000/api/users/login', {
         email,
         password,
       })
@@ -49,6 +51,8 @@ const Login = () => {
       .catch((error) => {
         // handle errors
         console.log(error);
+        setMessage('Invalid email or password');
+        // FIX THIS
       });
   };
 
@@ -64,11 +68,14 @@ const Login = () => {
         />
         <Input
           value={userInfo.password}
-          type='text'
+          type='password'
           callback={handleChange}
           name='password'
         />
         <Button name='Submit' />
+        {message !== '' ? (
+          <span style={{ color: 'red' }}>{message}</span>
+        ) : null}
       </form>
       <div>
         <p>

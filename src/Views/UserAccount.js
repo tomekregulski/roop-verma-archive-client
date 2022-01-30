@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import { AuthContext } from '../Context/AuthContext';
+import { TracksContextData } from '../Context/TracksContext';
 
 import Button from '../Components/Button/Button';
 import YesNoModal from '../Components/Modal/YesNoModal';
@@ -14,45 +15,48 @@ const UserAccount = () => {
   const [isAuth, setIsAuth] = auth;
   const [userData, setUserData] = user;
 
+  const { setTrackJwt, setProceed } = useContext(TracksContextData);
+
   let navigate = useNavigate();
 
   const changePassword = () => {
-    console.log('change password');
+    alert('change password functionality coming soon');
   };
 
   const cancelSubscription = async () => {
-    console.log('cancel subscription');
+    alert('cancel subscription functionality coming soon');
 
-    const customer_id = userData.stripe_id;
+    // const customer_id = userData.stripe_id;
 
-    await axios
-      .post('http://localhost:5000/api/payments/cancel-subscription', {
-        customer_id: customer_id,
-      })
-      .then(
-        setUserData((prevState) => ({
-          ...prevState,
-          subscription_active: false,
-          subscription_id: '',
-        }))
-      );
+    // await axios
+    //   .post('http://localhost:5000/api/payments/cancel-subscription', {
+    //     customer_id: customer_id,
+    //   })
+    //   .then(
+    //     setUserData((prevState) => ({
+    //       ...prevState,
+    //       subscription_active: false,
+    //       subscription_id: '',
+    //     }))
+    //   );
   };
 
   const resumeSubscription = () => {
-    console.log('resume subscription');
+    alert('resume subscription functionality coming soon');
   };
   const changePaymentMethod = () => {
-    console.log('change payment method');
+    alert('change payment method functionality coming soon');
   };
 
   const handleLogout = async () => {
     await axios
       .get('https://roop-verma-archive.herokuapp.com/api/users/logout', {})
       .then((response) => {
-        console.log(response);
+        // console.log(response);
+        setProceed(false);
+        setTrackJwt('');
         setUserData({});
         setIsAuth(false);
-
         document.cookie =
           'roop-verma-library= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
         navigate('/login');
@@ -60,7 +64,6 @@ const UserAccount = () => {
       .catch((error) => {
         console.log(error);
       });
-    setIsAuth(false);
   };
 
   return (
