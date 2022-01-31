@@ -9,12 +9,13 @@ import Button from '../Button/Button';
 const CARD_ELEMENT_OPTIONS = {
   style: {
     base: {
-      color: '#32325d',
+      color: 'white',
       fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
       fontSmoothing: 'antialiased',
       fontSize: '16px',
+
       '::placeholder': {
-        color: '#aab7c4',
+        color: 'white',
       },
     },
     invalid: {
@@ -95,10 +96,24 @@ export const PaymentForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: 400 }}>
-      <CardElement options={CARD_ELEMENT_OPTIONS} />
+    <form onSubmit={handleSubmit} style={{ width: '500px' }}>
+      <p style={{ color: 'white', marginBottom: '20px' }}>Enter Card Info</p>
+      <div
+        style={{
+          border: 'solid 1px white',
+          padding: '5px',
+          borderRadius: '5px',
+        }}
+      >
+        <CardElement options={CARD_ELEMENT_OPTIONS} />
+      </div>
       <div>
-        <Button name='Subscribe' callback={handleSubmit} />
+        <Button
+          margin='20px 0 0 0'
+          width='150px'
+          name='Subscribe'
+          callback={handleSubmit}
+        />
       </div>
     </form>
   );
