@@ -12,12 +12,21 @@ const stripeTestPromise = loadStripe(PUBLIC_KEY);
 
 const Subscribe = () => {
   return (
-    <>
-      <h1>Enter Card Info</h1>
-      <Elements stripe={stripeTestPromise}>
-        <PaymentForm />
-      </Elements>
-    </>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: '40px',
+      }}
+    >
+      <div>
+        <Elements stripe={stripeTestPromise}>
+          <PaymentForm />
+        </Elements>
+      </div>
+    </div>
   );
 };
 

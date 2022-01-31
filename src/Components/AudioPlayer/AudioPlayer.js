@@ -138,7 +138,6 @@ const AudioPlayer = () => {
 
   return (
     <div className='audio-player'>
-      <p>{userData.subscription_active ? 'Active' : 'Inactive'}</p>
       <div className='track-info'>
         <h2 className='title'>{currentTrack[0] ? currentTrack[0].raag : ''}</h2>
         <p className='trackMarquee'>
