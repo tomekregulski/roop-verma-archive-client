@@ -14,17 +14,31 @@ const Register = () => {
     password: '',
     confirm_password: '',
   });
+  const [firstnameMessage, setFirstnameMessage] = useState('');
+  const [lastnamelMessage, setLastnameMessage] = useState('');
   const [emailMessage, setEmailMessage] = useState('');
   const [passwordMessage, setPasswordMessage] = useState('');
+  const [confirmPasswordMessage, setConfirmPasswordMessage] = useState('');
 
   let navigate = useNavigate();
 
   const validatePassword = () => {
+    if (userInfo.password !== '') {
+      if (userInfo.password.length < 8 || userInfo.password.length > 15) {
+        setPasswordMessage(
+          'Password length must be between 8 and 15 characters'
+        );
+      } else {
+        setPasswordMessage('');
+      }
+    }
+  };
+  const validateConfirmPassword = () => {
     if (userInfo.password !== '' && userInfo.confirm_password !== '') {
       if (userInfo.password === userInfo.confirm_password) {
-        setPasswordMessage('');
+        setConfirmPasswordMessage('');
       } else {
-        setPasswordMessage('Passwords must match');
+        setConfirmPasswordMessage('Passwords must match');
       }
     }
   };
@@ -33,10 +47,14 @@ const Register = () => {
     var validRegex =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
-    if (userInfo.email.match(validRegex)) {
-      setEmailMessage('');
+    if (userInfo.email !== '') {
+      if (userInfo.email.match(validRegex)) {
+        setEmailMessage('');
+      } else {
+        setEmailMessage('Please enter a valid email address');
+      }
     } else {
-      setEmailMessage('Please enter a valid email address');
+      setEmailMessage('');
     }
   };
 
@@ -57,6 +75,10 @@ const Register = () => {
   useEffect(() => {
     validatePassword();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userInfo.password]);
+  useEffect(() => {
+    validateConfirmPassword();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userInfo.confirm_password]);
   useEffect(() => {
     validateEmail();
@@ -67,7 +89,11 @@ const Register = () => {
     event.preventDefault();
     // check all fields filled and messages are ''
 
-    if (userInfo.password === userInfo.confirm_password) {
+    if (
+      Object.values(userInfo).every((v) => v !== '') &&
+      confirmPasswordMessage === '' &&
+      emailMessage === ''
+    ) {
       const { first_name, last_name, email, password } = userInfo;
 
       axios
@@ -89,6 +115,22 @@ const Register = () => {
         .catch((error) => {
           console.log(error);
         });
+    } else {
+      if (userInfo.first_name === '') {
+        setFirstnameMessage('Please enter a first name');
+      }
+      if (userInfo.last_name === '') {
+        setLastnameMessage('Please enter a last name');
+      }
+      if (userInfo.email === '') {
+        setEmailMessage('Please enter an email');
+      }
+      if (userInfo.password === '') {
+        setPasswordMessage('Please choose a password');
+      }
+      if (userInfo.confirm_password === '') {
+        setConfirmPasswordMessage('Please confirm your password');
+      }
     }
   };
 
@@ -99,9 +141,18 @@ const Register = () => {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: '40px',
+        marginTop: '15px',
+        marginBottom: '50px',
       }}
     >
+      <h2
+        style={{
+          color: 'white',
+          marginBottom: '20px',
+        }}
+      >
+        Create a new account
+      </h2>
       <form
         style={{ width: '300px' }}
         onSubmit={(event) => handleFormSubmit(event)}
@@ -113,8 +164,11 @@ const Register = () => {
           type='text'
           callback={handleChange}
           labelColor='white'
-          margin='20px 0 0 0'
+          margin='10px 0 0 0'
         />
+        {firstnameMessage !== '' && (
+          <p style={{ color: 'pink', marginTop: '20px' }}>{firstnameMessage}</p>
+        )}
         <Input
           label='Last Name'
           name='last_name'
@@ -124,20 +178,21 @@ const Register = () => {
           labelColor='white'
           margin='20px 0 0 0'
         />
+        {lastnamelMessage !== '' && (
+          <p style={{ color: 'pink', marginTop: '20px' }}>{lastnamelMessage}</p>
+        )}
 
         <Input
           label='Email'
           name='email'
           value={userInfo.email}
-          type='email'
+          type='text'
           callback={handleChange}
           labelColor='white'
           margin='20px 0 0 0'
         />
         {emailMessage !== '' && (
-          <p style={{ color: 'red', marginTop: '20px', textAlign: 'center' }}>
-            {emailMessage}
-          </p>
+          <p style={{ color: 'pink', marginTop: '20px' }}>{emailMessage}</p>
         )}
 
         <Input
@@ -149,6 +204,9 @@ const Register = () => {
           labelColor='white'
           margin='20px 0 0 0'
         />
+        {passwordMessage !== '' && (
+          <p style={{ color: 'pink', marginTop: '20px' }}>{passwordMessage}</p>
+        )}
         <Input
           label='Confirm Password'
           name='confirm_password'
@@ -158,14 +216,16 @@ const Register = () => {
           labelColor='white'
           margin='20px 0 0 0'
         />
-        {passwordMessage !== '' && (
-          <p style={{ color: 'red', marginTop: '20px' }}>{passwordMessage}</p>
+        {confirmPasswordMessage !== '' && (
+          <p style={{ color: 'pink', marginTop: '20px' }}>
+            {confirmPasswordMessage}
+          </p>
         )}
-        <Button margin='20px 0 0 0' width='100%' name='Submit' />
-        <div style={{ margin: '20px 0 0 0', width: '100%' }}>
+        <Button margin='30px 0 0 0' width='100%' name='Submit' />
+        <div style={{ margin: '10px 0 0 0', width: '100%' }}>
           <p style={{ color: 'white', textAlign: 'center' }}>or</p>
           <Link to='/login' style={{ marginRight: '20px' }}>
-            <Button margin='20px 0 0 0' width='100%' name='Sign in' />
+            <Button margin='10px 0 0 0' width='100%' name='Sign in' />
           </Link>
         </div>
       </form>

@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { TracksContextData } from '../../Context/TracksContext';
-// import { AuthContext } from '../../Context/AuthContext';
 
 import AudioControls from '../AudioControls/AudioControls';
 import './audioPlayer.css';
@@ -9,19 +8,14 @@ const AudioPlayer = () => {
   const { trackList, selectedTrack, setSelectedTrack } =
     useContext(TracksContextData);
 
-  // const { user } = useContext(AuthContext);
-
   const [trackIndex, setTrackIndex] = useState();
   const [trackProgress, setTrackProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [trackSrc, setTrackSrc] = useState('');
   const [currentTrack, setCurrentTrack] = useState({});
 
-  // const [userData, setUserData] = user;
-
   useEffect(() => {
     if (selectedTrack !== null) {
-      // console.log(selectedTrack);
       setCurrentTrack(selectedTrack);
       const trackUrl = selectedTrack[0].url;
       setTrackSrc(trackUrl);
@@ -30,9 +24,7 @@ const AudioPlayer = () => {
   }, [selectedTrack]);
 
   const changeTrack = (id) => {
-    // console.log(id);
     const newTrack = trackList.filter((track) => track.id === id);
-    // console.log(newTrack);
     setSelectedTrack(newTrack);
   };
 

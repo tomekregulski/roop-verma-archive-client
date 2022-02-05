@@ -46,12 +46,9 @@
 
 .trackMarquee {
   font-weight: 300;
-  /* margin-top: 0; */
-  /* margin-bottom: 25px; */
   width: 90%;
   margin: 0 auto 25px;
   overflow: hidden;
-  /* box-sizing: border-box; */
 }
 
 .trackMarqueeSpan {
@@ -59,7 +56,6 @@
   width: max-content;
 
   padding-left: 100%;
-  /* show the marquee just outside the paragraph */
   will-change: transform;
   animation: marquee 30s linear infinite;
 }
