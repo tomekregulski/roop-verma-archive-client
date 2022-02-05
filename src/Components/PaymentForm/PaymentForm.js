@@ -34,6 +34,7 @@ export const PaymentForm = () => {
 
   let navigate = useNavigate();
   const { state } = useLocation();
+
   const { id, first_name, last_name, email } = state;
 
   const success = (token) => {

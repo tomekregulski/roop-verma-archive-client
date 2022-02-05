@@ -70,7 +70,7 @@ const AudioView = (props) => {
             <Select
               callback={filterSelect}
               name='category-filter'
-              item='Category'
+              item='Category Filter'
               values={categories}
             />
           </div>
