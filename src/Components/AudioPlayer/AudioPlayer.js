@@ -1,16 +1,15 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { TracksContextData } from '../../Context/TracksContext';
-import { AuthContext } from '../../Context/AuthContext';
+// import { AuthContext } from '../../Context/AuthContext';
 
 import AudioControls from '../AudioControls/AudioControls';
-import Backdrop from '../Backdrop/Backdrop';
 import './audioPlayer.css';
 
 const AudioPlayer = () => {
   const { trackList, selectedTrack, setSelectedTrack } =
     useContext(TracksContextData);
 
-  const { user } = useContext(AuthContext);
+  // const { user } = useContext(AuthContext);
 
   const [trackIndex, setTrackIndex] = useState();
   const [trackProgress, setTrackProgress] = useState(0);
@@ -18,21 +17,22 @@ const AudioPlayer = () => {
   const [trackSrc, setTrackSrc] = useState('');
   const [currentTrack, setCurrentTrack] = useState({});
 
-  const [userData, setUserData] = user;
+  // const [userData, setUserData] = user;
 
   useEffect(() => {
     if (selectedTrack !== null) {
       // console.log(selectedTrack);
       setCurrentTrack(selectedTrack);
-      setTrackSrc(selectedTrack[0].url);
+      const trackUrl = selectedTrack[0].url;
+      setTrackSrc(trackUrl);
       setTrackIndex(selectedTrack[0].id - 1);
     }
   }, [selectedTrack]);
 
   const changeTrack = (id) => {
-    console.log(id);
+    // console.log(id);
     const newTrack = trackList.filter((track) => track.id === id);
-    console.log(newTrack);
+    // console.log(newTrack);
     setSelectedTrack(newTrack);
   };
 
@@ -96,31 +96,45 @@ const AudioPlayer = () => {
     }
   };
 
+  const playPauseValidation = () => {
+    if (isPlaying === false) {
+      if (isReady.current) {
+        audioRef.current.play();
+        setIsPlaying(true);
+        startTimer();
+      } else {
+        // Set the isReady ref as true for the next pass
+        isReady.current = true;
+      }
+    }
+
+    if (isPlaying === true) {
+      setIsPlaying(false);
+    }
+  };
+
   useEffect(() => {
     if (isPlaying) {
       audioRef.current.play();
       startTimer();
-    } else {
+    } else if (isPlaying === false) {
       audioRef.current.pause();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPlaying]);
 
   // Handles cleanup and setup when changing tracks
   useEffect(() => {
     audioRef.current.pause();
-
+    setIsPlaying(false);
     audioRef.current = new Audio(trackSrc);
+    audioRef.current.load();
     setTrackProgress(audioRef.current.currentTime);
 
-    if (isReady.current) {
-      audioRef.current.play();
-      setIsPlaying(true);
-      startTimer();
-    } else {
-      // Set the isReady ref as true for the next pass
+    if (!isReady.current) {
       isReady.current = true;
     }
-  }, [trackIndex]);
+  }, [trackSrc]);
 
   useEffect(() => {
     // Pause and clean up on unmount
@@ -151,7 +165,8 @@ const AudioPlayer = () => {
           isPlaying={isPlaying}
           onPrevClick={toPrevTrack}
           onNextClick={toNextTrack}
-          onPlayPauseClick={setIsPlaying}
+          // onPlayPauseClick={setIsPlaying}
+          onPlayPauseClick={playPauseValidation}
         />
         <p>
           {duration
@@ -181,11 +196,6 @@ const AudioPlayer = () => {
           style={{ background: trackStyling }}
         />
       </div>
-      <Backdrop
-        trackIndex={trackIndex}
-        activeColor={'rgba(0, 180, 249, 0.872)'}
-        isPlaying={isPlaying}
-      />
     </div>
   );
 };

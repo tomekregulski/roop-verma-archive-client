@@ -49,6 +49,8 @@ const AudioView = (props) => {
                 color: 'white',
                 textAlign: 'center',
                 marginBottom: '50px',
+                padding: '0 25px',
+                lineHeight: '1.5',
               }}
             >
               Please enjoy this limited public selection of Roopji's work. For
@@ -63,6 +65,7 @@ const AudioView = (props) => {
               margin='0 15px 0 0'
               name='Surprise Me'
               callback={() => supriseMe}
+              padding='15px 35px'
             />
             <Select
               callback={filterSelect}
