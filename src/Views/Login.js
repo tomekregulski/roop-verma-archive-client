@@ -14,6 +14,8 @@ const Login = () => {
   });
 
   const [message, setMessage] = useState('');
+  const [emailMessage, setEmailMessage] = useState('');
+  const [passwordMessage, setPasswordMessage] = useState('');
 
   const { auth, user } = useContext(AuthContext);
   // eslint-disable-next-line no-unused-vars
@@ -34,26 +36,35 @@ const Login = () => {
   const handleFormSubmit = (event) => {
     event.preventDefault();
     console.log(userInfo);
-    const { email, password } = userInfo;
-    axios
-      .post('https://roop-verma-archive.herokuapp.com/api/users/login', {
-        // .post('http://localhost:5000/api/users/login', {
-        email,
-        password,
-      })
-      .then((response) => {
-        const token = response.data.token;
-        document.cookie = `roop-verma-library=${token}`;
-        setIsAuth(true);
-        setUserData(response.data.userData);
-        navigate('/');
-      })
-      .catch((error) => {
-        // handle errors
-        console.log(error);
-        setMessage('Invalid email or password');
-        // FIX THIS
-      });
+    if (Object.values(userInfo).every((v) => v !== '')) {
+      const { email, password } = userInfo;
+      axios
+        .post('https://roop-verma-archive.herokuapp.com/api/users/login', {
+          // .post('http://localhost:5000/api/users/login', {
+          email,
+          password,
+        })
+        .then((response) => {
+          const token = response.data.token;
+          document.cookie = `roop-verma-library=${token}`;
+          setIsAuth(true);
+          setUserData(response.data.userData);
+          navigate('/');
+        })
+        .catch((error) => {
+          // handle errors
+          console.log(error);
+          setMessage('Invalid email or password');
+          // FIX THIS
+        });
+    } else {
+      if (userInfo.email === '') {
+        setEmailMessage('Please enter an email address');
+      }
+      if (userInfo.password === '') {
+        setPasswordMessage('Please enter a password');
+      }
+    }
   };
 
   return (
@@ -63,9 +74,18 @@ const Login = () => {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: '100px',
+        marginTop: '15px',
+        marginBottom: '30px',
       }}
     >
+      <h2
+        style={{
+          color: 'white',
+          marginBottom: '20px',
+        }}
+      >
+        Sign in
+      </h2>
       <form
         style={{ width: '300px' }}
         onSubmit={(event) => handleFormSubmit(event)}
@@ -77,7 +97,11 @@ const Login = () => {
           callback={handleChange}
           name='email'
           labelColor='white'
+          margin='10px 0 0 0'
         />
+        {emailMessage !== '' && (
+          <p style={{ color: 'pink', marginTop: '20px' }}>{emailMessage}</p>
+        )}
         <Input
           label='Password'
           value={userInfo.password}
@@ -87,14 +111,18 @@ const Login = () => {
           labelColor='white'
           margin='20px 0 0 0'
         />
-        <Button margin='20px 0 0 0' width='100%' name='Log in' />
+        {passwordMessage !== '' && (
+          <p style={{ color: 'pink', marginTop: '20px' }}>{passwordMessage}</p>
+        )}
+
+        <Button margin='30px 0 0 0' width='100%' name='Log in' />
         {message !== '' ? (
-          <span style={{ color: 'red' }}>{message}</span>
+          <span style={{ color: 'pink' }}>{message}</span>
         ) : null}
-        <div style={{ margin: '20px 0 0 0', width: '100%' }}>
+        <div style={{ margin: '10px 0 0 0', width: '100%' }}>
           <p style={{ color: 'white', textAlign: 'center' }}>or</p>
           <Link to='/register'>
-            <Button margin='20px 0 0 0' width='100%' name='Sign up' />
+            <Button margin='10px 0 0 0' width='100%' name='Sign up' />
           </Link>
         </div>
       </form>

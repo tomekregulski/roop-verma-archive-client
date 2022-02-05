@@ -115,17 +115,16 @@ const UserAccount = () => {
               }
               callback={cancelSubscription}
             />
-          ) : (
-            <YesNoModal
-              buttonWidth='250px'
-              buttonMargin='15px 0 0 0'
-              action={'Resume Subscription'}
-              message={
-                'Are you sure that you want to resume your subscription?'
-              }
-              callback={resumeSubscription}
-            />
-          )}
+          ) : // <YesNoModal
+          //   buttonWidth='250px'
+          //   buttonMargin='15px 0 0 0'
+          //   action={'Resume Subscription'}
+          //   message={
+          //     'Are you sure that you want to resume your subscription?'
+          //   }
+          //   callback={resumeSubscription}
+          // />
+          null}
         </span>
         <Button
           name='Logout'
