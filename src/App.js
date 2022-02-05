@@ -20,7 +20,7 @@ import UserAccount from './Views/UserAccount';
 function App() {
   const [width, setWidth] = useState(window.innerWidth);
 
-  const breakpoint = 650;
+  const breakpoint = 850;
 
   useEffect(() => {
     const handleResizeWindow = () => setWidth(window.innerWidth);
@@ -31,7 +31,7 @@ function App() {
   }, []);
 
   return (
-    <>
+    <div>
       <Navbar />
       <TracksContext>
         <Routes>
@@ -47,7 +47,7 @@ function App() {
           <Route path='account' element={<UserAccount />} />
         </Routes>
       </TracksContext>
-    </>
+    </div>
   );
 }
 

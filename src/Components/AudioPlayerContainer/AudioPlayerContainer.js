@@ -2,9 +2,11 @@ import React, { useEffect, useContext } from 'react';
 
 import { TracksContextData } from '../../Context/TracksContext';
 
-import sitar from '../../assets/sitar.png';
-import sitarReverse from '../../assets/sitar-reverse.png';
+import tanpuraRight from '../../assets/sitar.png';
+import tanpuraLeft from '../../assets/sitar-reverse.png';
 import AudioPlayer from '../AudioPlayer/AudioPlayer';
+
+import './audioPlayerContainerStyles.css';
 
 const AudioPlayerContainer = (props) => {
   const { setTrackJwt, setProceed } = useContext(TracksContextData);
@@ -26,27 +28,13 @@ const AudioPlayerContainer = (props) => {
   }, [setProceed, setTrackJwt]);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-      }}
-    >
+    <div className='audioContainerWrapper'>
       {props.width > props.breakpoint && (
-        <img
-          src={sitarReverse}
-          alt='sitar'
-          style={{ height: '200px', marginRight: '50px' }}
-        />
+        <img className='tanpura__left' src={tanpuraLeft} alt='tanpura' />
       )}
       <AudioPlayer />
       {props.width > props.breakpoint && (
-        <img
-          src={sitar}
-          alt='sitar'
-          style={{ height: '200px', marginLeft: '50px' }}
-        />
+        <img className='tanpura__right' src={tanpuraRight} alt='tanpura' />
       )}
     </div>
   );

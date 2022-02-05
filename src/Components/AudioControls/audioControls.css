@@ -18,5 +18,11 @@
 }
 
 .audio-controls path {
-  fill: var(--white);
+  fill: white;
+}
+
+.audio-controls__button {
+  background: none;
+  border: none;
+  cursor: pointer;
 }

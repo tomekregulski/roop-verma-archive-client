@@ -4,6 +4,8 @@ import { AuthContext } from '../../Context/AuthContext';
 
 import TrackCard from '../TrackCard/TrackCard';
 
+import './trackContainerStyles.css';
+
 const TrackContainer = () => {
   const [trackRows, setTrackRows] = useState([]);
 
@@ -44,7 +46,7 @@ const TrackContainer = () => {
   };
 
   return (
-    <div style={{ marginTop: '30px' }}>
+    <div className='trackListContainer'>
       {trackRows.length ? (
         trackRows.map((track, index) => {
           return <TrackCard key={index} callback={clickHandle} track={track} />;

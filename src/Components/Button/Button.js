@@ -10,10 +10,11 @@ const Button = (props) => {
           display: 'block',
           width: props.width,
           padding: props.padding || '10px 25px',
+          backgroundColor: props.backgroundColor || 'white',
           margin: props.margin,
-          color: props.color || 'aliceblue',
+          color: props.color || 'black',
           borderRadius: props.borderRadius || '5px',
-          border: props.border || 'solid 1px white',
+          border: props.border || 'solid 1px rgba(0, 180, 249, 0.872)',
           fontWeight: props.fontWeight || '400',
         }}
       >
