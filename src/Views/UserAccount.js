@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
@@ -9,11 +9,21 @@ import { TracksContextData } from '../Context/TracksContext';
 import Button from '../Components/Button/Button';
 import YesNoModal from '../Components/Modal/YesNoModal';
 
+import PaymentForm from '../Components/PaymentForm/PaymentForm';
+
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+const PUBLIC_KEY =
+  'pk_test_51Jg7jKBlr8UFcXJymPB8I3ZU4z3vD7fIdgoWXQS3hDZsDCD98MMFDUozMO3C0hlCUL6stRdUbehbFZA7h7whWoDj00Q2mfpRZw';
+
+const stripeTestPromise = loadStripe(PUBLIC_KEY);
+
 const UserAccount = () => {
   const { auth, user } = useContext(AuthContext);
   // eslint-disable-next-line no-unused-vars
   const [isAuth, setIsAuth] = auth;
   const [userData, setUserData] = user;
+  const [resubscribe, setResubscribe] = useState(false);
 
   const { setTrackJwt, setProceed } = useContext(TracksContextData);
 
@@ -126,6 +136,13 @@ const UserAccount = () => {
           // />
           null}
         </span>
+        {resubscribe === true && (
+          <div>
+            <Elements stripe={stripeTestPromise}>
+              <PaymentForm />
+            </Elements>
+          </div>
+        )}
         <Button
           name='Logout'
           width='250px'
