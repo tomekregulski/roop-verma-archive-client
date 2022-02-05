@@ -14,6 +14,7 @@ const Register = () => {
     password: '',
     confirm_password: '',
   });
+  const [message, setMessage] = useState('');
   const [firstnameMessage, setFirstnameMessage] = useState('');
   const [lastnamelMessage, setLastnameMessage] = useState('');
   const [emailMessage, setEmailMessage] = useState('');
@@ -114,6 +115,7 @@ const Register = () => {
         })
         .catch((error) => {
           console.log(error);
+          setMessage('That email already exists');
         });
     } else {
       if (userInfo.first_name === '') {
@@ -227,6 +229,9 @@ const Register = () => {
           <Link to='/login' style={{ marginRight: '20px' }}>
             <Button margin='10px 0 0 0' width='100%' name='Sign in' />
           </Link>
+          {message !== '' ? (
+            <span style={{ color: 'pink' }}>{message}</span>
+          ) : null}
         </div>
       </form>
     </div>
