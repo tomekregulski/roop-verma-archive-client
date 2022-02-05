@@ -52,10 +52,8 @@ const Login = () => {
           navigate('/');
         })
         .catch((error) => {
-          // handle errors
           console.log(error);
           setMessage('Invalid email or password');
-          // FIX THIS
         });
     } else {
       if (userInfo.email === '') {
