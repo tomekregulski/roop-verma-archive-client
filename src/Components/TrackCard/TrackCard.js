@@ -20,7 +20,7 @@ const TrackCard = (props) => {
   return (
     <div
       className={
-        selectedTrack && selectedTrack[0].id === id
+        selectedTrack.length > 0 && selectedTrack[0].id === id
           ? 'cardContainer cardContainerPlaying'
           : 'cardContainer'
       }

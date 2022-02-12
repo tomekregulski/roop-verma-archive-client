@@ -1,70 +1,65 @@
-import React, { useState, createContext, useEffect } from 'react';
+import React, { useState, createContext, useEffect, useContext } from 'react';
 import axios from 'axios';
+import { checkJwt } from '../Utils/helperFunctions';
+import { AuthContext } from './AuthContext';
 
 export const TracksContextData = createContext(null);
 
 export const TracksContext = (props) => {
-  const [proceed, setProceed] = useState(false);
-  const [trackJwt, setTrackJwt] = useState('');
-  const [trackList, setTrackList] = useState(null);
-  const [selectedTrack, setSelectedTrack] = useState(null);
-  const [categoryFilter, setCategoryFilter] = useState('');
-
+  const [trackList, setTrackList] = useState([]);
+  const [selectedTrack, setSelectedTrack] = useState([]);
+  const [categoryFilter, setCategoryFilter] = useState('all');
   const [filteredTracks, setFilteredTracks] = useState(null);
 
-  useEffect(() => {
-    if (proceed === true) {
-      axios
-        // .get('http://localhost:5000/api/tracks', {
-        .get('https://roop-verma-archive.herokuapp.com/api/tracks', {
-          headers: { jwt: trackJwt },
-        })
-        .then((response) => {
-          setTrackList(response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else if (proceed === false) {
-      axios
-        .get(
-          // 'http://localhost:5000/api/tracks/public'
-          'https://roop-verma-archive.herokuapp.com/api/tracks/public'
-        )
-        .then((response) => {
-          setTrackList(response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  }, [proceed, trackJwt]);
+  const { auth } = useContext(AuthContext);
+  // eslint-disable-next-line no-unused-vars
+  const [isAuth, setIsAuth] = auth;
 
   useEffect(() => {
-    if (categoryFilter !== '') {
-      console.log(categoryFilter);
-      if (categoryFilter === 'all') {
-        setFilteredTracks(trackList);
-      } else {
-        const newTracks = trackList.filter(
-          (track) => track.raga.name === 'Bhupali'
-        );
-        setFilteredTracks(newTracks);
+    const fetchTracks = async () => {
+      let response;
+      const jwt = checkJwt();
+      try {
+        if (isAuth === true) {
+          response = await axios.get(
+            // .get('http://localhost:5000/api/tracks', {
+            'https://roop-verma-archive.herokuapp.com/api/tracks',
+            {
+              headers: { jwt: jwt },
+            }
+          );
+        } else if (isAuth === false) {
+          response = await axios.get(
+            // 'http://localhost:5000/api/tracks/public'
+            'https://roop-verma-archive.herokuapp.com/api/tracks/public'
+          );
+        }
+        setTrackList(response.data);
+      } catch (error) {
+        console.log(error);
       }
+    };
+    fetchTracks();
+  }, [isAuth]);
+
+  useEffect(() => {
+    if (categoryFilter === 'all') {
+      setFilteredTracks(trackList);
+    } else {
+      const newTracks = trackList.filter(
+        (track) => track.raga.name === 'Bhupali'
+      );
+      setFilteredTracks(newTracks);
     }
-  }, [categoryFilter]);
+  }, [categoryFilter, trackList]);
 
   return (
     <TracksContextData.Provider
       value={{
-        trackJwt,
-        setTrackJwt,
         trackList,
         setTrackList,
         selectedTrack,
         setSelectedTrack,
-        proceed,
-        setProceed,
         categoryFilter,
         setCategoryFilter,
         filteredTracks,

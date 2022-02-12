@@ -7,6 +7,8 @@ export const AuthProvider = (props) => {
   const [isAuth, setIsAuth] = useState(false);
   const [userData, setUserData] = useState({});
 
+  const jwtKey = 'roop-verma-library';
+
   useEffect(() => {
     const allCookies = document.cookie.split('; ');
     let cookies = {};
@@ -14,14 +16,11 @@ export const AuthProvider = (props) => {
       const currentCookie = allCookies[i].split('=');
       cookies[currentCookie[0]] = currentCookie[1];
     }
-    const jwtKey = 'roop-verma-library';
     let currentJwt;
     if (Object.keys(cookies).includes(jwtKey)) {
       currentJwt = cookies[jwtKey];
       const decoded = jwt_decode(currentJwt);
-      // console.log(decoded);
       setUserData(decoded);
-      // setJwt(currentJwt);
       setIsAuth(true);
     }
   }, [isAuth]);

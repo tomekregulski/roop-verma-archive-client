@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import { AuthContext } from '../Context/AuthContext';
-import { TracksContextData } from '../Context/TracksContext';
 
 import Button from '../Components/Button/Button';
 import YesNoModal from '../Components/Modal/YesNoModal';
@@ -24,8 +23,6 @@ const UserAccount = () => {
   const [isAuth, setIsAuth] = auth;
   const [userData, setUserData] = user;
   const [resubscribe, setResubscribe] = useState(false);
-
-  const { setTrackJwt, setProceed } = useContext(TracksContextData);
 
   let navigate = useNavigate();
 
@@ -61,10 +58,7 @@ const UserAccount = () => {
   const handleLogout = async () => {
     await axios
       .get('https://roop-verma-archive.herokuapp.com/api/users/logout', {})
-      .then((response) => {
-        // console.log(response);
-        setProceed(false);
-        setTrackJwt('');
+      .then(() => {
         setUserData({});
         setIsAuth(false);
         document.cookie =
