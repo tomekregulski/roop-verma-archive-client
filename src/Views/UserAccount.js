@@ -12,6 +12,8 @@ import PaymentForm from '../Components/PaymentForm/PaymentForm';
 
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+
+import './styles/userAccountStyles.css';
 const PUBLIC_KEY =
   'pk_test_51Jg7jKBlr8UFcXJymPB8I3ZU4z3vD7fIdgoWXQS3hDZsDCD98MMFDUozMO3C0hlCUL6stRdUbehbFZA7h7whWoDj00Q2mfpRZw';
 
@@ -71,81 +73,68 @@ const UserAccount = () => {
   };
 
   return (
-    <>
-      <h2 style={{ textAlign: 'center', color: 'white' }}>Your Account Info</h2>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <span style={{ marginTop: '10px', color: 'white' }}>
-          {`${userData.first_name} ${userData.last_name} - ${userData.email}`}
-        </span>
+    <div className='account--container'>
+      <h2>Your Account Info</h2>
+      <span className='account--text-span'>
+        {`${userData.first_name} ${userData.last_name} - ${userData.email}`}
+      </span>
 
-        <span>
-          <YesNoModal
-            buttonWidth='250px'
-            buttonMargin='15px 0 0 0'
-            action={'Change Password'}
-            message={'Are you sure that you want to change your password?'}
-            callback={changePassword}
-          />
-        </span>
-        <span>
-          <YesNoModal
-            buttonWidth='250px'
-            buttonMargin='15px 0 0 0'
-            action={'Change Payment Method'}
-            message={
-              'Are you sure that you want to change your payment method?'
-            }
-            callback={changePaymentMethod}
-          />
-        </span>
-        {/* <span style={{ marginTop: '15px', color: 'white' }}>
-          Subscription Status:{' '}
-          {userData.subscription_active ? 'Active' : 'Inactive'}
-        </span> */}
-        <span>
-          {userData.subscription_active ? (
-            <YesNoModal
-              buttonWidth='250px'
-              buttonMargin='15px 0 0 0'
-              action={'Cancel Subscription'}
-              message={
-                'Are you sure that you want to cancel your subscription?'
-              }
-              callback={cancelSubscription}
-            />
-          ) : // <YesNoModal
-          //   buttonWidth='250px'
-          //   buttonMargin='15px 0 0 0'
-          //   action={'Resume Subscription'}
-          //   message={
-          //     'Are you sure that you want to resume your subscription?'
-          //   }
-          //   callback={resumeSubscription}
-          // />
-          null}
-        </span>
-        {resubscribe === true && (
-          <div>
-            <Elements stripe={stripeTestPromise}>
-              <PaymentForm />
-            </Elements>
-          </div>
-        )}
-        <Button
-          name='Logout'
-          width='250px'
-          margin='15px 0 0 0'
-          callback={handleLogout}
-          style={{ color: 'white' }}
+      <span>
+        <YesNoModal
+          buttonWidth='250px'
+          buttonMargin='15px 0 0 0'
+          action={'Change Password'}
+          message={'Are you sure that you want to change your password?'}
+          callback={changePassword}
         />
-      </div>
-    </>
+      </span>
+      <span>
+        <YesNoModal
+          buttonWidth='250px'
+          buttonMargin='15px 0 0 0'
+          action={'Change Payment Method'}
+          message={'Are you sure that you want to change your payment method?'}
+          callback={changePaymentMethod}
+        />
+      </span>
+      <span className='account--text-span'>
+        Subscription Status:{' '}
+        {userData.subscription_active ? 'Active' : 'Inactive'}
+      </span>
+      <span>
+        {userData.subscription_active ? (
+          <YesNoModal
+            buttonWidth='250px'
+            buttonMargin='15px 0 0 0'
+            action={'Cancel Subscription'}
+            message={'Are you sure that you want to cancel your subscription?'}
+            callback={cancelSubscription}
+          />
+        ) : (
+          <YesNoModal
+            buttonWidth='250px'
+            buttonMargin='15px 0 0 0'
+            action={'Resume Subscription'}
+            message={'Are you sure that you want to resume your subscription?'}
+            callback={resumeSubscription}
+          />
+        )}
+      </span>
+      {resubscribe === true && (
+        <div>
+          <Elements stripe={stripeTestPromise}>
+            <PaymentForm />
+          </Elements>
+        </div>
+      )}
+      <Button
+        name='Logout'
+        width='250px'
+        margin='15px 0 0 0'
+        callback={handleLogout}
+        style={{ color: 'white' }}
+      />
+    </div>
   );
 };
 

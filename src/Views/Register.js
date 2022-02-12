@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import axios from 'axios';
-
 import Input from '../Components/Input/Input';
 import Button from '../Components/Button/Button';
+
+import axios from 'axios';
+
+import './styles/formStyles.css';
 
 const Register = () => {
   const [userInfo, setUserInfo] = useState({
@@ -137,28 +139,9 @@ const Register = () => {
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: '15px',
-        marginBottom: '50px',
-      }}
-    >
-      <h2
-        style={{
-          color: 'white',
-          marginBottom: '20px',
-        }}
-      >
-        Create a new account
-      </h2>
-      <form
-        style={{ width: '300px' }}
-        onSubmit={(event) => handleFormSubmit(event)}
-      >
+    <div className='form--container'>
+      <h2>Create a new account</h2>
+      <form onSubmit={(event) => handleFormSubmit(event)}>
         <Input
           label='First Name'
           name='first_name'
@@ -169,7 +152,7 @@ const Register = () => {
           margin='10px 0 0 0'
         />
         {firstnameMessage !== '' && (
-          <p style={{ color: 'pink', marginTop: '20px' }}>{firstnameMessage}</p>
+          <span className='form--alert'>{firstnameMessage}</span>
         )}
         <Input
           label='Last Name'
@@ -181,7 +164,7 @@ const Register = () => {
           margin='20px 0 0 0'
         />
         {lastnamelMessage !== '' && (
-          <p style={{ color: 'pink', marginTop: '20px' }}>{lastnamelMessage}</p>
+          <span className='form--alert'>{lastnamelMessage}</span>
         )}
 
         <Input
@@ -194,7 +177,7 @@ const Register = () => {
           margin='20px 0 0 0'
         />
         {emailMessage !== '' && (
-          <p style={{ color: 'pink', marginTop: '20px' }}>{emailMessage}</p>
+          <span className='form--alert'>{emailMessage}</span>
         )}
 
         <Input
@@ -207,7 +190,7 @@ const Register = () => {
           margin='20px 0 0 0'
         />
         {passwordMessage !== '' && (
-          <p style={{ color: 'pink', marginTop: '20px' }}>{passwordMessage}</p>
+          <span className='form--alert'>{passwordMessage}</span>
         )}
         <Input
           label='Confirm Password'
@@ -219,18 +202,16 @@ const Register = () => {
           margin='20px 0 0 0'
         />
         {confirmPasswordMessage !== '' && (
-          <p style={{ color: 'pink', marginTop: '20px' }}>
-            {confirmPasswordMessage}
-          </p>
+          <span className='form--alert'>{confirmPasswordMessage}</span>
         )}
         <Button margin='30px 0 0 0' width='100%' name='Submit' />
-        <div style={{ margin: '10px 0 0 0', width: '100%' }}>
-          <p style={{ color: 'white', textAlign: 'center' }}>or</p>
+        <div className='form--link-container'>
+          <span>or</span>
           <Link to='/login' style={{ marginRight: '20px' }}>
             <Button margin='10px 0 0 0' width='100%' name='Sign in' />
           </Link>
           {message !== '' ? (
-            <span style={{ color: 'pink' }}>{message}</span>
+            <span className='form--alert'>{message}</span>
           ) : null}
         </div>
       </form>
