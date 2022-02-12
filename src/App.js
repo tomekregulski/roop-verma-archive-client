@@ -12,7 +12,6 @@ import Register from './Views/Register';
 import Subscribe from './Views/Subscribe';
 import UserAccount from './Views/UserAccount';
 
-// import ProtectedRoute from './Components/ProtectedRoute/ProtectedRoute';
 // const Navbar = lazy(() => import('./Components/Navbar/Navbar'));
 // const AboutRoopji = lazy(() => import('./Views/AboutRoopji'));
 // const AboutLibrary = lazy(() => import('./Views/AboutLibrary'));

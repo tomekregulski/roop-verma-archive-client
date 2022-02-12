@@ -1,0 +1,12 @@
+.payment-form--container {
+  width: 500px;
+}
+.payment-form--container p {
+  color: white;
+  margin-bottom: 20px;
+}
+.payment-form--card-element-container {
+  border: solid 1px white;
+  padding: 5px;
+  border-radius: 5px;
+}

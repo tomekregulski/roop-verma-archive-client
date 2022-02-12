@@ -1,42 +1,43 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
+import { AuthContext } from '../../Context/AuthContext';
+
 import './navbarStyles.css';
 
-import { AuthContext } from '../../Context/AuthContext';
 const Navbar = () => {
   const { auth } = useContext(AuthContext);
   // eslint-disable-next-line no-unused-vars
   const [isAuth, setIsAuth] = auth;
 
   return (
-    <nav className='wrapper'>
-      <div className='nav'>
-        <h1 className='nav__h1'>
+    <nav>
+      <div className='nav--container'>
+        <h1>
           <span>The Acharya Roop Verma </span>
           <span>Digital Library</span>
         </h1>
-        <div className='navlinks'>
-          <span className='navlink__span'>
-            <Link to='/' className='navlinks__link'>
+        <div className='nav--links'>
+          <span>
+            <Link to='/' className='nav--links-link'>
               Audio Library
             </Link>
-            <Link to='roopji' className='navlinks__link'>
+            <Link to='roopji' className='nav--links-link'>
               About Roopji
             </Link>
           </span>
-          <span className='navlink__span'>
-            <Link to='library' className='navlinks__link'>
+          <span>
+            <Link to='library' className='nav--links-link'>
               About the Library
             </Link>
             {isAuth === true ? (
               <>
-                <Link to='account' className='navlinks__link'>
+                <Link to='account' className='nav--links-link'>
                   Account Info
                 </Link>
               </>
             ) : (
-              <Link to='login' className='navlinks__link'>
+              <Link to='login' className='nav--links-link'>
                 Login / Register
               </Link>
             )}

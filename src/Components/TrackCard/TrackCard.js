@@ -21,19 +21,19 @@ const TrackCard = (props) => {
     <div
       className={
         selectedTrack.length > 0 && selectedTrack[0].id === id
-          ? 'cardContainer cardContainerPlaying'
-          : 'cardContainer'
+          ? 'card--container card--container-playing'
+          : 'card--container'
       }
     >
-      <div className='cardBody' onClick={() => props.callback(id)}>
-        <div className='track-name'>{`Event Name - ${date} - ${location} - ${name}`}</div>
-        <div className='cardColumns'>
-          <div className='cardBodyLeft'>
-            <span className='track-detail-item'>Performance Type</span>
-            <span className='track-detail-item'>{time_of_day}</span>
+      <div className='card--body' onClick={() => props.callback(id)}>
+        <div className='card--track-name'>{`Event Name - ${date} - ${location} - ${name}`}</div>
+        <div className='card--columns'>
+          <div className='card--column-left'>
+            <span className='card--track-detail-item'>Performance Type</span>
+            <span className='card--track-detail-item'>{time_of_day}</span>
           </div>
-          <div className='cardBodyRight'>
-            <span className='track-detail-item'>
+          <div className='card--column-right'>
+            <span className='card--track-detail-item'>
               {
                 accompanied === true ? 'Performance with tabla' : 'Solo sitar'
                 // or lecture, guideed meditation, etc...
