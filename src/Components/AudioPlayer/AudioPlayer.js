@@ -15,7 +15,7 @@ const AudioPlayer = () => {
   const [currentTrack, setCurrentTrack] = useState({});
 
   useEffect(() => {
-    if (selectedTrack !== null) {
+    if (selectedTrack.length > 0) {
       setCurrentTrack(selectedTrack);
       const trackUrl = selectedTrack[0].url;
       setTrackSrc(trackUrl);
