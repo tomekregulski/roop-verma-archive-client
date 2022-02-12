@@ -7,6 +7,8 @@ import axios from 'axios';
 import Input from '../Components/Input/Input';
 import Button from '../Components/Button/Button';
 
+import './styles/formStyles.css';
+
 const Login = () => {
   const [userInfo, setUserInfo] = useState({
     email: '',
@@ -66,28 +68,9 @@ const Login = () => {
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: '15px',
-        marginBottom: '30px',
-      }}
-    >
-      <h2
-        style={{
-          color: 'white',
-          marginBottom: '20px',
-        }}
-      >
-        Sign in
-      </h2>
-      <form
-        style={{ width: '300px' }}
-        onSubmit={(event) => handleFormSubmit(event)}
-      >
+    <div className='form--container'>
+      <h2>Sign in</h2>
+      <form onSubmit={(event) => handleFormSubmit(event)}>
         <Input
           label='Email'
           value={userInfo.email}
@@ -98,7 +81,7 @@ const Login = () => {
           margin='10px 0 0 0'
         />
         {emailMessage !== '' && (
-          <p style={{ color: 'pink', marginTop: '20px' }}>{emailMessage}</p>
+          <span className='form--alert'>{emailMessage}</span>
         )}
         <Input
           label='Password'
@@ -110,15 +93,13 @@ const Login = () => {
           margin='20px 0 0 0'
         />
         {passwordMessage !== '' && (
-          <p style={{ color: 'pink', marginTop: '20px' }}>{passwordMessage}</p>
+          <span className='form--alert'>{passwordMessage}</span>
         )}
 
         <Button margin='30px 0 0 0' width='100%' name='Log in' />
-        {message !== '' ? (
-          <span style={{ color: 'pink' }}>{message}</span>
-        ) : null}
-        <div style={{ margin: '10px 0 0 0', width: '100%' }}>
-          <p style={{ color: 'white', textAlign: 'center' }}>or</p>
+        {message !== '' ? <span className='form--alert'>{message}</span> : null}
+        <div className='form--link-container'>
+          <span>or</span>
           <Link to='/register'>
             <Button margin='10px 0 0 0' width='100%' name='Sign up' />
           </Link>

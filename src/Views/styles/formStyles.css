@@ -1,0 +1,35 @@
+.form--container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  margin-bottom: 30px;
+}
+
+.form--container h2 {
+  color: white;
+  margin-bottom: 20px;
+}
+
+.form--container form {
+  width: 300px;
+}
+
+.form--alert {
+  display: block;
+  text-align: center;
+  color: pink;
+  margin-top: 20px;
+}
+
+.form--link-container {
+  margin: 10px 0 0 0;
+  width: 100%;
+}
+
+.form--link-container span {
+  display: block;
+  color: white;
+  text-align: center;
+}
