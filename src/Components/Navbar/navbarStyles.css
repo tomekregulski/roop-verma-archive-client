@@ -1,11 +1,11 @@
-.wrapper {
+nav {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.nav {
+.nav--container {
   padding: 40px 0 80px 0;
   color: white;
   display: block;
@@ -13,7 +13,14 @@
   width: auto;
 }
 
-.navlinks {
+.nav--container h1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 20px;
+}
+
+.nav--links {
   margin-top: 20px;
   display: flex;
   flex-direction: column;
@@ -21,29 +28,22 @@
   justify-content: center;
 }
 
-.navlink__span {
+.nav--links span {
   margin-top: 10px;
 }
 
-.navlinks__link {
+.nav--links-link {
   margin-right: 10px;
   margin-top: 40px;
 }
 
-.nav__h1 {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 20px;
-}
-
 @media screen and (min-width: 790px) {
-  .nav__h1 {
+  .nav--container h1 {
     display: block;
     font-size: 28px;
   }
 
-  .navlinks {
+  .nav--links {
     flex-direction: row;
     margin-top: 10px;
   }

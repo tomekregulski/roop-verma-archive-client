@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 
 import Button from '../Button/Button';
 
+import './modalStyles.css';
+
 const YesNoModal = (props) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -13,14 +15,7 @@ const YesNoModal = (props) => {
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
+    <div className='modal--button-container'>
       {open === false && (
         <Button
           width={props.buttonWidth}
@@ -31,19 +26,8 @@ const YesNoModal = (props) => {
       )}
       {open === true && (
         <div onClose={handleClose}>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: 'solid 2px white',
-              borderRadius: '10px',
-              padding: '20px',
-              margin: '20px 0 10px 0',
-            }}
-          >
-            <p style={{ color: 'white' }}>{props.message}</p>
+          <div className='modal--card-container'>
+            <p className='modal--content-body'>{props.message}</p>
             <Button
               width={props.buttonWidth}
               margin={props.buttonMargin}

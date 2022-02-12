@@ -1,27 +1,27 @@
-.audio-controls {
+.audio-controls--container {
   display: flex;
   justify-content: space-between;
   width: 75%;
   margin: 0 auto 15px;
 }
 
-.audio-controls .prev svg,
-.audio-controls .next svg {
+.audio-controls--container .prev svg,
+.audio-controls--container .next svg {
   width: 35px;
   height: 35px;
 }
 
-.audio-controls .play svg,
-.audio-controls .pause svg {
+.audio-controls--container .play svg,
+.audio-controls--container .pause svg {
   height: 40px;
   width: 40px;
 }
 
-.audio-controls path {
+.audio-controls--container path {
   fill: white;
 }
 
-.audio-controls__button {
+.audio-controls--button {
   background: none;
   border: none;
   cursor: pointer;

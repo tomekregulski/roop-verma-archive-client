@@ -2,9 +2,10 @@ import React, { useContext } from 'react';
 import { AuthContext } from '../../Context/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import axios from 'axios';
 
 import Button from '../Button/Button';
+
+import axios from 'axios';
 
 const CARD_ELEMENT_OPTIONS = {
   style: {
@@ -43,8 +44,7 @@ export const PaymentForm = () => {
     navigate('/');
   };
 
-  const handleSubmit = async (event) => {
-    console.log('pay');
+  const handlePaymentSubmit = async (event) => {
     event.preventDefault();
 
     if (!stripe || !elements) {
@@ -63,7 +63,6 @@ export const PaymentForm = () => {
     if (result.error) {
       console.log(result.error.message);
     } else {
-      console.log(result.paymentMethod);
       const res = await axios.post(
         'https://roop-verma-archive.herokuapp.com/api/payments/subscribe',
         // 'http://localhost:5000/api/payments/subscribe/',
@@ -76,8 +75,7 @@ export const PaymentForm = () => {
         }
       );
 
-      const { userData, client_secret, status, token } = res.data;
-      console.log(userData);
+      const { client_secret, status, token } = res.data;
 
       if (status === 'requires_action') {
         stripe.confirmCardPayment(client_secret).then(function (result) {
@@ -97,15 +95,9 @@ export const PaymentForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ width: '500px' }}>
-      <p style={{ color: 'white', marginBottom: '20px' }}>Enter Card Info</p>
-      <div
-        style={{
-          border: 'solid 1px white',
-          padding: '5px',
-          borderRadius: '5px',
-        }}
-      >
+    <form className='payment-form--container' onSubmit={handlePaymentSubmit}>
+      <p>Enter Card Info</p>
+      <div className='payment-form--card-element-container'>
         <CardElement options={CARD_ELEMENT_OPTIONS} />
       </div>
       <div>
@@ -113,7 +105,7 @@ export const PaymentForm = () => {
           margin='20px 0 0 0'
           width='150px'
           name='Subscribe'
-          callback={handleSubmit}
+          callback={handlePaymentSubmit}
         />
       </div>
     </form>

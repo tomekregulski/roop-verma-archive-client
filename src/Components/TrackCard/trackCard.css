@@ -1,4 +1,4 @@
-.cardContainer {
+.card--container {
   margin: auto;
   overflow: hidden;
   width: 95%;
@@ -9,40 +9,40 @@
   /* border-radius: 2px; */
 }
 
-.cardContainerPlaying {
+.card--container-playing {
   background: rgba(81, 152, 157, 0.194);
 }
 
-.cardBody {
+.card--body {
   padding: 10px;
 }
 
-.track-name {
+.card--track-name {
   display: block;
 }
 
-.cardColumns {
+.card--columns {
   display: flex;
   justify-content: space-between;
 }
 
-.cardBodyLeft {
+.card--column-left {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
 
-.cardBodyRight {
+.card--column-right {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-end;
 }
 
-.track-title {
+.card--track-name {
   font-size: 20px;
 }
 
-.track-detail-item {
+.card--track-detail-item {
   font-size: 14px;
 }

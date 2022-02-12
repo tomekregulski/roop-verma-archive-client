@@ -136,18 +136,14 @@ const AudioPlayer = () => {
     };
   }, []);
 
-  const printDuration = (duration) => {
-    const minutes = Math.floor(duration / 60);
-    const seconds = duration % 60;
-    console.log(`${minutes}:${seconds}`);
-  };
-
   return (
-    <div className='audio-player'>
-      <div className='track-info'>
-        <h2 className='title'>{currentTrack[0] ? currentTrack[0].raag : ''}</h2>
-        <p className='trackMarquee'>
-          <span className='trackMarqueeSpan'>
+    <div className='audio-player--container'>
+      <div className='audio-player--track-info'>
+        <h2 className='audio-player--title'>
+          {currentTrack[0] ? currentTrack[0].raag : ''}
+        </h2>
+        <p className='audio-player--track-marquee'>
+          <span>
             {currentTrack[0]
               ? 'This is placeholder text. Eventually this field will display information about the currently playing track, and scroll it if it does not all fit within the space.'
               : 'Select a track to begin'}
