@@ -20,7 +20,7 @@ export const TracksContext = (props) => {
       let response;
       const jwt = checkJwt();
       try {
-        if (isAuth === true) {
+        if (isAuth === true && jwt !== false) {
           response = await axios.get(
             // .get('http://localhost:5000/api/tracks', {
             'https://roop-verma-archive.herokuapp.com/api/tracks',
@@ -28,7 +28,7 @@ export const TracksContext = (props) => {
               headers: { jwt: jwt },
             }
           );
-        } else if (isAuth === false) {
+        } else {
           response = await axios.get(
             // 'http://localhost:5000/api/tracks/public'
             'https://roop-verma-archive.herokuapp.com/api/tracks/public'

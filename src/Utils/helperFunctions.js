@@ -6,11 +6,10 @@ export const checkJwt = () => {
     cookies[currentCookie[0]] = currentCookie[1];
   }
   const jwtKey = 'roop-verma-library';
-  let currentJwt;
   if (Object.keys(cookies).includes(jwtKey)) {
-    currentJwt = cookies[jwtKey];
+    let currentJwt = cookies[jwtKey];
     return currentJwt;
   } else {
-    return currentJwt;
+    return false;
   }
 };
