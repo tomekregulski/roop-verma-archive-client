@@ -37,7 +37,6 @@ const Login = () => {
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    console.log(userInfo);
     if (Object.values(userInfo).every((v) => v !== '')) {
       const { email, password } = userInfo;
       axios
