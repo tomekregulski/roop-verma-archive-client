@@ -89,19 +89,23 @@ const AudioPlayer = () => {
   };
 
   const playPauseValidation = () => {
-    if (isPlaying === false) {
-      if (isReady.current) {
-        audioRef.current.play();
-        setIsPlaying(true);
-        startTimer();
-      } else {
-        // Set the isReady ref as true for the next pass
-        isReady.current = true;
+    if (selectedTrack.length === 0) {
+      alert('Please select a track');
+    } else {
+      if (isPlaying === false) {
+        if (isReady.current) {
+          audioRef.current.play();
+          setIsPlaying(true);
+          startTimer();
+        } else {
+          // Set the isReady ref as true for the next pass
+          isReady.current = true;
+        }
       }
-    }
 
-    if (isPlaying === true) {
-      setIsPlaying(false);
+      if (isPlaying === true) {
+        setIsPlaying(false);
+      }
     }
   };
 

@@ -8,7 +8,7 @@ const Button = (props) => {
         type='submit'
         style={{
           display: 'block',
-          width: props.width,
+          width: props.width || '80px',
           padding: props.padding || '10px 25px',
           backgroundColor: props.backgroundColor || 'white',
           margin: props.margin,

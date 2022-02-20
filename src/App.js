@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TracksContext } from './Context/TracksContext';
 import { Routes, Route } from 'react-router-dom';
 
@@ -11,10 +11,6 @@ import Login from './Views/Login';
 import Register from './Views/Register';
 import Subscribe from './Views/Subscribe';
 import UserAccount from './Views/UserAccount';
-
-// const Navbar = lazy(() => import('./Components/Navbar/Navbar'));
-// const AboutRoopji = lazy(() => import('./Views/AboutRoopji'));
-// const AboutLibrary = lazy(() => import('./Views/AboutLibrary'));
 
 function App() {
   const [width, setWidth] = useState(window.innerWidth);
@@ -30,7 +26,7 @@ function App() {
   }, []);
 
   return (
-    <div>
+    <div id='modal-root'>
       <Navbar />
       <TracksContext>
         <Routes>
