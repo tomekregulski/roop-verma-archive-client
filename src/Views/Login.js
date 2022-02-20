@@ -7,6 +7,8 @@ import axios from 'axios';
 import Input from '../Components/Input/Input';
 import Button from '../Components/Button/Button';
 
+import ReCAPTCHA from 'react-google-recaptcha';
+
 import './styles/formStyles.css';
 
 const Login = () => {
@@ -18,12 +20,17 @@ const Login = () => {
   const [message, setMessage] = useState('');
   const [emailMessage, setEmailMessage] = useState('');
   const [passwordMessage, setPasswordMessage] = useState('');
+  const [token, setToken] = useState('');
 
   const { auth, user } = useContext(AuthContext);
   // eslint-disable-next-line no-unused-vars
   const [isAuth, setIsAuth] = auth;
   // eslint-disable-next-line no-unused-vars
   const [userData, setUserData] = user;
+
+  function onCaptchaChange(value) {
+    console.log('Captcha value:', value);
+  }
 
   let navigate = useNavigate();
 
@@ -33,6 +40,21 @@ const Login = () => {
       ...prevState,
       [name]: value,
     }));
+  };
+
+  const handleToken = async (token) => {
+    setToken(token);
+
+    // const res = await axios.post(
+    //   `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.REACT_APP_SECRET_KEY}&response=${token}`
+    // );
+
+    // if (res.data.success) console.log('Human');
+    // else console.log('BOT!!!');
+  };
+
+  const handleExpire = () => {
+    setToken(null);
   };
 
   const handleFormSubmit = (event) => {
@@ -102,6 +124,16 @@ const Login = () => {
           <Link to='/register'>
             <Button margin='10px 0 0 0' width='100%' name='Sign up' />
           </Link>
+          <div style={{ marginTop: '30px' }}>
+            <ReCAPTCHA
+              // sitekey='6Lf-pY8eAAAAAK1Jhj_M3GeYyVzZvKz6eWJsbA_d'
+              // onChange={onCaptchaChange}
+              sitekey={process.env.REACT_APP_SITE_KEY}
+              onChange={handleToken}
+              // onExpire={handleExpire}
+              // size='compact'
+            />
+          </div>
         </div>
       </form>
     </div>
