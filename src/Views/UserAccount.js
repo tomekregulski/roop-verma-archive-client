@@ -6,12 +6,13 @@ import axios from 'axios';
 import { AuthContext } from '../Context/AuthContext';
 
 import Button from '../Components/Button/Button';
-import YesNoModal from '../Components/Modal/YesNoModal';
 
 import PaymentForm from '../Components/PaymentForm/PaymentForm';
 
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+
+import ModalContainer from '../Components/Modal/ModalContainer';
 
 import './styles/userAccountStyles.css';
 const PUBLIC_KEY =
@@ -78,32 +79,27 @@ const UserAccount = () => {
       <span className='account--text-span'>
         {`${userData.first_name} ${userData.last_name} - ${userData.email}`}
       </span>
-
-      <span>
-        <YesNoModal
-          buttonWidth='250px'
-          buttonMargin='15px 0 0 0'
-          action={'Change Password'}
-          message={'Are you sure that you want to change your password?'}
-          callback={changePassword}
-        />
-      </span>
-      <span>
-        <YesNoModal
-          buttonWidth='250px'
-          buttonMargin='15px 0 0 0'
-          action={'Change Payment Method'}
-          message={'Are you sure that you want to change your payment method?'}
-          callback={changePaymentMethod}
-        />
-      </span>
+      <ModalContainer
+        buttonWidth='250px'
+        buttonMargin='15px 0 0 0'
+        action={'Test - Change Password'}
+        message={'Are you sure that you want to change your password?'}
+        callback={changePassword}
+      />
+      <ModalContainer
+        buttonWidth='250px'
+        buttonMargin='15px 0 0 0'
+        action={'Change Payment Method'}
+        message={'Are you sure that you want to change your payment method?'}
+        callback={changePaymentMethod}
+      />
       <span className='account--text-span'>
         Subscription Status:{' '}
         {userData.subscription_active ? 'Active' : 'Inactive'}
       </span>
       <span>
         {userData.subscription_active ? (
-          <YesNoModal
+          <ModalContainer
             buttonWidth='250px'
             buttonMargin='15px 0 0 0'
             action={'Cancel Subscription'}
@@ -111,7 +107,7 @@ const UserAccount = () => {
             callback={cancelSubscription}
           />
         ) : (
-          <YesNoModal
+          <ModalContainer
             buttonWidth='250px'
             buttonMargin='15px 0 0 0'
             action={'Resume Subscription'}

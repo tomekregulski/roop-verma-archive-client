@@ -42,7 +42,8 @@ const AudioView = (props) => {
           <Button
             margin='0 15px 0 0'
             name='Surprise Me'
-            callback={() => supriseMe}
+            width='180px'
+            callback={supriseMe}
             padding='15px 35px'
           />
           <Select
