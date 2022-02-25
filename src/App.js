@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 
 import Navbar from './Components/Navbar/Navbar';
 
+import Welcome from './Views/Welcome';
 import AudioView from './Views/AudioView';
 import AboutRoopji from './Views/AboutRoopji';
 import AboutLibrary from './Views/AboutLibrary';
@@ -30,8 +31,9 @@ function App() {
       <Navbar />
       <TracksContext>
         <Routes>
+          <Route path='/' element={<Welcome />} />
           <Route
-            path='/'
+            path='audio'
             element={<AudioView width={width} breakpoint={breakpoint} />}
           />
           <Route path='roopji' element={<AboutRoopji />} />

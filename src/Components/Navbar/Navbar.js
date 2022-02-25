@@ -20,6 +20,9 @@ const Navbar = () => {
         <div className='nav--links'>
           <span>
             <Link to='/' className='nav--links-link'>
+              Home
+            </Link>
+            <Link to='/audio' className='nav--links-link'>
               Audio Library
             </Link>
             <Link to='roopji' className='nav--links-link'>

@@ -6,7 +6,7 @@
   background: white;
   border-bottom: solid 1px rgba(0, 178, 249, 0.16);
   box-shadow: 5px 5px 15px rgba(gray);
-  /* border-radius: 2px; */
+  color: black;
 }
 
 .card--container-playing {

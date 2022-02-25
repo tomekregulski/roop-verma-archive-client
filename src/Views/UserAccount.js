@@ -66,7 +66,7 @@ const UserAccount = () => {
         setIsAuth(false);
         document.cookie =
           'roop-verma-library= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
-        navigate('/login');
+        navigate('/');
       })
       .catch((error) => {
         console.log(error);
