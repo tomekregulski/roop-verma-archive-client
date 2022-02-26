@@ -40,8 +40,8 @@ const Navbar = () => {
                 </Link>
               </>
             ) : (
-              <Link to='login' className='nav--links-link'>
-                Login / Register
+              <Link to='register' className='nav--links-link'>
+                Sign Up
               </Link>
             )}
           </span>

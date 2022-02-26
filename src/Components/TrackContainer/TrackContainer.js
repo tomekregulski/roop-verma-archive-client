@@ -8,13 +8,13 @@ import './trackContainerStyles.css';
 const TrackContainer = () => {
   const [trackRows, setTrackRows] = useState([]);
 
-  const { trackList, setTrackList, setSelectedTrack } =
+  const { filteredTracks, setFilteredTracks, setSelectedTrack } =
     useContext(TracksContextData);
 
   useEffect(() => {
     let rows = [];
-    if (trackList) {
-      trackList.map((item) => {
+    if (filteredTracks) {
+      filteredTracks.map((item) => {
         return rows.push({
           id: item.id,
           name: item.raga.name,
@@ -32,10 +32,10 @@ const TrackContainer = () => {
       });
     }
     setTrackRows(rows);
-  }, [setTrackList, trackList]);
+  }, [filteredTracks, setFilteredTracks]);
 
   const clickHandle = (id) => {
-    const newTrack = trackList.filter((track) => track.id === id);
+    const newTrack = filteredTracks.filter((track) => track.id === id);
     setSelectedTrack(newTrack);
   };
 
