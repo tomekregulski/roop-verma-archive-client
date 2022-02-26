@@ -18,10 +18,11 @@ const Input = (props) => {
         type={props.type}
         id={props.id}
         name={props.name}
+        placeholder={props.placeholder}
         onChange={(event) => props.callback(event, props.id)}
         style={{
-          margin: '10px 0 0 0',
-          padding: '5px',
+          margin: props.margin || '0 15px 0 0',
+          padding: props.padding || '5px',
           border: 'solid 1px white',
           borderRadius: '5px',
         }}

@@ -8,7 +8,7 @@ import './trackContainerStyles.css';
 const TrackContainer = () => {
   const [trackRows, setTrackRows] = useState([]);
 
-  const { filteredTracks, setFilteredTracks, setSelectedTrack } =
+  const { tracksMessage, filteredTracks, setFilteredTracks, setSelectedTrack } =
     useContext(TracksContextData);
 
   useEffect(() => {
@@ -41,12 +41,12 @@ const TrackContainer = () => {
 
   return (
     <div className='track-list--container'>
-      {trackRows.length ? (
+      {trackRows.length > 0 ? (
         trackRows.map((track, index) => {
           return <TrackCard key={index} callback={clickHandle} track={track} />;
         })
       ) : (
-        <p>Loading...</p>
+        <p>{tracksMessage}</p>
       )}
     </div>
   );
