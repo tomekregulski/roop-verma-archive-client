@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 
 import { TracksContextData } from '../Context/TracksContext';
 import { AuthContext } from '../Context/AuthContext';
@@ -26,18 +26,31 @@ const AudioView = (props) => {
   const { setSearchFilter, setSelectedTrack, trackList } =
     useContext(TracksContextData);
 
-  const filterSelect = (val) => {
-    console.log(val);
-    setSearchFilter(val);
-  };
-
-  const sendSearch = () => {
-    const results = getEachItem(trackList, search);
-    filterSelect(results);
-  };
+  useEffect(() => {
+    let searchResults = { ids: [], type: '' };
+    if (search === '') {
+      searchResults = { ...searchResults, type: 'all' };
+      setSearchFilter(searchResults);
+    } else {
+      const results = getEachItem(trackList, search);
+      if (results.length === 0) {
+        searchResults = { ...searchResults, type: 'none' };
+        setSearchFilter(searchResults);
+      } else if (results.length > 0) {
+        searchResults = { ids: results, type: 'some' };
+        setSearchFilter(searchResults);
+      } else {
+        searchResults = { ...searchResults, type: 'error' };
+        setSearchFilter(searchResults);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
 
   const searchItem = (e, id) => {
-    setSearch(e.target.value);
+    setTimeout(() => {
+      setSearch(e.target.value);
+    }, 1000);
   };
 
   const supriseMe = () => {
@@ -51,37 +64,21 @@ const AudioView = (props) => {
       {isAuth === false ? <LoggedOutView /> : null}
       <AudioPlayerContainer width={width} breakpoint={breakpoint} />
       {isAuth === true && (
-        <div style={{ display: 'flex', marginTop: '20px' }}>
-          <Button
-            margin='0 15px 0 0'
-            name='Surprise Me'
-            width='180px'
-            callback={supriseMe}
-            padding='15px 35px'
-          />
-          {/* <Select
-            callback={filterSelect}
-            name='category-filter'
-            item='Category Filter'
-            values={categories}
-          /> */}
+        <div
+          style={{ display: 'flex', alignItems: 'center', marginTop: '20px' }}
+        >
           <Input
-            label='Search Tracks'
+            placeholder='Search Tracks'
+            margin='0 15px 0 0'
+            padding='7px 15px'
             callback={(e, id) => searchItem(e, id)}
           />
           <Button
-            margin='0 15px 0 0'
-            name='Search'
+            margin='0 0 0 15px'
+            name='Surprise Me'
             width='180px'
-            callback={sendSearch}
-            padding='15px 35px'
-          />
-          <Button
-            margin='0 15px 0 0'
-            name='Reset Filter'
-            width='180px'
-            callback={() => filterSelect([])}
-            padding='15px 35px'
+            callback={supriseMe}
+            padding='8px 35px'
           />
         </div>
       )}

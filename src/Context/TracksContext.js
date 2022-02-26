@@ -8,8 +8,8 @@ export const TracksContextData = createContext(null);
 export const TracksContext = (props) => {
   const [trackList, setTrackList] = useState([]);
   const [selectedTrack, setSelectedTrack] = useState([]);
-  const [categoryFilter, setCategoryFilter] = useState('all');
   const [searchFilter, setSearchFilter] = useState([]);
+  const [tracksMessage, setTracksMessage] = useState('');
   const [filteredTracks, setFilteredTracks] = useState(null);
 
   const { auth } = useContext(AuthContext);
@@ -19,6 +19,7 @@ export const TracksContext = (props) => {
   useEffect(() => {
     const fetchTracks = async () => {
       let response;
+      setTracksMessage('Loading...');
       const jwt = checkJwt();
       try {
         if (isAuth === true && jwt !== false) {
@@ -39,26 +40,41 @@ export const TracksContext = (props) => {
       } catch (error) {
         console.log(error);
       }
+      setTracksMessage('');
     };
     fetchTracks();
   }, [isAuth]);
 
   useEffect(() => {
-    if (categoryFilter === 'all' && searchFilter.length === 0) {
-      console.log('reset');
-      setFilteredTracks(trackList);
-    } else if (categoryFilter !== 'all') {
-      const newTracks = trackList.filter(
-        (track) => track.raga.name === 'Bhupali'
-      );
-      setFilteredTracks(newTracks);
-    } else if (searchFilter.length > 0) {
-      const newTracks = trackList.filter((track) =>
-        searchFilter.includes(track.id)
-      );
-      setFilteredTracks(newTracks);
+    setTracksMessage('Loading...');
+    switch (searchFilter.type) {
+      case 'all':
+        setFilteredTracks(trackList);
+        setTracksMessage('');
+        break;
+      case 'none':
+        setFilteredTracks([]);
+        setTracksMessage('Sorry, there are no tracks that match your search');
+        break;
+      case 'some':
+        const newTracks = trackList.filter((track) =>
+          searchFilter.ids.includes(track.id)
+        );
+        setFilteredTracks(newTracks);
+        setTracksMessage('');
+        break;
+      case 'error':
+        setFilteredTracks([]);
+        setTracksMessage(
+          'Something went wrong. Please refresh the page and try again'
+        );
+        break;
+      default:
+        setFilteredTracks(trackList);
+        setTracksMessage('');
+        break;
     }
-  }, [searchFilter, categoryFilter, trackList]);
+  }, [searchFilter, trackList]);
 
   return (
     <TracksContextData.Provider
@@ -69,10 +85,10 @@ export const TracksContext = (props) => {
         setTrackList,
         selectedTrack,
         setSelectedTrack,
-        categoryFilter,
-        setCategoryFilter,
         filteredTracks,
         setFilteredTracks,
+        tracksMessage,
+        setTracksMessage,
       }}
     >
       {props.children}

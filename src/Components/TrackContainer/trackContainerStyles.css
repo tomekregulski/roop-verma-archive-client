@@ -4,6 +4,10 @@
   max-width: 500px;
 }
 
+.track-list--container p {
+  text-align: center;
+}
+
 @media screen and (min-width: 790px) {
   .trackListContainer {
     width: 500px;
