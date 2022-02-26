@@ -9,6 +9,7 @@ export const TracksContext = (props) => {
   const [trackList, setTrackList] = useState([]);
   const [selectedTrack, setSelectedTrack] = useState([]);
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [searchFilter, setSearchFilter] = useState([]);
   const [filteredTracks, setFilteredTracks] = useState(null);
 
   const { auth } = useContext(AuthContext);
@@ -43,19 +44,27 @@ export const TracksContext = (props) => {
   }, [isAuth]);
 
   useEffect(() => {
-    if (categoryFilter === 'all') {
+    if (categoryFilter === 'all' && searchFilter.length === 0) {
+      console.log('reset');
       setFilteredTracks(trackList);
-    } else {
+    } else if (categoryFilter !== 'all') {
       const newTracks = trackList.filter(
         (track) => track.raga.name === 'Bhupali'
       );
       setFilteredTracks(newTracks);
+    } else if (searchFilter.length > 0) {
+      const newTracks = trackList.filter((track) =>
+        searchFilter.includes(track.id)
+      );
+      setFilteredTracks(newTracks);
     }
-  }, [categoryFilter, trackList]);
+  }, [searchFilter, categoryFilter, trackList]);
 
   return (
     <TracksContextData.Provider
       value={{
+        searchFilter,
+        setSearchFilter,
         trackList,
         setTrackList,
         selectedTrack,

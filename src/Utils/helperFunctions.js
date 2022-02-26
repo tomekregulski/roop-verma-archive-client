@@ -13,3 +13,34 @@ export const checkJwt = () => {
     return false;
   }
 };
+
+// const searchTerm = 'ra';
+let result = [];
+let searchTerm = '';
+
+export function getEachItem(object, search) {
+  result = [];
+  searchTerm = search;
+  object.forEach((item) => {
+    searchItem(item);
+    // console.log(item);
+  });
+  // let uniqueResults = [...new Set(result)];
+  // console.log(uniqueResults);
+  // console.log(result);
+  return result;
+}
+
+function searchItem(item) {
+  Object.keys(item).forEach((key) => {
+    if (typeof item[key] === 'object' && item[key] !== null) {
+      searchItem(item[key]);
+    }
+    if (typeof item[key] === 'string') {
+      let searchAsRegEx = new RegExp(searchTerm, 'gi');
+      if (item[key].match(searchAsRegEx)) {
+        !result.includes(item.id) && result.push(item.id);
+      }
+    }
+  });
+}
