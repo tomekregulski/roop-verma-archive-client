@@ -17,17 +17,13 @@ const TrackContainer = () => {
       filteredTracks.map((item) => {
         return rows.push({
           id: item.id,
+          event_name: item.tape.event.event_name,
           name: item.raga.name,
-          tape: item.tape.id,
-          date: item.tape.date,
-          performance_type: item.performance_type,
-          location: 'Location',
-          time_of_day: 'morning',
-          accompanied: true,
-          artists: item.artists.map((artist, index) => [
-            artist.name,
-            artist.instrument,
-          ]),
+          date: item.tape.event.date,
+          // category: item.tape.event.category.name,
+          location: item.tape.event.location.name,
+          time_of_day: item.raga.time,
+          accompanied: item.accompanied,
         });
       });
     }

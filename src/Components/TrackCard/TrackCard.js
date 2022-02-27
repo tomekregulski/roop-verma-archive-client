@@ -8,11 +8,11 @@ const TrackCard = (props) => {
     accompanied,
     id,
     location,
-    tape,
     time_of_day,
     name,
+    event_name,
     date,
-    performance_type,
+    category,
   } = props.track;
 
   const { selectedTrack } = useContext(TracksContextData);
@@ -26,19 +26,22 @@ const TrackCard = (props) => {
       }
     >
       <div className='card--body' onClick={() => props.callback(id)}>
-        <div className='card--track-name'>{`Event Name - ${date} - ${location} - ${name}`}</div>
+        <div className='card--track-name'>{name}</div>
         <div className='card--columns'>
           <div className='card--column-left'>
-            <span className='card--track-detail-item'>Performance Type</span>
+            <span className='card--track-detail-item'>{`${
+              event_name && event_name + ' - '
+            }${date}${' - ' + location && location}`}</span>
+            <span className='card--track-detail-item'>{category}</span>
             <span className='card--track-detail-item'>{time_of_day}</span>
           </div>
           <div className='card--column-right'>
-            <span className='card--track-detail-item'>
+            {/* <span className='card--track-detail-item'>
               {
                 accompanied === true ? 'Performance with tabla' : 'Solo sitar'
                 // or lecture, guideed meditation, etc...
               }
-            </span>
+            </span> */}
           </div>
         </div>
       </div>
