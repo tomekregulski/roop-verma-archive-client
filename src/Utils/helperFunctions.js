@@ -17,17 +17,17 @@ export const checkJwt = () => {
 // const searchTerm = 'ra';
 let result = [];
 let searchTerm = '';
+let id = 0;
 
 export function getEachItem(object, search) {
   result = [];
   searchTerm = search;
+
   object.forEach((item) => {
+    id = item.id;
     searchItem(item);
-    // console.log(item);
   });
   // let uniqueResults = [...new Set(result)];
-  // console.log(uniqueResults);
-  // console.log(result);
   return result;
 }
 
@@ -39,7 +39,7 @@ function searchItem(item) {
     if (typeof item[key] === 'string') {
       let searchAsRegEx = new RegExp(searchTerm, 'gi');
       if (item[key].match(searchAsRegEx)) {
-        !result.includes(item.id) && result.push(item.id);
+        !result.includes(item.id) && result.push(id);
       }
     }
   });
