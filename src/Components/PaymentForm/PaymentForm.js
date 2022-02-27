@@ -7,6 +7,8 @@ import Button from '../Button/Button';
 
 import axios from 'axios';
 
+import './paymentFormStyles.css';
+
 const CARD_ELEMENT_OPTIONS = {
   style: {
     base: {
