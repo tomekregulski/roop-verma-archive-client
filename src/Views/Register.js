@@ -99,6 +99,10 @@ const Register = () => {
     ) {
       const { first_name, last_name, email, password } = userInfo;
 
+      // TODO: Instead of POST new user, validate that email does not already exist in system
+
+      // TODO: If validation passes, send formData forward to /subscribe as state
+
       axios
         .post('https://roop-verma-archive.herokuapp.com/api/users/', {
           first_name,
@@ -141,6 +145,15 @@ const Register = () => {
   return (
     <div className='form--container'>
       <h2>Create a new account</h2>
+      <p className='form--paragraph'>
+        <span>
+          Subscribe for Full Library Access / $18 per month (cancel any time).
+        </span>
+        <span>
+          These proceeds help us greatly in continuing to digitize, archive, and
+          share Roop Verma's work. Thank you very much for your support.
+        </span>
+      </p>
       <form onSubmit={(event) => handleFormSubmit(event)}>
         <Input
           label='First Name'
@@ -204,9 +217,9 @@ const Register = () => {
         {confirmPasswordMessage !== '' && (
           <span className='form--alert'>{confirmPasswordMessage}</span>
         )}
-        <Button margin='30px 0 0 0' width='100%' name='Submit' />
+        <Button margin='30px 0 0 0' width='100%' name='Register' />
         <div className='form--link-container'>
-          <span>or</span>
+          <span>Already have an account?</span>
           <Link to='/login' style={{ marginRight: '20px' }}>
             <Button margin='10px 0 0 0' width='100%' name='Sign in' />
           </Link>

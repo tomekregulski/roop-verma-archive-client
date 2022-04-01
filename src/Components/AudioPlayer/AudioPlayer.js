@@ -5,26 +5,40 @@ import AudioControls from '../AudioControls/AudioControls';
 import './audioPlayer.css';
 
 const AudioPlayer = () => {
-  const { trackList, selectedTrack, setSelectedTrack } =
-    useContext(TracksContextData);
+  const {
+    filteredTracks,
+    currentTrackIndex,
+    setCurrentTrackIndex,
+    selectedTrack,
+    setSelectedTrack,
+  } = useContext(TracksContextData);
 
-  const [trackIndex, setTrackIndex] = useState();
+  // const [trackIndex, setTrackIndex] = useState();
   const [trackProgress, setTrackProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [trackSrc, setTrackSrc] = useState('');
-  const [currentTrack, setCurrentTrack] = useState({});
+  // const [currentTrack, setCurrentTrack] = useState({});
 
   useEffect(() => {
-    if (selectedTrack.length > 0) {
-      setCurrentTrack(selectedTrack);
-      const trackUrl = selectedTrack[0].url;
+    if (selectedTrack) {
+      // setCurrentTrack(selectedTrack);
+      const trackUrl = selectedTrack.url;
+      console.log(selectedTrack);
       setTrackSrc(trackUrl);
-      setTrackIndex(selectedTrack[0].id - 1);
+      // setTrackIndex(selectedTrack[0].id - 1);
+      setCurrentTrackIndex(selectedTrack.id - 1);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTrack]);
 
   const changeTrack = (id) => {
-    const newTrack = trackList.filter((track) => track.id === id);
+    const newTrack = filteredTracks.filter((track) => track.id === id);
+    setSelectedTrack(newTrack);
+  };
+
+  const changeTrackIndex = (index) => {
+    const newTrack = filteredTracks[index];
+    setCurrentTrackIndex(index);
     setSelectedTrack(newTrack);
   };
 
@@ -46,7 +60,7 @@ const AudioPlayer = () => {
 
     intervalRef.current = setInterval(() => {
       if (audioRef.current.ended) {
-        toNextTrack();
+        toNextTrackIndex();
       } else {
         setTrackProgress(audioRef.current.currentTime);
       }
@@ -68,23 +82,44 @@ const AudioPlayer = () => {
     startTimer();
   };
 
-  const toPrevTrack = () => {
-    let id;
-    if (trackIndex - 1 < 0) {
-      id = trackList.length;
-      changeTrack(id);
+  // const toPrevTrack = () => {
+  //   let id;
+  //   if (trackIndex - 1 < 0) {
+  //     id = filteredTracks.length;
+  //     changeTrack(id);
+  //   } else {
+  //     id = trackIndex;
+  //     changeTrack(id);
+  //   }
+  // };
+
+  const toPrevTrackIndex = () => {
+    let index;
+    if (currentTrackIndex - 1 < 0) {
+      index = filteredTracks.length - 1;
+      changeTrackIndex(index);
     } else {
-      id = trackIndex;
-      changeTrack(id);
+      index = currentTrackIndex - 1;
+      changeTrackIndex(index);
     }
   };
 
-  const toNextTrack = () => {
-    if (trackIndex < trackList.length - 1) {
-      let id = trackIndex + 2;
-      changeTrack(id);
+  // const toNextTrack = () => {
+  //   if (trackIndex < filteredTracks.length - 1) {
+  //     let id = trackIndex + 2;
+  //     changeTrack(id);
+  //   } else {
+  //     changeTrack(1);
+  //   }
+  // };
+
+  const toNextTrackIndex = () => {
+    let index;
+    if (currentTrackIndex < filteredTracks.length - 1) {
+      index = currentTrackIndex + 1;
+      changeTrackIndex(index);
     } else {
-      changeTrack(1);
+      changeTrackIndex(0);
     }
   };
 
@@ -144,19 +179,19 @@ const AudioPlayer = () => {
     <div className='audio-player--container'>
       <div className='audio-player--track-info'>
         <h2 className='audio-player--title'>
-          {currentTrack[0] ? currentTrack[0].raag : ''}
+          {selectedTrack ? selectedTrack.raag : ''}
         </h2>
         <p className='audio-player--track-marquee'>
           <span>
-            {currentTrack[0]
-              ? 'This is placeholder text. Eventually this field will display information about the currently playing track, and scroll it if it does not all fit within the space.'
+            {selectedTrack
+              ? `${selectedTrack.raga.name} - ${selectedTrack.tape.event.date}`
               : 'Select a track to begin'}
           </span>
         </p>
         <AudioControls
           isPlaying={isPlaying}
-          onPrevClick={toPrevTrack}
-          onNextClick={toNextTrack}
+          onPrevClick={toPrevTrackIndex}
+          onNextClick={toNextTrackIndex}
           // onPlayPauseClick={setIsPlaying}
           onPlayPauseClick={playPauseValidation}
         />

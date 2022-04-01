@@ -8,8 +8,13 @@ import './trackContainerStyles.css';
 const TrackContainer = () => {
   const [trackRows, setTrackRows] = useState([]);
 
-  const { tracksMessage, filteredTracks, setFilteredTracks, setSelectedTrack } =
-    useContext(TracksContextData);
+  const {
+    tracksMessage,
+    filteredTracks,
+    setFilteredTracks,
+    setSelectedTrack,
+    setCurrentTrackIndex,
+  } = useContext(TracksContextData);
 
   useEffect(() => {
     let rows = [];
@@ -32,7 +37,9 @@ const TrackContainer = () => {
 
   const clickHandle = (id) => {
     const newTrack = filteredTracks.filter((track) => track.id === id);
-    setSelectedTrack(newTrack);
+    const index = filteredTracks.findIndex((track) => track.id === id);
+    setSelectedTrack(newTrack[0]);
+    setCurrentTrackIndex(index);
   };
 
   return (

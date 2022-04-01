@@ -7,10 +7,11 @@ export const TracksContextData = createContext(null);
 
 export const TracksContext = (props) => {
   const [trackList, setTrackList] = useState([]);
-  const [selectedTrack, setSelectedTrack] = useState([]);
+  const [selectedTrack, setSelectedTrack] = useState({});
   const [searchFilter, setSearchFilter] = useState([]);
   const [tracksMessage, setTracksMessage] = useState('');
   const [filteredTracks, setFilteredTracks] = useState(null);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState();
 
   const { auth } = useContext(AuthContext);
   // eslint-disable-next-line no-unused-vars
@@ -89,6 +90,8 @@ export const TracksContext = (props) => {
         setFilteredTracks,
         tracksMessage,
         setTracksMessage,
+        currentTrackIndex,
+        setCurrentTrackIndex,
       }}
     >
       {props.children}

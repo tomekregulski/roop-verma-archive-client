@@ -23,8 +23,13 @@ const AudioView = (props) => {
   const [isAuth, setIsAuth] = auth;
   const [search, setSearch] = useState('');
 
-  const { setSearchFilter, setSelectedTrack, trackList } =
-    useContext(TracksContextData);
+  const {
+    setSearchFilter,
+    setSelectedTrack,
+    trackList,
+    filteredTracks,
+    setFilteredTracks,
+  } = useContext(TracksContextData);
 
   useEffect(() => {
     let searchResults = { ids: [], type: '' };
@@ -55,33 +60,42 @@ const AudioView = (props) => {
 
   const supriseMe = () => {
     const randomTrackNumber = Math.floor(Math.random() * 10);
-    const randomTrack = [trackList[randomTrackNumber]];
+    const randomTrack = [filteredTracks[randomTrackNumber]];
     setSelectedTrack(randomTrack);
+  };
+
+  const showAll = () => {
+    console.log(trackList);
+    setFilteredTracks(trackList);
+    setSearch('');
   };
 
   return (
     <div className='audioview--container'>
       {isAuth === false ? <LoggedOutView /> : null}
       <AudioPlayerContainer width={width} breakpoint={breakpoint} />
-      {isAuth === true && (
-        <div
-          style={{ display: 'flex', alignItems: 'center', marginTop: '20px' }}
-        >
-          <Input
-            placeholder='Search Tracks'
-            margin='0 15px 0 0'
-            padding='7px 15px'
-            callback={(e, id) => searchItem(e, id)}
-          />
-          <Button
-            margin='0 0 0 15px'
-            name='Surprise Me'
-            width='180px'
-            callback={supriseMe}
-            padding='8px 35px'
-          />
-        </div>
-      )}
+      <div style={{ display: 'flex', alignItems: 'center', marginTop: '20px' }}>
+        <Input
+          placeholder='Search Tracks'
+          margin='0 0 0 0'
+          padding='7px 15px'
+          callback={(e, id) => searchItem(e, id)}
+        />
+        <Button
+          margin='0 0 0 15px'
+          name='Show All'
+          width='180px'
+          callback={showAll}
+          padding='8px 35px'
+        />
+        <Button
+          margin='0 0 0 15px'
+          name='Surprise Me'
+          width='180px'
+          callback={supriseMe}
+          padding='8px 35px'
+        />
+      </div>
       <TrackContainer />
     </div>
   );
