@@ -183,7 +183,7 @@ const AudioPlayer = () => {
         </h2>
         <p className='audio-player--track-marquee'>
           <span>
-            {selectedTrack
+            {Object.keys(selectedTrack).length > 0
               ? `${selectedTrack.raga.name} - ${selectedTrack.tape.event.date}`
               : 'Select a track to begin'}
           </span>
