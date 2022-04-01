@@ -1,20 +1,22 @@
 import React from 'react';
 
+import './styles/helpStyles.css';
+
 const AboutLibrary = () => {
   return (
-    <div>
-      <h1>Help / How to Use the Library</h1>
-      <section>
-        <p>
-          For any technical issues, please use the form below to submit a
-          ticket.
-        </p>
+    <div className='help__container'>
+      <section className='help__section'>
+        <h2>Help / How to Use the Library</h2>
         <p>
           As the library expands, this page will grow as a resource for using
           its various features.
         </p>
+        <p>
+          For any technical issues, please use the form below (coming soon) to
+          submit a ticket.
+        </p>
       </section>
-      <section>
+      <section className='help__section'>
         <h2>Media Player</h2>
         <p>
           This feature will provide access to a wide range of Roopji's audio
