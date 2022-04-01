@@ -13,19 +13,20 @@ const AudioPlayer = () => {
     setSelectedTrack,
   } = useContext(TracksContextData);
 
-  const [trackIndex, setTrackIndex] = useState();
+  // const [trackIndex, setTrackIndex] = useState();
   const [trackProgress, setTrackProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [trackSrc, setTrackSrc] = useState('');
-  const [currentTrack, setCurrentTrack] = useState({});
+  // const [currentTrack, setCurrentTrack] = useState({});
 
   useEffect(() => {
-    if (selectedTrack.length > 0) {
-      setCurrentTrack(selectedTrack);
-      const trackUrl = selectedTrack[0].url;
+    if (selectedTrack) {
+      // setCurrentTrack(selectedTrack);
+      const trackUrl = selectedTrack.url;
+      console.log(selectedTrack);
       setTrackSrc(trackUrl);
       // setTrackIndex(selectedTrack[0].id - 1);
-      setCurrentTrackIndex(selectedTrack[0].id - 1);
+      setCurrentTrackIndex(selectedTrack.id - 1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTrack]);
@@ -59,7 +60,7 @@ const AudioPlayer = () => {
 
     intervalRef.current = setInterval(() => {
       if (audioRef.current.ended) {
-        toNextTrack();
+        toNextTrackIndex();
       } else {
         setTrackProgress(audioRef.current.currentTime);
       }
@@ -81,16 +82,16 @@ const AudioPlayer = () => {
     startTimer();
   };
 
-  const toPrevTrack = () => {
-    let id;
-    if (trackIndex - 1 < 0) {
-      id = filteredTracks.length;
-      changeTrack(id);
-    } else {
-      id = trackIndex;
-      changeTrack(id);
-    }
-  };
+  // const toPrevTrack = () => {
+  //   let id;
+  //   if (trackIndex - 1 < 0) {
+  //     id = filteredTracks.length;
+  //     changeTrack(id);
+  //   } else {
+  //     id = trackIndex;
+  //     changeTrack(id);
+  //   }
+  // };
 
   const toPrevTrackIndex = () => {
     let index;
@@ -103,14 +104,14 @@ const AudioPlayer = () => {
     }
   };
 
-  const toNextTrack = () => {
-    if (trackIndex < filteredTracks.length - 1) {
-      let id = trackIndex + 2;
-      changeTrack(id);
-    } else {
-      changeTrack(1);
-    }
-  };
+  // const toNextTrack = () => {
+  //   if (trackIndex < filteredTracks.length - 1) {
+  //     let id = trackIndex + 2;
+  //     changeTrack(id);
+  //   } else {
+  //     changeTrack(1);
+  //   }
+  // };
 
   const toNextTrackIndex = () => {
     let index;
@@ -178,12 +179,12 @@ const AudioPlayer = () => {
     <div className='audio-player--container'>
       <div className='audio-player--track-info'>
         <h2 className='audio-player--title'>
-          {currentTrack[0] ? currentTrack[0].raag : ''}
+          {selectedTrack ? selectedTrack.raag : ''}
         </h2>
         <p className='audio-player--track-marquee'>
           <span>
-            {currentTrack[0]
-              ? 'This is placeholder text. Eventually this field will display information about the currently playing track, and scroll it if it does not all fit within the space.'
+            {selectedTrack
+              ? `${selectedTrack.raga.name} - ${selectedTrack.tape.event.date}`
               : 'Select a track to begin'}
           </span>
         </p>
