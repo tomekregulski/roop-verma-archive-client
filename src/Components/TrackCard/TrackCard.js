@@ -4,23 +4,15 @@ import { TracksContextData } from '../../Context/TracksContext';
 import './trackCard.css';
 
 const TrackCard = (props) => {
-  const {
-    accompanied,
-    id,
-    location,
-    time_of_day,
-    name,
-    event_name,
-    date,
-    category,
-  } = props.track;
+  const { id, location, time_of_day, name, event_name, date, category } =
+    props.track;
 
   const { selectedTrack } = useContext(TracksContextData);
 
   return (
     <div
       className={
-        selectedTrack.length > 0 && selectedTrack[0].id === id
+        Object.keys(selectedTrack).length > 0 && selectedTrack.id === id
           ? 'card--container card--container-playing'
           : 'card--container'
       }

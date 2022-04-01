@@ -33,3 +33,17 @@
   color: white;
   text-align: center;
 }
+
+.form--paragraph {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 300px;
+  max-width: 600px;
+  text-align: center;
+}
+
+.form--paragraph span {
+  margin-bottom: 15px;
+}

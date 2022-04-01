@@ -31,7 +31,7 @@ const Navbar = () => {
           </span>
           <span>
             <Link to='library' className='nav--links-link'>
-              About the Library
+              Help
             </Link>
             {isAuth === true ? (
               <>

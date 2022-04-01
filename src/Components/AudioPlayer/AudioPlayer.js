@@ -5,8 +5,13 @@ import AudioControls from '../AudioControls/AudioControls';
 import './audioPlayer.css';
 
 const AudioPlayer = () => {
-  const { trackList, selectedTrack, setSelectedTrack } =
-    useContext(TracksContextData);
+  const {
+    filteredTracks,
+    currentTrackIndex,
+    setCurrentTrackIndex,
+    selectedTrack,
+    setSelectedTrack,
+  } = useContext(TracksContextData);
 
   const [trackIndex, setTrackIndex] = useState();
   const [trackProgress, setTrackProgress] = useState(0);
@@ -19,12 +24,20 @@ const AudioPlayer = () => {
       setCurrentTrack(selectedTrack);
       const trackUrl = selectedTrack[0].url;
       setTrackSrc(trackUrl);
-      setTrackIndex(selectedTrack[0].id - 1);
+      // setTrackIndex(selectedTrack[0].id - 1);
+      setCurrentTrackIndex(selectedTrack[0].id - 1);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTrack]);
 
   const changeTrack = (id) => {
-    const newTrack = trackList.filter((track) => track.id === id);
+    const newTrack = filteredTracks.filter((track) => track.id === id);
+    setSelectedTrack(newTrack);
+  };
+
+  const changeTrackIndex = (index) => {
+    const newTrack = filteredTracks[index];
+    setCurrentTrackIndex(index);
     setSelectedTrack(newTrack);
   };
 
@@ -71,7 +84,7 @@ const AudioPlayer = () => {
   const toPrevTrack = () => {
     let id;
     if (trackIndex - 1 < 0) {
-      id = trackList.length;
+      id = filteredTracks.length;
       changeTrack(id);
     } else {
       id = trackIndex;
@@ -79,12 +92,33 @@ const AudioPlayer = () => {
     }
   };
 
+  const toPrevTrackIndex = () => {
+    let index;
+    if (currentTrackIndex - 1 < 0) {
+      index = filteredTracks.length - 1;
+      changeTrackIndex(index);
+    } else {
+      index = currentTrackIndex - 1;
+      changeTrackIndex(index);
+    }
+  };
+
   const toNextTrack = () => {
-    if (trackIndex < trackList.length - 1) {
+    if (trackIndex < filteredTracks.length - 1) {
       let id = trackIndex + 2;
       changeTrack(id);
     } else {
       changeTrack(1);
+    }
+  };
+
+  const toNextTrackIndex = () => {
+    let index;
+    if (currentTrackIndex < filteredTracks.length - 1) {
+      index = currentTrackIndex + 1;
+      changeTrackIndex(index);
+    } else {
+      changeTrackIndex(0);
     }
   };
 
@@ -155,8 +189,8 @@ const AudioPlayer = () => {
         </p>
         <AudioControls
           isPlaying={isPlaying}
-          onPrevClick={toPrevTrack}
-          onNextClick={toNextTrack}
+          onPrevClick={toPrevTrackIndex}
+          onNextClick={toNextTrackIndex}
           // onPlayPauseClick={setIsPlaying}
           onPlayPauseClick={playPauseValidation}
         />
