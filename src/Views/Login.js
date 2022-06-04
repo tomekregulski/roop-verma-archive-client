@@ -60,8 +60,8 @@ const Login = () => {
     if (Object.values(userInfo).every((v) => v !== '')) {
       const { email, password } = userInfo;
       axios
-        .post('https://roop-verma-archive.herokuapp.com/api/users/login', {
-          // .post('http://localhost:5000/api/users/login', {
+        // .post('https://roop-verma-archive.herokuapp.com/api/users/login', {
+        .post('http://localhost:5000/api/users/login', {
           email,
           password,
         })
@@ -121,6 +121,10 @@ const Login = () => {
           <span>or</span>
           <Link to='/register'>
             <Button margin='10px 0 0 0' width='100%' name='Sign up' />
+          </Link>
+          <span>Forgot your password?</span>
+          <Link to='/library' style={{ marginRight: '20px' }}>
+            <Button margin='10px 0 0 0' width='100%' name='Contact Us' />
           </Link>
           {/* <div style={{ marginTop: '30px' }}>
             <ReCAPTCHA

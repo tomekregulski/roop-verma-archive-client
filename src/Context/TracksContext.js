@@ -25,16 +25,16 @@ export const TracksContext = (props) => {
       try {
         if (isAuth === true && jwt !== false) {
           response = await axios.get(
-            // 'http://localhost:5000/api/tracks',
-            'https://roop-verma-archive.herokuapp.com/api/tracks',
+            'http://localhost:5000/api/tracks',
+            // 'https://roop-verma-archive.herokuapp.com/api/tracks',
             {
               headers: { jwt: jwt },
             }
           );
         } else {
           response = await axios.get(
-            // 'http://localhost:5000/api/tracks/public'
-            'https://roop-verma-archive.herokuapp.com/api/tracks/public'
+            'http://localhost:5000/api/tracks/public'
+            // 'https://roop-verma-archive.herokuapp.com/api/tracks/public'
           );
         }
         setTrackList(response.data);
