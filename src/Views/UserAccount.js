@@ -60,8 +60,8 @@ const UserAccount = () => {
 
   const handleLogout = async () => {
     await axios
-      .get('http://localhost:5000/api/users/logout', {})
-      // .get('https://roop-verma-archive.herokuapp.com/api/users/logout', {})
+      // .get('http://localhost:5000/api/users/logout', {})
+      .get('https://roop-verma-archive.herokuapp.com/api/users/logout', {})
       .then(() => {
         setUserData({});
         setIsAuth(false);
