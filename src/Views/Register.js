@@ -223,6 +223,10 @@ const Register = () => {
           <Link to='/login' style={{ marginRight: '20px' }}>
             <Button margin='10px 0 0 0' width='100%' name='Sign in' />
           </Link>
+          <span>Forgot your password?</span>
+          <Link to='/library' style={{ marginRight: '20px' }}>
+            <Button margin='10px 0 0 0' width='100%' name='Contact Us' />
+          </Link>
           {message !== '' ? (
             <span className='form--alert'>{message}</span>
           ) : null}

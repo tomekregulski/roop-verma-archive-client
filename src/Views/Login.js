@@ -122,6 +122,10 @@ const Login = () => {
           <Link to='/register'>
             <Button margin='10px 0 0 0' width='100%' name='Sign up' />
           </Link>
+          <span>Forgot your password?</span>
+          <Link to='/library' style={{ marginRight: '20px' }}>
+            <Button margin='10px 0 0 0' width='100%' name='Contact Us' />
+          </Link>
           {/* <div style={{ marginTop: '30px' }}>
             <ReCAPTCHA
               // sitekey='6Lf-pY8eAAAAAK1Jhj_M3GeYyVzZvKz6eWJsbA_d'

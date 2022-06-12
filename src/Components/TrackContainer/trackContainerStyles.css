@@ -2,6 +2,8 @@
   margin: 30px 0 0 0;
   width: 90%;
   max-width: 500px;
+  max-height: 600px;
+  overflow: scroll;
 }
 
 .track-list--container p {
