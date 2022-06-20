@@ -11,12 +11,14 @@ const AudioPlayer = () => {
     setCurrentTrackIndex,
     selectedTrack,
     setSelectedTrack,
+    incrementPlays,
   } = useContext(TracksContextData);
 
   // const [trackIndex, setTrackIndex] = useState();
   const [trackProgress, setTrackProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [trackSrc, setTrackSrc] = useState('');
+  const [secondsPlayed, setSecondsPlayed] = useState(0);
   // const [currentTrack, setCurrentTrack] = useState({});
 
   useEffect(() => {
@@ -31,15 +33,16 @@ const AudioPlayer = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTrack]);
 
-  const changeTrack = (id) => {
-    const newTrack = filteredTracks.filter((track) => track.id === id);
-    setSelectedTrack(newTrack);
-  };
+  // const changeTrack = (id) => {
+  //   const newTrack = filteredTracks.filter((track) => track.id === id);
+  //   setSelectedTrack(newTrack);
+  // };
 
   const changeTrackIndex = (index) => {
     const newTrack = filteredTracks[index];
     setCurrentTrackIndex(index);
     setSelectedTrack(newTrack);
+    setSecondsPlayed(0);
   };
 
   const audioRef = useRef(new Audio(trackSrc));
@@ -67,6 +70,14 @@ const AudioPlayer = () => {
     }, [1000]);
   };
 
+  useEffect(() => {
+    setSecondsPlayed((prevState) => prevState + 1);
+    if (secondsPlayed > duration / 2) {
+      incrementPlays();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trackProgress]);
+
   const onScrub = (value) => {
     // Clear any timers already running
     clearInterval(intervalRef.current);
@@ -79,6 +90,7 @@ const AudioPlayer = () => {
     if (!isPlaying) {
       setIsPlaying(true);
     }
+    setSecondsPlayed(0);
     startTimer();
   };
 

@@ -29,6 +29,7 @@ const TrackContainer = () => {
           location: item.tape.event.location.name,
           time_of_day: item.raga.time,
           accompanied: item.accompanied,
+          plays: item.plays,
         });
       });
     }

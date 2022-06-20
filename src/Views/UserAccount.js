@@ -60,8 +60,8 @@ const UserAccount = () => {
 
   const handleLogout = async () => {
     await axios
-      // .get('http://localhost:5000/api/users/logout', {})
-      .get('https://roop-verma-archive.herokuapp.com/api/users/logout', {})
+      .get('http://localhost:5000/api/users/logout', {})
+      // .get('https://roop-verma-archive.herokuapp.com/api/users/logout', {})
       .then(() => {
         setUserData({});
         setIsAuth(false);
@@ -86,13 +86,22 @@ const UserAccount = () => {
         action={'Test - Change Password'}
         message={'Are you sure that you want to change your password?'}
         callback={changePassword}
+        type='modal'
       />
+      {/* <ModalContainer
+        buttonWidth='250px'
+        buttonMargin='15px 0 0 0'
+        action={'Test - Change Password Alert '}
+        message={'Change password functionality coming soon'}
+        type='alert'
+      /> */}
       <ModalContainer
         buttonWidth='250px'
         buttonMargin='15px 0 0 0'
         action={'Change Payment Method'}
         message={'Are you sure that you want to change your payment method?'}
         callback={changePaymentMethod}
+        type='modal'
       />
       <span className='account--text-span'>
         Subscription Status:{' '}
@@ -106,6 +115,7 @@ const UserAccount = () => {
             action={'Cancel Subscription'}
             message={'Are you sure that you want to cancel your subscription?'}
             callback={cancelSubscription}
+            type='modal'
           />
         ) : (
           <ModalContainer
@@ -114,6 +124,7 @@ const UserAccount = () => {
             action={'Resume Subscription'}
             message={'Are you sure that you want to resume your subscription?'}
             callback={resumeSubscription}
+            type='modal'
           />
         )}
       </span>

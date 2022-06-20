@@ -104,18 +104,18 @@ const Register = () => {
       // TODO: If validation passes, send formData forward to /subscribe as state
 
       axios
-        .post('https://roop-verma-archive.herokuapp.com/api/users/', {
-          first_name,
-          last_name,
-          email,
-          password,
-        })
-        // .post('http://localhost:5000/api/users/', {
+        // .post('https://roop-verma-archive.herokuapp.com/api/users/', {
         //   first_name,
         //   last_name,
         //   email,
         //   password,
         // })
+        .post('http://localhost:5000/api/users/', {
+          first_name,
+          last_name,
+          email,
+          password,
+        })
         .then((response) => {
           navigate('/subscribe', { state: response.data });
         })

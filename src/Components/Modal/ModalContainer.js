@@ -20,6 +20,7 @@ const ModalContainer = (props) => {
         buttonMargin='15px 0 0 0'
         action={'Change Password'}
         callback={props.callback}
+        type={props.type}
       >
         <p>{props.message}</p>
       </RenderModal>
