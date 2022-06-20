@@ -25,16 +25,16 @@ export const TracksContext = (props) => {
       try {
         if (isAuth === true && jwt !== false) {
           response = await axios.get(
-            // 'http://localhost:5000/api/tracks',
-            'https://roop-verma-archive.herokuapp.com/api/tracks',
+            'http://localhost:5000/api/tracks',
+            // 'https://roop-verma-archive.herokuapp.com/api/tracks',
             {
               headers: { jwt: jwt },
             }
           );
         } else {
           response = await axios.get(
-            // 'http://localhost:5000/api/tracks/public'
-            'https://roop-verma-archive.herokuapp.com/api/tracks/public'
+            'http://localhost:5000/api/tracks/public'
+            // 'https://roop-verma-archive.herokuapp.com/api/tracks/public'
           );
         }
         setTrackList(response.data);
@@ -77,6 +77,25 @@ export const TracksContext = (props) => {
     }
   }, [searchFilter, trackList]);
 
+  const incrementPlays = async () => {
+    try {
+      // const response = await axios.put(
+      //   'http://localhost:5000/api/tracks/track-plays',
+      //   // 'https://roop-verma-archive.herokuapp.com/api/tracks/track-plays',
+      //   {
+      //     id: selectedTrack.id,
+      //   }
+      // );
+      // const track = filteredTracks.find(
+      //   (track) => track.id === selectedTrack.id
+      // );
+      // track.plays = track.plays + 1;
+      console.log('plays increment disabled until tested');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <TracksContextData.Provider
       value={{
@@ -92,6 +111,7 @@ export const TracksContext = (props) => {
         setTracksMessage,
         currentTrackIndex,
         setCurrentTrackIndex,
+        incrementPlays,
       }}
     >
       {props.children}

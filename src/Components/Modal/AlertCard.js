@@ -5,7 +5,7 @@ import Button from '../Button/Button';
 
 import '../Modal/modalStyles.css';
 
-const AlertModal = React.memo(({ children, closeModal }) => {
+const AlertCard = React.memo(({ children, closeModal }) => {
   const domEl = document.getElementById('modal-root');
 
   if (!domEl) return null;
@@ -21,4 +21,4 @@ const AlertModal = React.memo(({ children, closeModal }) => {
   );
 });
 
-export default AlertModal;
+export default AlertCard;
