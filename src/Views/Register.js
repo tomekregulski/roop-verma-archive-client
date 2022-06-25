@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import Input from '../Components/Input/Input';
 import Button from '../Components/Button/Button';
+// import { useModal } from '../Hooks/useModal';
+import AlertCard from '../Components/Modal/AlertCard';
 
 import axios from 'axios';
 
@@ -24,6 +26,7 @@ const Register = () => {
   const [confirmPasswordMessage, setConfirmPasswordMessage] = useState('');
 
   let navigate = useNavigate();
+  // const { show, hide, RenderModal } = useModal();
 
   const validatePassword = () => {
     if (userInfo.password !== '') {
@@ -76,6 +79,10 @@ const Register = () => {
   };
 
   useEffect(() => {
+    console.log(message);
+  }, [message]);
+
+  useEffect(() => {
     validatePassword();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userInfo.password]);
@@ -104,23 +111,25 @@ const Register = () => {
       // TODO: If validation passes, send formData forward to /subscribe as state
 
       axios
-        // .post('https://roop-verma-archive.herokuapp.com/api/users/', {
-        //   first_name,
-        //   last_name,
-        //   email,
-        //   password,
-        // })
-        .post('http://localhost:5000/api/users/', {
+        .post('https://roop-verma-archive.herokuapp.com/api/users/', {
           first_name,
           last_name,
           email,
           password,
         })
+        // .post('http://localhost:5000/api/users/', {
+        //   first_name,
+        //   last_name,
+        //   email,
+        //   password,
+        // })
         .then((response) => {
           navigate('/subscribe', { state: response.data });
         })
         .catch((error) => {
           console.log(error);
+          console.log(error.response.data);
+          // alert(error.response.data);
           setMessage('That email already exists');
         });
     } else {
@@ -154,6 +163,14 @@ const Register = () => {
           share Roop Verma's work. Thank you very much for your support.
         </span>
       </p>
+      {message !== '' && (
+        <AlertCard
+          closeAlert={() => setMessage('')}
+          show={message !== '' ? true : false}
+        >
+          {message}
+        </AlertCard>
+      )}
       <form onSubmit={(event) => handleFormSubmit(event)}>
         <Input
           label='First Name'
@@ -227,9 +244,9 @@ const Register = () => {
           <Link to='/library' style={{ marginRight: '20px' }}>
             <Button margin='10px 0 0 0' width='100%' name='Contact Us' />
           </Link>
-          {message !== '' ? (
+          {/* {message !== '' ? (
             <span className='form--alert'>{message}</span>
-          ) : null}
+          ) : null} */}
         </div>
       </form>
     </div>
