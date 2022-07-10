@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { AuthContext } from '../../Context/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-
+import AlertCard from '../Modal/AlertCard';
 import Button from '../Button/Button';
 
 import axios from 'axios';
@@ -31,6 +31,7 @@ const CARD_ELEMENT_OPTIONS = {
 export const PaymentForm = () => {
   const { auth } = useContext(AuthContext);
   const [isAuth, setIsAuth] = auth;
+  const [message, setMessage] = useState('');
 
   const stripe = useStripe();
   const elements = useElements();
@@ -38,12 +39,19 @@ export const PaymentForm = () => {
   let navigate = useNavigate();
   const { state } = useLocation();
 
-  const { id, first_name, last_name, email } = state;
+  const { id, first_name, last_name, email, stripe_id } = state;
+
+  console.log(stripe_id);
 
   const success = (token) => {
     document.cookie = `roop-verma-library=${token}`;
     setIsAuth(true);
-    navigate('/');
+    if (!stripe_id) {
+      navigate('/');
+    }
+    if (stripe_id) {
+      navigate('/account');
+    }
   };
 
   const handlePaymentSubmit = async (event) => {
@@ -66,8 +74,8 @@ export const PaymentForm = () => {
       console.log(result.error.message);
     } else {
       const res = await axios.post(
-        'https://roop-verma-archive.herokuapp.com/api/payments/subscribe',
-        // 'http://localhost:5000/api/payments/subscribe/',
+        // 'https://roop-verma-archive.herokuapp.com/api/payments/subscribe',
+        'http://localhost:5000/api/payments/subscribe/',
         {
           payment_method: result.paymentMethod.id,
           first_name: first_name,
@@ -84,6 +92,7 @@ export const PaymentForm = () => {
           if (result.error) {
             console.log('There was an issue.');
             console.log(result.error);
+            setMessage(result.error);
           } else {
             console.log('Subscription success!');
             success(token);
@@ -110,6 +119,14 @@ export const PaymentForm = () => {
           callback={handlePaymentSubmit}
         />
       </div>
+      {message !== '' && (
+        <AlertCard
+          closeAlert={() => setMessage('')}
+          show={message !== '' ? true : false}
+        >
+          {message}
+        </AlertCard>
+      )}
     </form>
   );
 };

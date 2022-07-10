@@ -6,26 +6,18 @@ import axios from 'axios';
 import { AuthContext } from '../Context/AuthContext';
 
 import Button from '../Components/Button/Button';
-
-import PaymentForm from '../Components/PaymentForm/PaymentForm';
-
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+import AlertCard from '../Components/Modal/AlertCard';
 
 import ModalContainer from '../Components/Modal/ModalContainer';
 
 import './styles/userAccountStyles.css';
-const PUBLIC_KEY =
-  'pk_test_51Jg7jKBlr8UFcXJymPB8I3ZU4z3vD7fIdgoWXQS3hDZsDCD98MMFDUozMO3C0hlCUL6stRdUbehbFZA7h7whWoDj00Q2mfpRZw';
-
-const stripeTestPromise = loadStripe(PUBLIC_KEY);
 
 const UserAccount = () => {
   const { auth, user } = useContext(AuthContext);
   // eslint-disable-next-line no-unused-vars
   const [isAuth, setIsAuth] = auth;
   const [userData, setUserData] = user;
-  const [resubscribe, setResubscribe] = useState(false);
+  const [message, setMessage] = useState('');
 
   let navigate = useNavigate();
 
@@ -34,25 +26,31 @@ const UserAccount = () => {
   };
 
   const cancelSubscription = async () => {
-    alert('cancel subscription functionality coming soon');
+    const customer_id = userData.stripe_id;
 
-    // const customer_id = userData.stripe_id;
-
-    // await axios
-    //   .post('http://localhost:5000/api/payments/cancel-subscription', {
-    //     customer_id: customer_id,
-    //   })
-    //   .then(
-    //     setUserData((prevState) => ({
-    //       ...prevState,
-    //       subscription_active: false,
-    //       subscription_id: '',
-    //     }))
-    //   );
+    await axios
+      .post('http://localhost:5000/api/payments/cancel-subscription', {
+        customer_id: customer_id,
+      })
+      .then(
+        setUserData((prevState) => ({
+          ...prevState,
+          subscription_active: false,
+          subscription_id: '',
+        }))
+      )
+      .then(
+        setMessage(
+          'Subscription has been cancelled. Your account will remain active until the end of your current subscription period. At that point, you will still be able to log in, but you will lose member access. You can resubscribe from this page at any time.'
+        )
+      );
   };
 
-  const resumeSubscription = () => {
-    alert('resume subscription functionality coming soon');
+  const resubscribe = () => {
+    const { id, stripe_id, first_name, last_name, email } = userData;
+    const resubscribeUser = { id, stripe_id, first_name, last_name, email };
+    console.log(resubscribeUser);
+    navigate('/subscribe', { state: resubscribeUser });
   };
   const changePaymentMethod = () => {
     alert('change payment method functionality coming soon');
@@ -60,8 +58,8 @@ const UserAccount = () => {
 
   const handleLogout = async () => {
     await axios
-      // .get('http://localhost:5000/api/users/logout', {})
-      .get('https://roop-verma-archive.herokuapp.com/api/users/logout', {})
+      .get('http://localhost:5000/api/users/logout', {})
+      // .get('https://roop-verma-archive.herokuapp.com/api/users/logout', {})
       .then(() => {
         setUserData({});
         setIsAuth(false);
@@ -80,6 +78,14 @@ const UserAccount = () => {
       <span className='account--text-span'>
         {`${userData.first_name} ${userData.last_name} - ${userData.email}`}
       </span>
+      {message !== '' && (
+        <AlertCard
+          closeAlert={() => setMessage('')}
+          show={message !== '' ? true : false}
+        >
+          {message}
+        </AlertCard>
+      )}
       <ModalContainer
         buttonWidth='250px'
         buttonMargin='15px 0 0 0'
@@ -115,20 +121,13 @@ const UserAccount = () => {
           <ModalContainer
             buttonWidth='250px'
             buttonMargin='15px 0 0 0'
-            action={'Resume Subscription'}
+            action={'Resubscribe'}
             message={'Are you sure that you want to resume your subscription?'}
-            callback={resumeSubscription}
+            callback={resubscribe}
             type='modal'
           />
         )}
       </span>
-      {resubscribe === true && (
-        <div>
-          <Elements stripe={stripeTestPromise}>
-            <PaymentForm />
-          </Elements>
-        </div>
-      )}
       <Button
         name='Logout'
         width='250px'

@@ -60,8 +60,8 @@ const Login = () => {
     if (Object.values(userInfo).every((v) => v !== '')) {
       const { email, password } = userInfo;
       axios
-        .post('https://roop-verma-archive.herokuapp.com/api/users/login', {
-          // .post('http://localhost:5000/api/users/login', {
+        // .post('https://roop-verma-archive.herokuapp.com/api/users/login', {
+        .post('http://localhost:5000/api/users/login', {
           email,
           password,
         })
@@ -88,6 +88,14 @@ const Login = () => {
 
   return (
     <div className='form--container'>
+      <p>
+        Please Note - the next month or two will bring with them a few
+        structural changes to the database as preparations for public release
+        are made. This will require a few complete resets which will clear any
+        existing user accounts. If you find that your password suddenly does not
+        work, please try recreating it. If that brings any errors, reach out via
+        the help form.
+      </p>
       <h2>Sign in</h2>
       <form onSubmit={(event) => handleFormSubmit(event)}>
         <Input

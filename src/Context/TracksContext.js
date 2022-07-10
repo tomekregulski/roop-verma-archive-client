@@ -1,4 +1,10 @@
-import React, { useState, createContext, useEffect, useContext } from 'react';
+import React, {
+  useState,
+  createContext,
+  useEffect,
+  useContext,
+  useRef,
+} from 'react';
 import axios from 'axios';
 import { checkJwt } from '../Utils/helperFunctions';
 import { AuthContext } from './AuthContext';
@@ -12,6 +18,9 @@ export const TracksContext = (props) => {
   const [tracksMessage, setTracksMessage] = useState('');
   const [filteredTracks, setFilteredTracks] = useState(null);
   const [currentTrackIndex, setCurrentTrackIndex] = useState();
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+  const [trackSrc, setTrackSrc] = useState('');
 
   const { auth } = useContext(AuthContext);
   // eslint-disable-next-line no-unused-vars
@@ -25,16 +34,16 @@ export const TracksContext = (props) => {
       try {
         if (isAuth === true && jwt !== false) {
           response = await axios.get(
-            // 'http://localhost:5000/api/tracks',
-            'https://roop-verma-archive.herokuapp.com/api/tracks',
+            'http://localhost:5000/api/tracks',
+            // 'https://roop-verma-archive.herokuapp.com/api/tracks',
             {
               headers: { jwt: jwt },
             }
           );
         } else {
           response = await axios.get(
-            // 'http://localhost:5000/api/tracks/public'
-            'https://roop-verma-archive.herokuapp.com/api/tracks/public'
+            'http://localhost:5000/api/tracks/public'
+            // 'https://roop-verma-archive.herokuapp.com/api/tracks/public'
           );
         }
         setTrackList(response.data);
@@ -96,6 +105,39 @@ export const TracksContext = (props) => {
     }
   };
 
+  useEffect(() => {
+    setTrackSrc(selectedTrack.url);
+  }, [selectedTrack]);
+
+  const audioRef = useRef(new Audio(trackSrc));
+  const intervalRef = useRef();
+  // const isReady = useRef(false);
+  const { duration } = audioRef.current;
+
+  const playPauseValidation = () => {
+    if (selectedTrack.length === 0) {
+      alert('Please select a track');
+    } else {
+      if (!isPlaying) {
+        // if (isReady.current) {
+        if (isReady) {
+          console.log('play');
+          console.log(audioRef.current);
+          audioRef.current.play();
+          setIsPlaying(true);
+        } else {
+          // Set the isReady ref as true for the next pass
+          // isReady.current = true;
+          setIsReady(true);
+        }
+      }
+
+      if (isPlaying === true) {
+        setIsPlaying(false);
+      }
+    }
+  };
+
   return (
     <TracksContextData.Provider
       value={{
@@ -112,6 +154,16 @@ export const TracksContext = (props) => {
         currentTrackIndex,
         setCurrentTrackIndex,
         incrementPlays,
+        isPlaying,
+        setIsPlaying,
+        isReady,
+        setIsReady,
+        trackSrc,
+        setTrackSrc,
+        audioRef,
+        intervalRef,
+        duration,
+        playPauseValidation,
       }}
     >
       {props.children}

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { TracksContextData } from '../../Context/TracksContext';
 
 import AudioControls from '../AudioControls/AudioControls';
@@ -12,12 +12,22 @@ const AudioPlayer = () => {
     selectedTrack,
     setSelectedTrack,
     incrementPlays,
+    isPlaying,
+    setIsPlaying,
+    isReady,
+    setIsReady,
+    trackSrc,
+    setTrackSrc,
+    audioRef,
+    intervalRef,
+    duration,
+    playPauseValidation,
   } = useContext(TracksContextData);
 
   // const [trackIndex, setTrackIndex] = useState();
   const [trackProgress, setTrackProgress] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [trackSrc, setTrackSrc] = useState('');
+  // const [isPlaying, setIsPlaying] = useState(false);
+  // const [trackSrc, setTrackSrc] = useState('');
   const [secondsPlayed, setSecondsPlayed] = useState(0);
   // const [currentTrack, setCurrentTrack] = useState({});
 
@@ -45,10 +55,10 @@ const AudioPlayer = () => {
     setSecondsPlayed(0);
   };
 
-  const audioRef = useRef(new Audio(trackSrc));
-  const intervalRef = useRef();
-  const isReady = useRef(false);
-  const { duration } = audioRef.current;
+  // const audioRef = useRef(new Audio(trackSrc));
+  // const intervalRef = useRef();
+  // const isReady = useRef(false);
+  // const { duration } = audioRef.current;
 
   const currentPercentage = duration
     ? `${(trackProgress / duration) * 100}%`
@@ -135,26 +145,37 @@ const AudioPlayer = () => {
     }
   };
 
-  const playPauseValidation = () => {
-    if (selectedTrack.length === 0) {
-      alert('Please select a track');
-    } else {
-      if (isPlaying === false) {
-        if (isReady.current) {
-          audioRef.current.play();
-          setIsPlaying(true);
-          startTimer();
-        } else {
-          // Set the isReady ref as true for the next pass
-          isReady.current = true;
-        }
-      }
+  // const playPauseValidation = () => {
+  //   if (selectedTrack.length === 0) {
+  //     alert('Please select a track');
+  //   } else {
+  //     if (!isPlaying) {
+  //       // if (isReady.current) {
+  //       if (isReady) {
+  //         console.log('play');
+  //         console.log(audioRef.current);
+  //         audioRef.current.play();
+  //         setIsPlaying(true);
+  //         // startTimer();
+  //       } else {
+  //         // Set the isReady ref as true for the next pass
+  //         // isReady.current = true;
+  //         setIsReady(true);
+  //       }
+  //     }
 
-      if (isPlaying === true) {
-        setIsPlaying(false);
-      }
+  //     if (isPlaying === true) {
+  //       setIsPlaying(false);
+  //     }
+  //   }
+  // };
+
+  useEffect(() => {
+    if (isPlaying) {
+      startTimer();
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPlaying]);
 
   useEffect(() => {
     if (isPlaying) {
@@ -174,9 +195,12 @@ const AudioPlayer = () => {
     audioRef.current.load();
     setTrackProgress(audioRef.current.currentTime);
 
-    if (!isReady.current) {
-      isReady.current = true;
+    if (!isReady) {
+      // if (!isReady.current) {
+      // isReady.current = true;
+      setIsReady(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trackSrc]);
 
   useEffect(() => {
@@ -185,6 +209,7 @@ const AudioPlayer = () => {
       audioRef.current.pause();
       clearInterval(intervalRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

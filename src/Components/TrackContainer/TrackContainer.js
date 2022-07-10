@@ -5,8 +5,10 @@ import TrackCard from '../TrackCard/TrackCard';
 
 import './trackContainerStyles.css';
 
-const TrackContainer = () => {
+const TrackContainer = (props) => {
   const [trackRows, setTrackRows] = useState([]);
+
+  const { handleTriggerPlayPause } = props;
 
   const {
     tracksMessage,
@@ -47,7 +49,14 @@ const TrackContainer = () => {
     <div className='track-list--container'>
       {trackRows.length > 0 ? (
         trackRows.map((track, index) => {
-          return <TrackCard key={index} callback={clickHandle} track={track} />;
+          return (
+            <TrackCard
+              key={index}
+              callback={clickHandle}
+              track={track}
+              handleTriggerPlayPause={handleTriggerPlayPause}
+            />
+          );
         })
       ) : (
         <p>{tracksMessage}</p>
