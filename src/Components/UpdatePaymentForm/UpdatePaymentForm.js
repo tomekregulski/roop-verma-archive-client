@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { AuthContext } from '../../Context/AuthContext';
+// import { AuthContext } from '../../Context/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import AlertCard from '../Modal/AlertCard';
@@ -8,7 +8,7 @@ import { init, send } from 'emailjs-com';
 
 import axios from 'axios';
 
-import './paymentFormStyles.css';
+import '../PaymentForm/paymentFormStyles.css';
 
 init('user_sWNT4oROPiAoUGksmqFlD');
 
@@ -32,8 +32,8 @@ const CARD_ELEMENT_OPTIONS = {
 };
 
 export const PaymentForm = () => {
-  const { auth } = useContext(AuthContext);
-  const [isAuth, setIsAuth] = auth;
+  // const { auth } = useContext(AuthContext);
+  // const [isAuth, setIsAuth] = auth;
   const [message, setMessage] = useState('');
 
   const stripe = useStripe();
@@ -42,31 +42,28 @@ export const PaymentForm = () => {
   let navigate = useNavigate();
   const { state } = useLocation();
 
-  const { id, first_name, last_name, email, stripe_id } = state;
+  const { id, stripe_id, first_name, last_name, email, subscription_id } =
+    state;
 
-  console.log(stripe_id);
+  console.log('subscription_id:', subscription_id);
 
-  const sendConfirmationEmail = () => {
-    send('rvdl_forms', 'template_lj7tqph', {
-      email,
-      name: first_name,
-    }).then(
-      (response) => {
-        console.log('SUCCESS!', response.status, response.text);
-      },
-      (error) => {
-        console.log('FAILED...', error);
-      }
-    );
-  };
+  // const sendConfirmationEmail = () => {
+  //   send('rvdl_forms', 'template_rgadtp9', {
+  //     email,
+  //     name: first_name,
+  //   }).then(
+  //     (response) => {
+  //       console.log('SUCCESS!', response.status, response.text);
+  //     },
+  //     (error) => {
+  //       console.log('FAILED...', error);
+  //     }
+  //   );
+  // };
 
   const success = (token) => {
     document.cookie = `roop-verma-library=${token}`;
-    setIsAuth(true);
-    sendConfirmationEmail();
-    if (!stripe_id) {
-      navigate('/');
-    }
+    // sendConfirmationEmail();
     if (stripe_id) {
       navigate('/account');
     }
@@ -88,38 +85,41 @@ export const PaymentForm = () => {
       },
     });
 
+    console.log(result);
+
     if (result.error) {
       console.log(result.error.message);
     } else {
-      const res = await axios.post(
-        // 'https://roop-verma-archive.herokuapp.com/api/payments/subscribe',
-        'http://localhost:5000/api/payments/subscribe/',
+      const res = await axios.put(
+        // 'https://roop-verma-archive.herokuapp.com/api/payments/udpate-payment/',
+        'http://localhost:5000/api/payments/update-payment',
         {
+          stripe_id,
+          subscription_id,
           payment_method: result.paymentMethod.id,
-          first_name: first_name,
-          last_name: last_name,
-          email: email,
-          id: id,
         }
       );
 
-      const { client_secret, status, token } = res.data;
+      console.log('Payment Method Update Success!');
+      console.log(res);
 
-      if (status === 'requires_action') {
-        stripe.confirmCardPayment(client_secret).then(function (result) {
-          if (result.error) {
-            console.log('There was an issue.');
-            console.log(result.error);
-            setMessage(result.error);
-          } else {
-            console.log('Subscription success!');
-            success(token);
-          }
-        });
-      } else {
-        console.log('Subscription success!');
-        success(token);
-      }
+      // const { client_secret, status, token } = res.data;
+
+      //   if (status === 'requires_action') {
+      //     stripe.confirmCardPayment(client_secret).then(function (result) {
+      //       if (result.error) {
+      //         console.log('There was an issue.');
+      //         console.log(result.error);
+      //         setMessage(result.error);
+      //       } else {
+      //         console.log('Payment Method Update Success!');
+      //         success(token);
+      //       }
+      //     });
+      //   } else {
+      //     console.log('Payment Method Update Success!');
+      //     success(token);
+      //   }
     }
   };
 
@@ -133,7 +133,7 @@ export const PaymentForm = () => {
         <Button
           margin='20px 0 0 0'
           width='150px'
-          name='Subscribe'
+          name='Update Payment'
           callback={handlePaymentSubmit}
         />
       </div>

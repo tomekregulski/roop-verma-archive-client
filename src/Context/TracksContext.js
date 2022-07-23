@@ -86,20 +86,20 @@ export const TracksContext = (props) => {
     }
   }, [searchFilter, trackList]);
 
-  const incrementPlays = async () => {
+  const incrementPlays = async (data) => {
+    console.log('increment');
+    const { userId, trackId, secondsListened } = data;
     try {
-      // const response = await axios.put(
-      //   'http://localhost:5000/api/tracks/track-plays',
-      //   // 'https://roop-verma-archive.herokuapp.com/api/tracks/track-plays',
-      //   {
-      //     id: selectedTrack.id,
-      //   }
-      // );
-      // const track = filteredTracks.find(
-      //   (track) => track.id === selectedTrack.id
-      // );
-      // track.plays = track.plays + 1;
-      console.log('plays increment disabled until tested');
+      const response = await axios.post(
+        'http://localhost:5000/api/tracks/track-plays',
+        // 'https://roop-verma-archive.herokuapp.com/api/tracks/track-plays',
+        {
+          userId,
+          trackId,
+          secondsListened,
+        }
+      );
+      console.log(response);
     } catch (error) {
       console.log(error);
     }

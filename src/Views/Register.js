@@ -105,6 +105,7 @@ const Register = () => {
       emailMessage === ''
     ) {
       const { first_name, last_name, email, password } = userInfo;
+      console.log(userInfo);
 
       // TODO: Instead of POST new user, validate that email does not already exist in system
 
@@ -124,6 +125,7 @@ const Register = () => {
           password,
         })
         .then((response) => {
+          console.log(response);
           navigate('/subscribe', { state: response.data });
         })
         .catch((error) => {

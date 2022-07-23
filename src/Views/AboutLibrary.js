@@ -40,7 +40,7 @@ const AboutLibrary = () => {
     console.log(helpInfo);
     const form = document.querySelector('#contact-form');
 
-    sendForm('contact_form', 'template_xu5gbwo', '#contact-form').then(
+    sendForm('rvdl_forms', 'template_xu5gbwo', '#contact-form').then(
       (response) => {
         console.log('SUCCESS!', response.status, response.text);
         form.reset();

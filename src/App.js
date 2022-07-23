@@ -12,6 +12,7 @@ import Login from './Views/Login';
 import Register from './Views/Register';
 import Subscribe from './Views/Subscribe';
 import UserAccount from './Views/UserAccount';
+import UpdatePaymentMethod from './Views/UpdatePaymentMethod';
 
 function App() {
   const [width, setWidth] = useState(window.innerWidth);
@@ -42,6 +43,10 @@ function App() {
           <Route path='register' element={<Register />} />
           <Route path='subscribe' element={<Subscribe />} />
           <Route path='account' element={<UserAccount />} />
+          <Route
+            path='update-payment-method'
+            element={<UpdatePaymentMethod />}
+          />
         </Routes>
       </TracksContext>
     </div>

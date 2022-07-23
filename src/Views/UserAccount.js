@@ -53,7 +53,20 @@ const UserAccount = () => {
     navigate('/subscribe', { state: resubscribeUser });
   };
   const changePaymentMethod = () => {
-    alert('change payment method functionality coming soon');
+    const { id, stripe_id, first_name, last_name, email, subscription_id } =
+      userData;
+
+    console.log(subscription_id);
+    const user = {
+      id,
+      stripe_id,
+      first_name,
+      last_name,
+      email,
+      subscription_id,
+    };
+    console.log(user);
+    navigate('/update-payment-method', { state: user });
   };
 
   const handleLogout = async () => {

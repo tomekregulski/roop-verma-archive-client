@@ -9,6 +9,8 @@ export const AuthProvider = (props) => {
   const [isAuth, setIsAuth] = useState(false);
   const [userData, setUserData] = useState({});
 
+  console.log(userData);
+
   useEffect(() => {
     const currentJwt = checkJwt();
     if (currentJwt !== false) {
