@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import { AuthContext } from '../Context/AuthContext';
+import { UpdatePasswordForm } from '../Components/UpdatePasswordForm/UpdatePasswordForm';
 
 import Button from '../Components/Button/Button';
 import AlertCard from '../Components/Modal/AlertCard';
@@ -18,11 +19,17 @@ const UserAccount = () => {
   const [isAuth, setIsAuth] = auth;
   const [userData, setUserData] = user;
   const [message, setMessage] = useState('');
+  const [showUpdatePassword, setShowUpdatePassword] = useState(false);
 
   let navigate = useNavigate();
 
   const changePassword = () => {
-    alert('change password functionality coming soon');
+    setShowUpdatePassword(true);
+  };
+
+  const handleCancellChangePassword = () => {
+    console.log('cancel');
+    setShowUpdatePassword(false);
   };
 
   const cancelSubscription = async () => {
@@ -107,6 +114,9 @@ const UserAccount = () => {
         callback={changePassword}
         type='modal'
       />
+      {showUpdatePassword && (
+        <UpdatePasswordForm handleCancel={handleCancellChangePassword} />
+      )}
 
       <ModalContainer
         buttonWidth='250px'

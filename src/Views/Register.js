@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import Input from '../Components/Input/Input';
 import Button from '../Components/Button/Button';
-// import { useModal } from '../Hooks/useModal';
 import AlertCard from '../Components/Modal/AlertCard';
 
 import axios from 'axios';
@@ -18,7 +17,7 @@ const Register = () => {
     password: '',
     confirm_password: '',
   });
-  const [message, setMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [firstnameMessage, setFirstnameMessage] = useState('');
   const [lastnamelMessage, setLastnameMessage] = useState('');
   const [emailMessage, setEmailMessage] = useState('');
@@ -26,7 +25,6 @@ const Register = () => {
   const [confirmPasswordMessage, setConfirmPasswordMessage] = useState('');
 
   let navigate = useNavigate();
-  // const { show, hide, RenderModal } = useModal();
 
   const validatePassword = () => {
     if (userInfo.password !== '') {
@@ -66,38 +64,20 @@ const Register = () => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-
     setUserInfo((prevState) => ({
       ...prevState,
       [name]: value,
     }));
-
-    if (name === 'confirm_password') {
-    }
-    if (name === 'email') {
-    }
   };
-
-  useEffect(() => {
-    console.log(message);
-  }, [message]);
-
   useEffect(() => {
     validatePassword();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userInfo.password]);
-  useEffect(() => {
     validateConfirmPassword();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userInfo.confirm_password]);
-  useEffect(() => {
     validateEmail();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userInfo.email]);
+  }, [userInfo]);
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    // check all fields filled and messages are ''
 
     if (
       Object.values(userInfo).every((v) => v !== '') &&
@@ -105,11 +85,6 @@ const Register = () => {
       emailMessage === ''
     ) {
       const { first_name, last_name, email, password } = userInfo;
-      console.log(userInfo);
-
-      // TODO: Instead of POST new user, validate that email does not already exist in system
-
-      // TODO: If validation passes, send formData forward to /subscribe as state
 
       axios
         // .post('https://roop-verma-archive.herokuapp.com/api/users/', {
@@ -129,10 +104,7 @@ const Register = () => {
           navigate('/subscribe', { state: response.data });
         })
         .catch((error) => {
-          console.log(error);
-          console.log(error.response.data);
-          // alert(error.response.data);
-          setMessage('That email already exists');
+          setErrorMessage(error.response.data);
         });
     } else {
       if (userInfo.first_name === '') {
@@ -165,12 +137,12 @@ const Register = () => {
           share Roop Verma's work. Thank you very much for your support.
         </span>
       </p>
-      {message !== '' && (
+      {errorMessage !== '' && (
         <AlertCard
-          closeAlert={() => setMessage('')}
-          show={message !== '' ? true : false}
+          closeAlert={() => setErrorMessage('')}
+          show={errorMessage !== '' ? true : false}
         >
-          {message}
+          {errorMessage}
         </AlertCard>
       )}
       <form onSubmit={(event) => handleFormSubmit(event)}>
@@ -246,9 +218,6 @@ const Register = () => {
           <Link to='/library' style={{ marginRight: '20px' }}>
             <Button margin='10px 0 0 0' width='100%' name='Contact Us' />
           </Link>
-          {/* {message !== '' ? (
-            <span className='form--alert'>{message}</span>
-          ) : null} */}
         </div>
       </form>
     </div>

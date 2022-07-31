@@ -1,5 +1,4 @@
-import React, { useContext, useState } from 'react';
-// import { AuthContext } from '../../Context/AuthContext';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import AlertCard from '../Modal/AlertCard';
@@ -32,9 +31,8 @@ const CARD_ELEMENT_OPTIONS = {
 };
 
 export const PaymentForm = () => {
-  // const { auth } = useContext(AuthContext);
-  // const [isAuth, setIsAuth] = auth;
   const [message, setMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const stripe = useStripe();
   const elements = useElements();
@@ -42,28 +40,24 @@ export const PaymentForm = () => {
   let navigate = useNavigate();
   const { state } = useLocation();
 
-  const { id, stripe_id, first_name, last_name, email, subscription_id } =
-    state;
+  const { stripe_id, first_name, email, subscription_id } = state;
 
-  console.log('subscription_id:', subscription_id);
+  const sendConfirmationEmail = () => {
+    send('rvdl_forms', 'template_rgadtp9', {
+      email,
+      name: first_name,
+    }).then(
+      (response) => {
+        console.log('Email successfully sent', response.status, response.text);
+      },
+      (error) => {
+        console.error('Email did not send', error);
+      }
+    );
+  };
 
-  // const sendConfirmationEmail = () => {
-  //   send('rvdl_forms', 'template_rgadtp9', {
-  //     email,
-  //     name: first_name,
-  //   }).then(
-  //     (response) => {
-  //       console.log('SUCCESS!', response.status, response.text);
-  //     },
-  //     (error) => {
-  //       console.log('FAILED...', error);
-  //     }
-  //   );
-  // };
-
-  const success = (token) => {
-    document.cookie = `roop-verma-library=${token}`;
-    // sendConfirmationEmail();
+  const success = () => {
+    sendConfirmationEmail();
     if (stripe_id) {
       navigate('/account');
     }
@@ -85,12 +79,10 @@ export const PaymentForm = () => {
       },
     });
 
-    console.log(result);
-
     if (result.error) {
-      console.log(result.error.message);
+      setErrorMessage(result.error.message);
     } else {
-      const res = await axios.put(
+      await axios.put(
         // 'https://roop-verma-archive.herokuapp.com/api/payments/udpate-payment/',
         'http://localhost:5000/api/payments/update-payment',
         {
@@ -99,27 +91,7 @@ export const PaymentForm = () => {
           payment_method: result.paymentMethod.id,
         }
       );
-
-      console.log('Payment Method Update Success!');
-      console.log(res);
-
-      // const { client_secret, status, token } = res.data;
-
-      //   if (status === 'requires_action') {
-      //     stripe.confirmCardPayment(client_secret).then(function (result) {
-      //       if (result.error) {
-      //         console.log('There was an issue.');
-      //         console.log(result.error);
-      //         setMessage(result.error);
-      //       } else {
-      //         console.log('Payment Method Update Success!');
-      //         success(token);
-      //       }
-      //     });
-      //   } else {
-      //     console.log('Payment Method Update Success!');
-      //     success(token);
-      //   }
+      setMessage('Payment Method Update Success!');
     }
   };
 
@@ -139,7 +111,20 @@ export const PaymentForm = () => {
       </div>
       {message !== '' && (
         <AlertCard
-          closeAlert={() => setMessage('')}
+          closeAlert={() => {
+            setMessage('');
+            success();
+          }}
+          show={message !== '' ? true : false}
+        >
+          {message}
+        </AlertCard>
+      )}
+      {errorMessage !== '' && (
+        <AlertCard
+          closeAlert={() => {
+            setErrorMessage('');
+          }}
           show={message !== '' ? true : false}
         >
           {message}
