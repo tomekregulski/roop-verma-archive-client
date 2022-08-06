@@ -93,7 +93,7 @@ const Register = () => {
         //   email,
         //   password,
         // })
-        .post('http://localhost:5000/api/users/', {
+        .post('http://localhost:5000/api/v1/users/', {
           first_name,
           last_name,
           email,

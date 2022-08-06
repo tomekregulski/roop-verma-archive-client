@@ -22,7 +22,6 @@ export const UpdatePasswordForm = (props) => {
   const { user } = useContext(AuthContext);
   // eslint-disable-next-line no-unused-vars
   const [userData, setUserData] = user;
-  console.log(userData);
 
   const { handleCancel } = props;
 
@@ -78,16 +77,17 @@ export const UpdatePasswordForm = (props) => {
         //     password,
         //   }
         // )
-        .put('http://localhost:5000/api/users/update-password', {
+        .put('http://localhost:5000/api/v1/users/update-password', {
           userId: userData.id,
           password,
         })
         .then((response) => {
           console.log(response);
-          setSuccessMessage(response.data);
+          setSuccessMessage(response.data.message);
         })
         .catch((error) => {
-          setErrorMessage(error.response.data);
+          console.log(error);
+          // setErrorMessage(error.response.data);
         });
     } else {
       if (userInfo.password === '') {
@@ -101,10 +101,9 @@ export const UpdatePasswordForm = (props) => {
 
   return (
     <div className='form--container'>
-      <h2>Update Password</h2>
       <form onSubmit={(event) => handleFormSubmit(event)}>
         <Input
-          label='Password'
+          label='New Password'
           name='password'
           value={userInfo.password}
           type='password'
@@ -116,7 +115,7 @@ export const UpdatePasswordForm = (props) => {
           <span className='form--alert'>{passwordMessage}</span>
         )}
         <Input
-          label='Confirm Password'
+          label='Confirm New Password'
           name='confirm_password'
           value={userInfo.confirm_password}
           type='password'
@@ -128,6 +127,12 @@ export const UpdatePasswordForm = (props) => {
           <span className='form--alert'>{confirmPasswordMessage}</span>
         )}
         <Button margin='30px 0 0 0' width='100%' name='Update Password' />
+        <Button
+          margin='30px 0 0 0'
+          width='100%'
+          name='Cancel'
+          callback={handleCancel}
+        />
       </form>
       {errorMessage !== '' && (
         <AlertCard

@@ -28,7 +28,6 @@ const UserAccount = () => {
   };
 
   const handleCancellChangePassword = () => {
-    console.log('cancel');
     setShowUpdatePassword(false);
   };
 
@@ -78,7 +77,7 @@ const UserAccount = () => {
 
   const handleLogout = async () => {
     await axios
-      .get('http://localhost:5000/api/users/logout', {})
+      .post('http://localhost:5000/api/v1/auth/logout', {})
       // .get('https://roop-verma-archive.herokuapp.com/api/users/logout', {})
       .then(() => {
         setUserData({});
@@ -109,7 +108,7 @@ const UserAccount = () => {
       <ModalContainer
         buttonWidth='250px'
         buttonMargin='15px 0 0 0'
-        action={'Test - Change Password'}
+        action={'Change Password'}
         message={'Are you sure that you want to change your password?'}
         callback={changePassword}
         type='modal'
