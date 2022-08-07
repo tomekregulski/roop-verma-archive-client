@@ -21,6 +21,8 @@ const UserAccount = () => {
   const [message, setMessage] = useState('');
   const [showUpdatePassword, setShowUpdatePassword] = useState(false);
 
+  const key = process.env.REACT_APP_API_KEY;
+
   let navigate = useNavigate();
 
   const changePassword = () => {
@@ -35,7 +37,7 @@ const UserAccount = () => {
     const customer_id = userData.stripe_id;
 
     await axios
-      .post('http://localhost:5000/api/payments/cancel-subscription', {
+      .post(`http://localhost:5000/api/payments/cancel-subscription/`, {
         customer_id: customer_id,
       })
       .then(
@@ -77,8 +79,8 @@ const UserAccount = () => {
 
   const handleLogout = async () => {
     await axios
-      .post('http://localhost:5000/api/v1/auth/logout', {})
-      // .get('https://roop-verma-archive.herokuapp.com/api/users/logout', {})
+      .post(`http://localhost:5000/api/v1/auth/logout/${key}`)
+      // .post(`https://roop-verma-archive.herokuapp.com/api/v1/users/logout/${key}`)
       .then(() => {
         setUserData({});
         setIsAuth(false);

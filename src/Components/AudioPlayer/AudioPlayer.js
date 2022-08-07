@@ -144,6 +144,7 @@ const AudioPlayer = () => {
       });
     }
     setSecondsPlayed(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTrack]);
 
   // Handles cleanup and setup when changing tracks

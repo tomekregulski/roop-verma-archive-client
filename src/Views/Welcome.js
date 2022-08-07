@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext } from 'react';
 
 import { AuthContext } from '../Context/AuthContext';
 
@@ -7,6 +7,7 @@ import Login from './Login';
 
 const Welcome = () => {
   const { auth, user } = useContext(AuthContext);
+  // eslint-disable-next-line no-unused-vars
   const [userData, setUserData] = user;
   // eslint-disable-next-line no-unused-vars
   const [isAuth, setIsAuth] = auth;

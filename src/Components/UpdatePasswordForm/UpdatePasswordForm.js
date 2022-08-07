@@ -19,6 +19,8 @@ export const UpdatePasswordForm = (props) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
+  const key = process.env.REACT_APP_API_KEY;
+
   const { user } = useContext(AuthContext);
   // eslint-disable-next-line no-unused-vars
   const [userData, setUserData] = user;
@@ -77,7 +79,7 @@ export const UpdatePasswordForm = (props) => {
         //     password,
         //   }
         // )
-        .put('http://localhost:5000/api/v1/users/update-password', {
+        .put(`http://localhost:5000/api/v1/users/update-password/${key}`, {
           userId: userData.id,
           password,
         })
@@ -86,8 +88,7 @@ export const UpdatePasswordForm = (props) => {
           setSuccessMessage(response.data.message);
         })
         .catch((error) => {
-          console.log(error);
-          // setErrorMessage(error.response.data);
+          setErrorMessage(error.response.data.error.message);
         });
     } else {
       if (userInfo.password === '') {

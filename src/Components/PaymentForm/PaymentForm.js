@@ -33,6 +33,7 @@ const CARD_ELEMENT_OPTIONS = {
 
 export const PaymentForm = () => {
   const { auth } = useContext(AuthContext);
+  // eslint-disable-next-line no-unused-vars
   const [isAuth, setIsAuth] = auth;
   const [message, setMessage] = useState('');
 

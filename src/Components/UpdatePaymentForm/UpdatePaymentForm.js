@@ -83,8 +83,8 @@ export const PaymentForm = () => {
       setErrorMessage(result.error.message);
     } else {
       await axios.put(
-        // 'https://roop-verma-archive.herokuapp.com/api/payments/udpate-payment/',
-        'http://localhost:5000/api/payments/update-payment',
+        // 'https://roop-verma-archive.herokuapp.com/api/v1/payments/udpate-payment/',
+        `http://localhost:5000/api/payments/update-payment/`,
         {
           stripe_id,
           subscription_id,
