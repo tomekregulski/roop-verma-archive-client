@@ -37,6 +37,8 @@ export const PaymentForm = () => {
   const stripe = useStripe();
   const elements = useElements();
 
+  const key = process.env.REACT_APP_API_KEY;
+
   let navigate = useNavigate();
   const { state } = useLocation();
 
@@ -83,8 +85,8 @@ export const PaymentForm = () => {
       setErrorMessage(result.error.message);
     } else {
       await axios.put(
-        // 'https://roop-verma-archive.herokuapp.com/api/v1/payments/udpate-payment/',
-        `http://localhost:5000/api/payments/update-payment/`,
+        // `https://roop-verma-archive.herokuapp.com/api/v1/payments/udpate-payment/${key}`,
+        `http://localhost:5000/api/v1/payments/update-payment/${key}`,
         {
           stripe_id,
           subscription_id,

@@ -73,7 +73,7 @@ export const UpdatePasswordForm = (props) => {
 
       axios
         // .put(
-        //   'https://roop-verma-archive.herokuapp.com/api/users/update-password',
+        //   `https://roop-verma-archive.herokuapp.com/api/v1/users/update-password${key}`,
         //   {
         //     userId: userData.id,
         //     password,

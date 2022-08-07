@@ -37,6 +37,8 @@ export const PaymentForm = () => {
   const [isAuth, setIsAuth] = auth;
   const [message, setMessage] = useState('');
 
+  const key = process.env.REACT_APP_API_KEY;
+
   const stripe = useStripe();
   const elements = useElements();
 
@@ -44,8 +46,6 @@ export const PaymentForm = () => {
   const { state } = useLocation();
 
   const { id, first_name, last_name, email, stripe_id } = state;
-
-  console.log(stripe_id);
 
   const sendConfirmationEmail = () => {
     send('rvdl_forms', 'template_lj7tqph', {
@@ -93,8 +93,8 @@ export const PaymentForm = () => {
       console.log(result.error.message);
     } else {
       const res = await axios.post(
-        // 'https://roop-verma-archive.herokuapp.com/api/payments/subscribe',
-        'http://localhost:5000/api/payments/subscribe/',
+        // `https://roop-verma-archive.herokuapp.com/api/v1/payments/subscribe${key}`,
+        `http://localhost:5000/api/v1/payments/subscribe/${key}`,
         {
           payment_method: result.paymentMethod.id,
           first_name: first_name,

@@ -22,6 +22,8 @@ export const TracksContext = (props) => {
   const [isReady, setIsReady] = useState(false);
   const [trackSrc, setTrackSrc] = useState('');
 
+  const key = process.env.REACT_APP_API_KEY;
+
   const { auth } = useContext(AuthContext);
   // eslint-disable-next-line no-unused-vars
   const [isAuth, setIsAuth] = auth;
@@ -34,16 +36,16 @@ export const TracksContext = (props) => {
       try {
         if (isAuth === true && jwt !== false) {
           response = await axios.get(
-            'http://localhost:5000/api/tracks',
-            // 'https://roop-verma-archive.herokuapp.com/api/tracks',
+            `http://localhost:5000/api/v1/tracks/${key}`,
+            // `https://roop-verma-archive.herokuapp.com/api/v1/tracks/${key}`,
             {
               headers: { jwt: jwt },
             }
           );
         } else {
           response = await axios.get(
-            'http://localhost:5000/api/tracks/public'
-            // 'https://roop-verma-archive.herokuapp.com/api/tracks/public'
+            `http://localhost:5000/api/v1/tracks/public/${key}`
+            // `https://roop-verma-archive.herokuapp.com/api/v1/tracks/public${key}`
           );
         }
         setTrackList(response.data);
@@ -91,8 +93,8 @@ export const TracksContext = (props) => {
     const { userId, trackId, secondsListened } = data;
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/tracks/track-plays',
-        // 'https://roop-verma-archive.herokuapp.com/api/tracks/track-plays',
+        `http://localhost:5000/api/v1/tracks/track-plays/${key}`,
+        // `https://roop-verma-archive.herokuapp.com/api/v1/tracks/track-plays${key}`,
         {
           userId,
           trackId,
