@@ -10,13 +10,18 @@ const Modal = React.memo(({ props, children, closeModal }) => {
 
   const { callback } = props;
 
+  const handleCallback = () => {
+    closeModal();
+    callback();
+  };
+
   if (!domEl) return null;
 
   return ReactDOM.createPortal(
     <div className='modal--card-container'>
       <div className='modal--content-body'>{children}</div>
       <div className='modal--buttons-div'>
-        <Button name='Yes' callback={callback} margin='0 20px 0 0' />
+        <Button name='Yes' callback={handleCallback} margin='0 20px 0 0' />
         <Button name='No' callback={closeModal} margin='0 0 0 20px' />
       </div>
     </div>,

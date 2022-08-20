@@ -9,6 +9,12 @@
   color: black;
 }
 
+.audio-controls--button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
 .card--container-playing {
   background: rgba(81, 152, 157, 0.194);
 }

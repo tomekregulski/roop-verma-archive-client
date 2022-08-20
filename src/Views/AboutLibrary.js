@@ -1,8 +1,11 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../Context/AuthContext';
 import Input from '../Components/Input/Input';
 import Button from '../Components/Button/Button';
 import { init, sendForm } from 'emailjs-com';
+import { useNavigate } from 'react-router-dom';
+import { isValidJwt } from '../Utils/isValidJwt';
+import AlertCard from '../Components/Modal/AlertCard';
 
 import './styles/helpStyles.css';
 
@@ -14,6 +17,20 @@ const AboutLibrary = () => {
   const [isAuth, setIsAuth] = auth;
   // eslint-disable-next-line no-unused-vars
   const [userData, setUserData] = user;
+  const [message, setMessage] = useState('');
+
+  let navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isValidJwt) {
+      setUserData({});
+      setIsAuth(false);
+      document.cookie =
+        'roop-verma-library= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
+      navigate('/');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [helpInfo, setHelpInfo] = useState({
     name: userData.first_name
@@ -24,10 +41,7 @@ const AboutLibrary = () => {
   });
 
   const handleChange = (event) => {
-    console.log('help info');
     const { name, value } = event.target;
-
-    console.log({ [name]: value });
 
     setHelpInfo((prevState) => ({
       ...prevState,
@@ -37,19 +51,24 @@ const AboutLibrary = () => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    console.log(helpInfo);
     const form = document.querySelector('#contact-form');
 
-    sendForm('contact_form', 'template_xu5gbwo', '#contact-form').then(
+    sendForm('rvdl_forms', 'template_xu5gbwo', '#contact-form').then(
       (response) => {
+        setMessage('Message successfully sent');
         console.log('SUCCESS!', response.status, response.text);
         form.reset();
       },
       (error) => {
         console.log('FAILED...', error);
+        setMessage(
+          'Something went wrong and your message was not sent. Error: ',
+          error
+        );
       }
     );
   };
+
   return (
     <div className='help__container'>
       <section className='help__section'>
@@ -133,6 +152,16 @@ const AboutLibrary = () => {
           <Button margin='30px 0 0 0' width='100%' name='Send Message' />
         </form>
       </section>
+      {message !== '' && (
+        <AlertCard
+          closeAlert={() => {
+            setMessage('');
+          }}
+          show={message !== '' ? true : false}
+        >
+          {message}
+        </AlertCard>
+      )}
     </div>
   );
 };

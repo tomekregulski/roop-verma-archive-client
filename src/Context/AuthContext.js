@@ -12,6 +12,7 @@ export const AuthProvider = (props) => {
   useEffect(() => {
     const currentJwt = checkJwt();
     if (currentJwt !== false) {
+      // update JWT to only have ID
       const decoded = jwt_decode(currentJwt);
       setUserData(decoded);
       setIsAuth(true);

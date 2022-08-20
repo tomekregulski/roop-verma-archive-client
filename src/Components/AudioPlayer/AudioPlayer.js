@@ -1,5 +1,6 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { TracksContextData } from '../../Context/TracksContext';
+import { AuthContext } from '../../Context/AuthContext';
 
 import AudioControls from '../AudioControls/AudioControls';
 import './audioPlayer.css';
@@ -12,31 +13,32 @@ const AudioPlayer = () => {
     selectedTrack,
     setSelectedTrack,
     incrementPlays,
+    isPlaying,
+    setIsPlaying,
+    isReady,
+    setIsReady,
+    trackSrc,
+    setTrackSrc,
+    audioRef,
+    intervalRef,
+    duration,
+    playPauseValidation,
   } = useContext(TracksContextData);
 
-  // const [trackIndex, setTrackIndex] = useState();
+  const { user } = useContext(AuthContext);
   const [trackProgress, setTrackProgress] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [trackSrc, setTrackSrc] = useState('');
+  // const [recordedPlay, setRecordedPlay] = useState(false);
   const [secondsPlayed, setSecondsPlayed] = useState(0);
-  // const [currentTrack, setCurrentTrack] = useState({});
 
   useEffect(() => {
     if (selectedTrack) {
-      // setCurrentTrack(selectedTrack);
       const trackUrl = selectedTrack.url;
       console.log(selectedTrack);
       setTrackSrc(trackUrl);
-      // setTrackIndex(selectedTrack[0].id - 1);
       setCurrentTrackIndex(selectedTrack.id - 1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTrack]);
-
-  // const changeTrack = (id) => {
-  //   const newTrack = filteredTracks.filter((track) => track.id === id);
-  //   setSelectedTrack(newTrack);
-  // };
 
   const changeTrackIndex = (index) => {
     const newTrack = filteredTracks[index];
@@ -45,10 +47,10 @@ const AudioPlayer = () => {
     setSecondsPlayed(0);
   };
 
-  const audioRef = useRef(new Audio(trackSrc));
-  const intervalRef = useRef();
-  const isReady = useRef(false);
-  const { duration } = audioRef.current;
+  // const audioRef = useRef(new Audio(trackSrc));
+  // const intervalRef = useRef();
+  // const isReady = useRef(false);
+  // const { duration } = audioRef.current;
 
   const currentPercentage = duration
     ? `${(trackProgress / duration) * 100}%`
@@ -72,10 +74,6 @@ const AudioPlayer = () => {
 
   useEffect(() => {
     setSecondsPlayed((prevState) => prevState + 1);
-    if (secondsPlayed > duration / 2) {
-      incrementPlays();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trackProgress]);
 
   const onScrub = (value) => {
@@ -90,20 +88,9 @@ const AudioPlayer = () => {
     if (!isPlaying) {
       setIsPlaying(true);
     }
-    setSecondsPlayed(0);
+    // setSecondsPlayed(0);
     startTimer();
   };
-
-  // const toPrevTrack = () => {
-  //   let id;
-  //   if (trackIndex - 1 < 0) {
-  //     id = filteredTracks.length;
-  //     changeTrack(id);
-  //   } else {
-  //     id = trackIndex;
-  //     changeTrack(id);
-  //   }
-  // };
 
   const toPrevTrackIndex = () => {
     let index;
@@ -116,15 +103,6 @@ const AudioPlayer = () => {
     }
   };
 
-  // const toNextTrack = () => {
-  //   if (trackIndex < filteredTracks.length - 1) {
-  //     let id = trackIndex + 2;
-  //     changeTrack(id);
-  //   } else {
-  //     changeTrack(1);
-  //   }
-  // };
-
   const toNextTrackIndex = () => {
     let index;
     if (currentTrackIndex < filteredTracks.length - 1) {
@@ -135,26 +113,12 @@ const AudioPlayer = () => {
     }
   };
 
-  const playPauseValidation = () => {
-    if (selectedTrack.length === 0) {
-      alert('Please select a track');
-    } else {
-      if (isPlaying === false) {
-        if (isReady.current) {
-          audioRef.current.play();
-          setIsPlaying(true);
-          startTimer();
-        } else {
-          // Set the isReady ref as true for the next pass
-          isReady.current = true;
-        }
-      }
-
-      if (isPlaying === true) {
-        setIsPlaying(false);
-      }
+  useEffect(() => {
+    if (isPlaying) {
+      startTimer();
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPlaying]);
 
   useEffect(() => {
     if (isPlaying) {
@@ -166,6 +130,23 @@ const AudioPlayer = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPlaying]);
 
+  useEffect(() => {
+    // setRecordedPlay(false);
+    console.log('test');
+    console.log(secondsPlayed);
+    console.log(secondsPlayed > 0);
+    if (secondsPlayed > 0) {
+      console.log('save');
+      incrementPlays({
+        userId: user[0].id,
+        trackId: selectedTrack.id,
+        secondsListened: secondsPlayed,
+      });
+    }
+    setSecondsPlayed(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTrack]);
+
   // Handles cleanup and setup when changing tracks
   useEffect(() => {
     audioRef.current.pause();
@@ -174,9 +155,12 @@ const AudioPlayer = () => {
     audioRef.current.load();
     setTrackProgress(audioRef.current.currentTime);
 
-    if (!isReady.current) {
-      isReady.current = true;
+    if (!isReady) {
+      // if (!isReady.current) {
+      // isReady.current = true;
+      setIsReady(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trackSrc]);
 
   useEffect(() => {
@@ -185,6 +169,7 @@ const AudioPlayer = () => {
       audioRef.current.pause();
       clearInterval(intervalRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -1,14 +1,15 @@
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../../Context/AuthContext';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import AlertCard from '../Modal/AlertCard';
 import Button from '../Button/Button';
 import { init, send } from 'emailjs-com';
+import { fetchJwt } from '../../Utils/fetchJwt';
 
 import axios from 'axios';
 
-import './paymentFormStyles.css';
+import '../PaymentForm/paymentFormStyles.css';
 
 init('user_sWNT4oROPiAoUGksmqFlD');
 
@@ -31,10 +32,12 @@ const CARD_ELEMENT_OPTIONS = {
   },
 };
 
-export const PaymentForm = () => {
-  const { auth } = useContext(AuthContext);
+export const ResubscribeForm = () => {
+  const { auth, user } = useContext(AuthContext);
   // eslint-disable-next-line no-unused-vars
   const [isAuth, setIsAuth] = auth;
+  // eslint-disable-next-line no-unused-vars
+  const [userData, setUserData] = user;
   const [message, setMessage] = useState('');
 
   const key = process.env.REACT_APP_API_KEY;
@@ -42,10 +45,9 @@ export const PaymentForm = () => {
   const stripe = useStripe();
   const elements = useElements();
 
-  let navigate = useNavigate();
-  const { state } = useLocation();
+  const { id, first_name, last_name, email } = userData;
 
-  const { id, first_name, last_name, email, stripe_id } = state;
+  let navigate = useNavigate();
 
   const sendConfirmationEmail = () => {
     send('rvdl_forms', 'template_lj7tqph', {
@@ -65,12 +67,7 @@ export const PaymentForm = () => {
     document.cookie = `roop-verma-library=${token}`;
     setIsAuth(true);
     sendConfirmationEmail();
-    if (!stripe_id) {
-      navigate('/');
-    }
-    if (stripe_id) {
-      navigate('/account');
-    }
+    navigate('/account');
   };
 
   const handlePaymentSubmit = async (event) => {
@@ -80,46 +77,53 @@ export const PaymentForm = () => {
       // Disable form submissions until Stripe has loaded
       return;
     }
-
-    const result = await stripe.createPaymentMethod({
-      type: 'card',
-      card: elements.getElement(CardElement),
-      billing_details: {
-        email: email,
-      },
-    });
-
-    if (result.error) {
-      console.log(result.error.message);
-    } else {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_ORIGIN}/api/v1/payments/subscribe/${key}`,
-        {
-          payment_method: result.paymentMethod.id,
-          first_name: first_name,
-          last_name: last_name,
+    try {
+      const result = await stripe.createPaymentMethod({
+        type: 'card',
+        card: elements.getElement(CardElement),
+        billing_details: {
           email: email,
-          id: id,
-        }
-      );
+        },
+      });
 
-      const { client_secret, status, token } = res.data;
-
-      if (status === 'requires_action') {
-        stripe.confirmCardPayment(client_secret).then(function (result) {
-          if (result.error) {
-            console.log('There was an issue.');
-            console.log(result.error);
-            setMessage(result.error);
-          } else {
-            console.log('Subscription success!');
-            success(token);
-          }
-        });
+      if (result.error) {
+        console.log(result.error.message);
       } else {
-        console.log('Subscription success!');
-        success(token);
+        const jwt = fetchJwt();
+        if (!jwt) {
+          setMessage('Error: cannot find valid token');
+          return;
+        }
+        console.log(jwt);
+        const res = await axios.post(
+          `${process.env.REACT_APP_API_ORIGIN}/api/v1/payments/subscribe/${key}`,
+          {
+            payment_method: result.paymentMethod.id,
+            first_name: first_name,
+            last_name: last_name,
+            email: email,
+            id: id,
+          },
+          jwt
+        );
+
+        const { client_secret, status, token } = res.data;
+
+        if (status === 'requires_action') {
+          stripe.confirmCardPayment(client_secret).then(function (result) {
+            if (result.error) {
+              setMessage(result.error);
+              return;
+            } else {
+              success(token);
+            }
+          });
+        } else {
+          success(token);
+        }
       }
+    } catch (error) {
+      setMessage(error.message);
     }
   };
 
@@ -149,4 +153,4 @@ export const PaymentForm = () => {
   );
 };
 
-export default PaymentForm;
+export default ResubscribeForm;

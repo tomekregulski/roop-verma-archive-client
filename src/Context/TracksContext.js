@@ -1,4 +1,10 @@
-import React, { useState, createContext, useEffect, useContext } from 'react';
+import React, {
+  useState,
+  createContext,
+  useEffect,
+  useContext,
+  useRef,
+} from 'react';
 import axios from 'axios';
 import { checkJwt } from '../Utils/helperFunctions';
 import { AuthContext } from './AuthContext';
@@ -12,6 +18,11 @@ export const TracksContext = (props) => {
   const [tracksMessage, setTracksMessage] = useState('');
   const [filteredTracks, setFilteredTracks] = useState(null);
   const [currentTrackIndex, setCurrentTrackIndex] = useState();
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+  const [trackSrc, setTrackSrc] = useState('');
+
+  const key = process.env.REACT_APP_API_KEY;
 
   const { auth } = useContext(AuthContext);
   // eslint-disable-next-line no-unused-vars
@@ -25,16 +36,14 @@ export const TracksContext = (props) => {
       try {
         if (isAuth === true && jwt !== false) {
           response = await axios.get(
-            // 'http://localhost:5000/api/tracks',
-            'https://roop-verma-archive.herokuapp.com/api/tracks',
+            `${process.env.REACT_APP_API_ORIGIN}/api/v1/tracks/${key}`,
             {
               headers: { jwt: jwt },
             }
           );
         } else {
           response = await axios.get(
-            // 'http://localhost:5000/api/tracks/public'
-            'https://roop-verma-archive.herokuapp.com/api/tracks/public'
+            `${process.env.REACT_APP_API_ORIGIN}/api/v1/tracks/public/${key}`
           );
         }
         setTrackList(response.data);
@@ -44,6 +53,7 @@ export const TracksContext = (props) => {
       setTracksMessage('');
     };
     fetchTracks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuth]);
 
   useEffect(() => {
@@ -77,22 +87,54 @@ export const TracksContext = (props) => {
     }
   }, [searchFilter, trackList]);
 
-  const incrementPlays = async () => {
+  const incrementPlays = async (data) => {
+    console.log('increment');
+    const { userId, trackId, secondsListened } = data;
     try {
-      // const response = await axios.put(
-      //   'http://localhost:5000/api/tracks/track-plays',
-      //   // 'https://roop-verma-archive.herokuapp.com/api/tracks/track-plays',
-      //   {
-      //     id: selectedTrack.id,
-      //   }
-      // );
-      // const track = filteredTracks.find(
-      //   (track) => track.id === selectedTrack.id
-      // );
-      // track.plays = track.plays + 1;
-      console.log('plays increment disabled until tested');
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_ORIGIN}/api/v1/tracks/track-plays/${key}`,
+        {
+          userId,
+          trackId,
+          secondsListened,
+        }
+      );
+      console.log(response);
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    setTrackSrc(selectedTrack.url);
+  }, [selectedTrack]);
+
+  const audioRef = useRef(new Audio(trackSrc));
+  const intervalRef = useRef();
+  // const isReady = useRef(false);
+  const { duration } = audioRef.current;
+
+  const playPauseValidation = () => {
+    if (selectedTrack.length === 0) {
+      alert('Please select a track');
+    } else {
+      if (!isPlaying) {
+        // if (isReady.current) {
+        if (isReady) {
+          console.log('play');
+          console.log(audioRef.current);
+          audioRef.current.play();
+          setIsPlaying(true);
+        } else {
+          // Set the isReady ref as true for the next pass
+          // isReady.current = true;
+          setIsReady(true);
+        }
+      }
+
+      if (isPlaying === true) {
+        setIsPlaying(false);
+      }
     }
   };
 
@@ -112,6 +154,16 @@ export const TracksContext = (props) => {
         currentTrackIndex,
         setCurrentTrackIndex,
         incrementPlays,
+        isPlaying,
+        setIsPlaying,
+        isReady,
+        setIsReady,
+        trackSrc,
+        setTrackSrc,
+        audioRef,
+        intervalRef,
+        duration,
+        playPauseValidation,
       }}
     >
       {props.children}

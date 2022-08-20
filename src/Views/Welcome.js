@@ -1,15 +1,34 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import { AuthContext } from '../Context/AuthContext';
 
 import './styles/welcomeStyles.css';
 import Login from './Login';
+import { useNavigate } from 'react-router-dom';
+import { isValidJwt } from '../Utils/isValidJwt';
 
 const Welcome = () => {
   const { auth, user } = useContext(AuthContext);
+  // eslint-disable-next-line no-unused-vars
   const [userData, setUserData] = user;
   // eslint-disable-next-line no-unused-vars
   const [isAuth, setIsAuth] = auth;
+
+  let navigate = useNavigate();
+
+  useEffect(() => {
+    console.log('checking');
+    const valid = isValidJwt();
+    console.log(valid);
+    if (!valid) {
+      setUserData({});
+      setIsAuth(false);
+      document.cookie =
+        'roop-verma-library= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
+      navigate('/');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className='welcome__container'>
