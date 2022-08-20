@@ -45,7 +45,7 @@ export const PaymentForm = () => {
   let navigate = useNavigate();
   const { state } = useLocation();
 
-  const { id, first_name, last_name, email, stripe_id } = state;
+  const { id, first_name, last_name, email, stripe_id } = state.userData;
 
   const sendConfirmationEmail = () => {
     send('rvdl_forms', 'template_lj7tqph', {

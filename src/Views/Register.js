@@ -96,11 +96,10 @@ const Register = () => {
           password,
         })
         .then((response) => {
-          console.log(response);
           navigate('/subscribe', { state: response.data });
         })
         .catch((error) => {
-          setErrorMessage(error.response.data);
+          setErrorMessage(error.response.data.error.message);
         });
     } else {
       if (userInfo.first_name === '') {
