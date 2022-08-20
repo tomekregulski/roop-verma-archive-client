@@ -90,8 +90,8 @@ const Login = () => {
   return (
     <div className='form--container'>
       <p>
-        Please Note - we are in the midst of structural changes to the database
-        as preparations for public release are made. This will require a few
+        Attention - we are in the midst of structural changes to the database as
+        preparations for public release are made. This will require a few
         complete resets which will clear any existing user accounts. If you find
         that your password suddenly does not work, please try recreating it. If
         that brings any errors, reach out via the help form. Thank you!
