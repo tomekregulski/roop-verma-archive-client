@@ -96,7 +96,7 @@ export const ResubscribeForm = () => {
         }
         console.log(jwt);
         const res = await axios.post(
-          `${process.env.REACT_APP_API_ORIGIN}/api/v1/payments/subscribe/${key}`,
+          `${process.env.REACT_APP_API_ORIGIN}/api/v1/payments/resubscribe/${key}`,
           {
             payment_method: result.paymentMethod.id,
             first_name: first_name,
