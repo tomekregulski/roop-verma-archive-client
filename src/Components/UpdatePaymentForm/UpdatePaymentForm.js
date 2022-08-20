@@ -89,7 +89,7 @@ export const PaymentForm = () => {
         console.log('Email successfully sent', response.status, response.text);
       },
       (error) => {
-        console.error('Email did not send', error);
+        console.error('Email did not send', error.response.data.error.message);
       }
     );
   };

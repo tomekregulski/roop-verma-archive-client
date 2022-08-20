@@ -63,7 +63,7 @@ const AboutLibrary = () => {
         console.log('FAILED...', error);
         setMessage(
           'Something went wrong and your message was not sent. Error: ',
-          error
+          error.response.data.error.message
         );
       }
     );
