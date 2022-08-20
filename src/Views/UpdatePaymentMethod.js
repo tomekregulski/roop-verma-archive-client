@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { isValidJwt } from '../Utils/isValidJwt';
+import { AuthContext } from '../Context/AuthContext';
 
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
@@ -13,6 +16,25 @@ const PUBLIC_KEY =
 const stripeTestPromise = loadStripe(PUBLIC_KEY);
 
 const UpdatePaymentMethod = () => {
+  const { auth, user } = useContext(AuthContext);
+  // eslint-disable-next-line no-unused-vars
+  const [isAuth, setIsAuth] = auth;
+  // eslint-disable-next-line no-unused-vars
+  const [userData, setUserData] = user;
+
+  let navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isValidJwt) {
+      setUserData({});
+      setIsAuth(false);
+      document.cookie =
+        'roop-verma-library= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
+      navigate('/');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className='subscribe--container'>
       <div>

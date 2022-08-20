@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../../Context/AuthContext';
+import { fetchJwt } from '../../Utils/fetchJwt';
 
 import Input from '../Input/Input';
 import Button from '../Button/Button';
@@ -11,8 +12,9 @@ import '../../Views/styles/formStyles.css';
 
 export const UpdatePasswordForm = (props) => {
   const [userInfo, setUserInfo] = useState({
+    currentPassword: '',
     password: '',
-    confirm_password: '',
+    confirmPassword: '',
   });
   const [passwordMessage, setPasswordMessage] = useState('');
   const [confirmPasswordMessage, setConfirmPasswordMessage] = useState('');
@@ -40,8 +42,8 @@ export const UpdatePasswordForm = (props) => {
   };
 
   const validateConfirmPassword = () => {
-    if (userInfo.password !== '' && userInfo.confirm_password !== '') {
-      if (userInfo.password === userInfo.confirm_password) {
+    if (userInfo.password !== '' && userInfo.confirmPassword !== '') {
+      if (userInfo.password === userInfo.confirmPassword) {
         setConfirmPasswordMessage('');
       } else {
         setConfirmPasswordMessage('Passwords must match');
@@ -69,20 +71,24 @@ export const UpdatePasswordForm = (props) => {
       Object.values(userInfo).every((v) => v !== '') &&
       confirmPasswordMessage === ''
     ) {
-      const { password } = userInfo;
+      const { password, currentPassword } = userInfo;
+
+      const jwt = fetchJwt();
+      if (!jwt) {
+        setErrorMessage('Error: cannot find valid token');
+        return;
+      }
 
       axios
-        // .put(
-        //   `https://roop-verma-archive.herokuapp.com/api/v1/users/update-password${key}`,
-        //   {
-        //     userId: userData.id,
-        //     password,
-        //   }
-        // )
-        .put(`http://localhost:5000/api/v1/users/update-password/${key}`, {
-          userId: userData.id,
-          password,
-        })
+        .put(
+          `${process.env.REACT_APP_API_ORIGIN}/api/v1/users/update-password/${key}`,
+          {
+            userId: userData.id,
+            currentPassword,
+            password,
+          },
+          jwt
+        )
         .then((response) => {
           console.log(response);
           setSuccessMessage(response.data.message);
@@ -104,6 +110,15 @@ export const UpdatePasswordForm = (props) => {
     <div className='form--container'>
       <form onSubmit={(event) => handleFormSubmit(event)}>
         <Input
+          label='Current Password'
+          name='currentPassword'
+          value={userInfo.currentPassword}
+          type='password'
+          callback={handleChange}
+          labelColor='white'
+          margin='20px 0 0 0'
+        />
+        <Input
           label='New Password'
           name='password'
           value={userInfo.password}
@@ -117,8 +132,8 @@ export const UpdatePasswordForm = (props) => {
         )}
         <Input
           label='Confirm New Password'
-          name='confirm_password'
-          value={userInfo.confirm_password}
+          name='confirmPassword'
+          value={userInfo.confirmPassword}
           type='password'
           callback={handleChange}
           labelColor='white'

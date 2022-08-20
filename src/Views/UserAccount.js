@@ -1,5 +1,7 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { isValidJwt } from '../Utils/isValidJwt';
+import { fetchJwt } from '../Utils/fetchJwt';
 
 import axios from 'axios';
 
@@ -18,12 +20,56 @@ const UserAccount = () => {
   // eslint-disable-next-line no-unused-vars
   const [isAuth, setIsAuth] = auth;
   const [userData, setUserData] = user;
+  const [stripeInfo, setStripeInfo] = useState({
+    stripe_id: '',
+    subscription_id: '',
+  });
   const [message, setMessage] = useState('');
   const [showUpdatePassword, setShowUpdatePassword] = useState(false);
+
+  const { id, email, first_name, last_name, subscription_active } = userData;
 
   const key = process.env.REACT_APP_API_KEY;
 
   let navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isValidJwt) {
+      setUserData({});
+      setIsAuth(false);
+      document.cookie =
+        'roop-verma-library= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
+      navigate('/');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (Object.keys(userData).length > 0) {
+      const jwt = fetchJwt();
+      if (!jwt) {
+        setMessage('Error: cannot find valid token');
+        return;
+      }
+      try {
+        const fetchUserStripeInfo = async () => {
+          const userStripeInfo = await axios.get(
+            `${process.env.REACT_APP_API_ORIGIN}/api/v1/users/${id}/${key}`,
+            jwt
+          );
+          setStripeInfo({
+            stripe_id: userStripeInfo.data.stripe_id,
+            subscription_id: userStripeInfo.data.subscription_id,
+          });
+        };
+        fetchUserStripeInfo();
+      } catch (error) {
+        console.log(error);
+        setMessage('Erver error: ', error);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const changePassword = () => {
     setShowUpdatePassword(true);
@@ -34,53 +80,57 @@ const UserAccount = () => {
   };
 
   const cancelSubscription = async () => {
-    const customer_id = userData.stripe_id;
+    if (stripeInfo.stripe_id !== '') {
+      const jwt = fetchJwt();
+      if (!jwt) {
+        setMessage('Error: cannot find valid token');
+        return;
+      }
+      const customer_id = stripeInfo.stripe_id;
 
-    await axios
-      .post(`http://localhost:5000/api/payments/cancel-subscription/`, {
-        customer_id: customer_id,
-      })
-      .then(
-        setUserData((prevState) => ({
-          ...prevState,
-          subscription_active: false,
-          subscription_id: '',
-        }))
-      )
-      .then(
-        setMessage(
-          'Subscription has been cancelled. Your account will remain active until the end of your current subscription period. At that point, you will still be able to log in, but you will lose member access. You can resubscribe from this page at any time.'
+      await axios
+        .post(
+          `${process.env.REACT_APP_API_ORIGIN}/api/payments/cancel-subscription/`,
+          {
+            customer_id: customer_id,
+            jwt,
+          }
         )
+        .then(
+          setUserData((prevState) => ({
+            ...prevState,
+            subscription_active: false,
+          }))
+        )
+        .then(
+          setMessage(
+            'Subscription has been cancelled. Your account will remain active until the end of your current subscription period. At that point, you will still be able to log in, but you will lose member access. You can resubscribe from this page at any time.'
+          )
+        );
+    } else {
+      setMessage(
+        'Error: Cannot locate subscription information. Please refresh the page to try again, If the issue persists, please reach send a message to support.'
       );
+    }
   };
 
   const resubscribe = () => {
-    const { id, stripe_id, first_name, last_name, email } = userData;
-    const resubscribeUser = { id, stripe_id, first_name, last_name, email };
-    console.log(resubscribeUser);
-    navigate('/subscribe', { state: resubscribeUser });
+    if (stripeInfo.stripe_id !== '') {
+      navigate('/resubscribe');
+    } else {
+      setMessage(
+        'Error: Cannot locate subscription information. Please refresh the page to try again, If the issue persists, please reach send a message to support.'
+      );
+    }
   };
-  const changePaymentMethod = () => {
-    const { id, stripe_id, first_name, last_name, email, subscription_id } =
-      userData;
 
-    console.log(subscription_id);
-    const user = {
-      id,
-      stripe_id,
-      first_name,
-      last_name,
-      email,
-      subscription_id,
-    };
-    console.log(user);
-    navigate('/update-payment-method', { state: user });
+  const changePaymentMethod = () => {
+    navigate('/update-payment-method');
   };
 
   const handleLogout = async () => {
     await axios
-      .post(`http://localhost:5000/api/v1/auth/logout/${key}`)
-      // .post(`https://roop-verma-archive.herokuapp.com/api/v1/users/logout/${key}`)
+      .post(`${process.env.REACT_APP_API_ORIGIN}/api/v1/auth/logout/${key}`)
       .then(() => {
         setUserData({});
         setIsAuth(false);
@@ -90,6 +140,7 @@ const UserAccount = () => {
       })
       .catch((error) => {
         console.log(error);
+        setMessage(error);
       });
   };
 
@@ -97,7 +148,7 @@ const UserAccount = () => {
     <div className='account--container'>
       <h2>Your Account Info</h2>
       <span className='account--text-span'>
-        {`${userData.first_name} ${userData.last_name} - ${userData.email}`}
+        {`${first_name} ${last_name} - ${email}`}
       </span>
       {message !== '' && (
         <AlertCard
@@ -128,11 +179,10 @@ const UserAccount = () => {
         type='modal'
       />
       <span className='account--text-span'>
-        Subscription Status:{' '}
-        {userData.subscription_active ? 'Active' : 'Inactive'}
+        Subscription Status: {subscription_active ? 'Active' : 'Inactive'}
       </span>
       <span>
-        {userData.subscription_active ? (
+        {subscription_active ? (
           <ModalContainer
             buttonWidth='250px'
             buttonMargin='15px 0 0 0'

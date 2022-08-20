@@ -89,13 +89,7 @@ const Register = () => {
       const { first_name, last_name, email, password } = userInfo;
 
       axios
-        // .post(`https://roop-verma-archive.herokuapp.com/api/v1/users/${key}`, {
-        //   first_name,
-        //   last_name,
-        //   email,
-        //   password,
-        // })
-        .post(`http://localhost:5000/api/v1/users/${key}`, {
+        .post(`${process.env.REACT_APP_API_ORIGIN}/api/v1/users/${key}`, {
           first_name,
           last_name,
           email,

@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useContext, useEffect } from 'react';
+import { AuthContext } from '../../Context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import AlertCard from '../Modal/AlertCard';
 import Button from '../Button/Button';
 import { init, send } from 'emailjs-com';
+import { fetchJwt } from '../../Utils/fetchJwt';
 
 import axios from 'axios';
 
@@ -31,8 +33,45 @@ const CARD_ELEMENT_OPTIONS = {
 };
 
 export const PaymentForm = () => {
+  const { user } = useContext(AuthContext);
+
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [stripeInfo, setStripeInfo] = useState({
+    stripe_id: '',
+    subscription_id: '',
+  });
+  // eslint-disable-next-line no-unused-vars
+  const [userData, setUserData] = user;
+
+  const { id, email, first_name } = userData;
+
+  useEffect(() => {
+    try {
+      const jwt = fetchJwt();
+      if (!jwt) {
+        setMessage('Error: cannot find valid token');
+        return;
+      }
+      const fetchUserStripeInfo = async () => {
+        const userStripeInfo = await axios.get(
+          `${process.env.REACT_APP_API_ORIGIN}/api/v1/users/${id}/${key}`,
+          jwt
+        );
+        setStripeInfo({
+          stripe_id: userStripeInfo.data.stripe_id,
+          subscription_id: userStripeInfo.data.subscription_id,
+        });
+      };
+      fetchUserStripeInfo();
+    } catch (error) {
+      console.log(error);
+      setErrorMessage(
+        'Error: Cannot locate subscription information. Please refresh the page to try again, If the issue persists, please reach send a message to support.'
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const stripe = useStripe();
   const elements = useElements();
@@ -40,9 +79,6 @@ export const PaymentForm = () => {
   const key = process.env.REACT_APP_API_KEY;
 
   let navigate = useNavigate();
-  const { state } = useLocation();
-
-  const { stripe_id, first_name, email, subscription_id } = state;
 
   const sendConfirmationEmail = () => {
     send('rvdl_forms', 'template_rgadtp9', {
@@ -60,7 +96,8 @@ export const PaymentForm = () => {
 
   const success = () => {
     sendConfirmationEmail();
-    if (stripe_id) {
+    if (stripeInfo.stripe_id !== '') {
+      setStripeInfo({});
       navigate('/account');
     }
   };
@@ -84,14 +121,19 @@ export const PaymentForm = () => {
     if (result.error) {
       setErrorMessage(result.error.message);
     } else {
+      const jwt = fetchJwt();
+      if (!jwt) {
+        setMessage('Error: cannot find valid token');
+        return;
+      }
       await axios.put(
-        // `https://roop-verma-archive.herokuapp.com/api/v1/payments/udpate-payment/${key}`,
-        `http://localhost:5000/api/v1/payments/update-payment/${key}`,
+        `${process.env.REACT_APP_API_ORIGIN}/api/v1/payments/update-payment/${key}`,
         {
-          stripe_id,
-          subscription_id,
+          stripe_id: stripeInfo.stripe_id,
+          subscription_id: stripeInfo.stripe_id,
           payment_method: result.paymentMethod.id,
-        }
+        },
+        jwt
       );
       setMessage('Payment Method Update Success!');
     }

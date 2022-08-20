@@ -11,6 +11,7 @@ import AboutLibrary from './Views/AboutLibrary';
 import Login from './Views/Login';
 import Register from './Views/Register';
 import Subscribe from './Views/Subscribe';
+import Resubscribe from './Views/Resubscribe';
 import UserAccount from './Views/UserAccount';
 import UpdatePaymentMethod from './Views/UpdatePaymentMethod';
 
@@ -42,6 +43,7 @@ function App() {
           <Route path='login' element={<Login />} />
           <Route path='register' element={<Register />} />
           <Route path='subscribe' element={<Subscribe />} />
+          <Route path='resubscribe' element={<Resubscribe />} />
           <Route path='account' element={<UserAccount />} />
           <Route
             path='update-payment-method'
