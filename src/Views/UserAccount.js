@@ -65,7 +65,7 @@ const UserAccount = () => {
         fetchUserStripeInfo();
       } catch (error) {
         console.log(error);
-        setMessage('Erver error: ', error);
+        setMessage('Server error: ', error.response.data.error.message);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -140,7 +140,7 @@ const UserAccount = () => {
       })
       .catch((error) => {
         console.log(error);
-        setMessage(error);
+        setMessage(error.response.data.error.message);
       });
   };
 
