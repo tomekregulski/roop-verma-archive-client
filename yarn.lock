@@ -1675,6 +1675,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"emailjs-com@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "emailjs-com@npm:3.2.0"
+  checksum: c6d0a1d60786405482928efcb33e9fda9e1c131a0380a1861b73a1f1139923794fbbb6679d83c632b4a2cf2d2dbe08541dd68db61ce78db6ed28b6ed68b4e00f
+  languageName: node
+  linkType: hard
+
 "emoji-regex@npm:^8.0.0":
   version: 8.0.0
   resolution: "emoji-regex@npm:8.0.0"
@@ -4387,6 +4394,7 @@ eslint-plugin-react@latest:
     autoprefixer: ^10.4.13
     axios: ^1.3.4
     babel-plugin-macros: ^3.1.0
+    emailjs-com: ^3.2.0
     eslint: ^8.34.0
     eslint-config-airbnb-typescript: ^17.0.0
     eslint-config-prettier: ^8.6.0
