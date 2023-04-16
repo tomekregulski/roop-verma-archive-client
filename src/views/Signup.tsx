@@ -14,7 +14,6 @@ const key = import.meta.env.VITE_API_KEY;
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY!);
 const stripe = await stripePromise;
-console.log(stripe);
 
 const product = 'price_1MdMKqBlr8UFcXJy83qKfDmx';
 
@@ -61,31 +60,41 @@ export function Signup() {
         validateEmail();
     }, [registrationInfo.email]);
 
-    const handleCheckout = async () => {
-        console.log(product);
-        const subscriptionRes = await axios.get(
-            `${
-                import.meta.env.VITE_API_ORIGIN
-            }/api/v1/payment/checkout-session/${key}`
-        );
-        console.log('returned');
-        console.log(subscriptionRes);
-        const sessionId = subscriptionRes.data.id;
-        console.log(sessionId);
-        // const stripe = await getStripe();
-        const { error } = await stripe!.redirectToCheckout({
-            //     // Make the id field from the Checkout Session creation API response
-            //     // available to this file, so you can provide it as parameter here
-            //     // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
-            sessionId,
-        });
-        // If `redirectToCheckout` fails due to a browser or network
-        // error, display the localized error message to your customer
-        // using `error.message`.
-        console.warn(error.message);
+    const handleDeleteAllUsers = async () => {
+        await axios
+            .delete(`${import.meta.env.VITE_API_ORIGIN}/api/v1/user/${key}`)
+            .then((response) => console.log(response.data));
     };
 
-    const handleSignUp = () => {
+    const handleCheckout = async (stripeId: string) => {
+        console.log('handle checkout');
+        try {
+            const subscriptionRes = await axios.get(
+                `${
+                    import.meta.env.VITE_API_ORIGIN
+                }/api/v1/payment/checkout-session/${key}/${stripeId}`
+            );
+            console.log('returned');
+            console.log(subscriptionRes);
+            const sessionId = subscriptionRes.data.id;
+            console.log(sessionId);
+            // const stripe = await getStripe();
+            const { error } = await stripe!.redirectToCheckout({
+                //     //     // Make the id field from the Checkout Session creation API response
+                //     //     // available to this file, so you can provide it as parameter here
+                //     //     // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
+                sessionId,
+            });
+            // If `redirectToCheckout` fails due to a browser or network
+            // error, display the localized error message to your customer
+            // using `error.message`.
+            console.warn(error.message);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleSignUp = async () => {
         console.log('signup');
         if (
             Object.values(registrationInfo).every((v) => v !== '') &&
@@ -94,10 +103,7 @@ export function Signup() {
             console.log(registrationInfo);
             setInvalidFirstName('');
             setInvalidLastName('');
-
             const { firstName, lastName, email } = registrationInfo;
-            console.log(registrationInfo);
-
             axios
                 .post(`${import.meta.env.VITE_API_ORIGIN}/api/v1/user/${key}`, {
                     firstName,
@@ -106,17 +112,11 @@ export function Signup() {
                 })
                 .then((response) => {
                     console.log(response.data);
-                    // updateRegistrationInfo({
-                    //     stripeId: response.data.stripeId,
-                    // });
-                    handleCheckout();
+                    handleCheckout(response.data.stripeId);
                 })
                 .catch((error) => {
                     setErrorMessage(error.response.data.error.message);
                 });
-            // send registrationInfo, validate, and create user record in DB
-            // create stripe user
-            // forward to /register
         } else {
             if (registrationInfo.firstName === '') {
                 setInvalidFirstName('Please enter a first name');
@@ -171,20 +171,19 @@ export function Signup() {
             {invalidEmail !== '' && (
                 <span className="form--alert">{invalidEmail}</span>
             )}
-            {/* <Button
-                callback={handleSignUp}
-                margin="30px 0 0 0"
-                width="100%"
-                name="Sign Up"
-            /> */}
-            {/* <Link to="/register"> */}
+
             <Button
                 callback={handleSignUp}
                 margin="10px 0 0 0"
                 width="100%"
                 name="Sign up"
             />
-            {/* </Link> */}
+            <Button
+                callback={handleDeleteAllUsers}
+                margin="10px 0 0 0"
+                width="100%"
+                name="Delete"
+            />
         </>
     );
 }

@@ -6,7 +6,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY!);
 const stripe = await stripePromise;
-console.log(stripe);
 
 export function Register() {
     let navigate = useNavigate();
