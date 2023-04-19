@@ -11,14 +11,22 @@ export function LoginGate() {
             const params = url.split('?')[1].split('&');
             const emailKey = params[0].split('=')[1];
             const email = params[1].split('=')[1];
-            const cookie = await axios
+            console.log(email, emailKey);
+            await axios
                 .get(
                     `${
                         import.meta.env.VITE_API_ORIGIN
                     }/api/v1/auth/session-token/${key}/${email}/${emailKey}`
                 )
-                .then((response) => console.log(response));
-            // console.log(cookie);
+                .then((response) => {
+                    console.log(response);
+                    const token = response.data.authToken;
+                    document.cookie = `roop-verma-library=${token}`;
+                    //   setIsAuth(true);
+                    //   setUserData(response.data.userData);
+                    //   navigate('/');
+                    // console.log(cookie);
+                });
         };
         effect();
     }, []);

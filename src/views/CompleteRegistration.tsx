@@ -64,15 +64,16 @@ export function CompleteRegistration() {
                 const emailKeyResponse = await axios.get(
                     `${
                         import.meta.env.VITE_API_ORIGIN
-                    }/api/v1/auth/email-key/${key}/${email}`
+                    }/api/v1/auth/email-token/${key}/${email}`
                 );
 
-                const { emailKey } = emailKeyResponse.data.token;
+                const token = emailKeyResponse.data.token;
+                console.log(token.emailToken);
 
                 setEmailInfo({
                     name,
                     email,
-                    emailKey,
+                    emailKey: token.emailToken,
                 });
             }
         };
@@ -90,7 +91,7 @@ export function CompleteRegistration() {
                     callback={handleSendEmail}
                     margin="10px 0 0 0"
                     width="100%"
-                    name="Delete"
+                    name="Proceed"
                 />
             </>
         );
