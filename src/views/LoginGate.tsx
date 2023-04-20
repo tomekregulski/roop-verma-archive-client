@@ -1,9 +1,12 @@
 import axios from 'axios';
 import { useEffect } from 'react';
+import { useAuthContext } from '../context/AuthContext';
 
 const key = import.meta.env.VITE_API_KEY;
 
 export function LoginGate() {
+    const { updateAuthStatus, updateUserData } = useAuthContext();
+
     useEffect(() => {
         // currently firing twice
         const effect = async () => {
@@ -22,10 +25,8 @@ export function LoginGate() {
                     console.log(response);
                     const token = response.data.authToken;
                     document.cookie = `roop-verma-library=${token}`;
-                    //   setIsAuth(true);
-                    //   setUserData(response.data.userData);
-                    //   navigate('/');
-                    // console.log(cookie);
+                    updateAuthStatus(true);
+                    updateUserData(response.data.userData);
                 });
         };
         effect();
