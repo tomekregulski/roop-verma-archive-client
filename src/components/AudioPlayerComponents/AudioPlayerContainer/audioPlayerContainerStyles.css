@@ -1,0 +1,24 @@
+.audioContainerWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 90%;
+  max-width: 500px;
+}
+
+.tanpura__left {
+  height: 200px;
+  margin-right: 50px;
+}
+
+.tanpura__right {
+  height: 200px;
+  margin-left: 50px;
+}
+
+@media screen and (min-width: 790px) {
+  .audioContainerWrapper {
+    width: 750px;
+    max-width: none;
+  }
+}
