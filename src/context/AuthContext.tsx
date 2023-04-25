@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import jwt_decode from 'jwt-decode';
 
-import { checkJwt } from '../util/checkJwt';
+import { isValidJwt } from '../util/isValidJwt';
 
 interface UserData {
     id: number;
@@ -52,9 +52,8 @@ export const AuthProvider = (props: AuthContextProps) => {
 
     useEffect(() => {
         console.log('AuthContext useEffect');
-        const currentJwt = checkJwt();
-        console.log(currentJwt);
-        if (currentJwt !== false) {
+        const currentJwt = isValidJwt();
+        if (currentJwt) {
             // TODO: update JWT to only have ID and/or stripeId
             const decoded = jwt_decode(currentJwt);
             // TODO: clean this up

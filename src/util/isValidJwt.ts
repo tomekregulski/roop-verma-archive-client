@@ -1,34 +1,15 @@
-import jwt_decode from 'jwt-decode';
-
-export function isValidJwt() {
-    console.log('validating jwt');
+export const isValidJwt = () => {
+    console.log('checking jwt...');
     const allCookies = document.cookie.split('; ');
-    let cookies = {};
-
+    const jwtKey = 'roop-verma-library';
     for (let i = 0; i < allCookies.length; i++) {
         const currentCookie = allCookies[i].split('=');
-        // @ts-expect-error any
-        cookies[currentCookie[0]] = currentCookie[1];
-    }
-
-    const jwtKey = 'roop-verma-library';
-
-    if (Object.keys(cookies).includes(jwtKey)) {
-        // @ts-expect-error any
-        let currentJwt = cookies[jwtKey];
-        let decodedToken = jwt_decode(currentJwt);
-        let currentDate = new Date();
-
-        // @ts-expect-error any
-        if (decodedToken.exp * 1000 < currentDate.getTime()) {
-            console.log('Token expired.');
-            return false;
+        if (currentCookie[0] === jwtKey) {
+            console.log('jwt found!');
+            return currentCookie[1];
         } else {
-            console.log('Valid token');
-            return true;
+            console.log('no jwt found, please log in');
+            return;
         }
-    } else {
-        console.log('No JWT found');
-        return false;
     }
-}
+};
