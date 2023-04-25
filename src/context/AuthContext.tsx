@@ -51,15 +51,18 @@ export const AuthProvider = (props: AuthContextProps) => {
     }
 
     useEffect(() => {
+        console.log('AuthContext useEffect');
         const currentJwt = checkJwt();
         console.log(currentJwt);
         if (currentJwt !== false) {
             // TODO: update JWT to only have ID and/or stripeId
             const decoded = jwt_decode(currentJwt);
             // TODO: clean this up
+            console.log('AuthContext: setting isAuth: true');
             setUserData(decoded as UserData);
             setIsAuth(true);
         } else {
+            console.log('AuthContext: setting isAuth: false');
             setIsAuth(false);
             setUserData(null);
         }
