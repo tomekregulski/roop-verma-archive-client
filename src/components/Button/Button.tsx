@@ -13,7 +13,7 @@ interface ButtonProps {
     name: string;
 }
 
-const Button = (props: ButtonProps) => {
+export function Button(props: ButtonProps) {
     const {
         callback,
         width,
@@ -48,6 +48,4 @@ const Button = (props: ButtonProps) => {
             </button>
         </div>
     );
-};
-
-export default Button;
+}

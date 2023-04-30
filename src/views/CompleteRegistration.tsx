@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { init, send } from 'emailjs-com';
 import { loadStripe } from '@stripe/stripe-js';
 import axios from 'axios';
-import Button from '../components/Button/Button';
+import { Button } from '../components/Button/Button';
 
 const key = import.meta.env.VITE_API_KEY;
 

@@ -1,0 +1,136 @@
+import React, { useContext, useState, useEffect, ChangeEvent } from 'react';
+
+// import { TracksContextData } from '../Context/TracksContext';
+// import { AuthContext } from '../Context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { isValidJwt } from '../util/isValidJwt';
+
+import AudioPlayerContainer from '../components/AudioPlayerComponents/AudioPlayerContainer/AudioPlayerContainer';
+import TrackContainer from '../components/TrackContainer/TrackContainer';
+import { LoggedOutView } from './LoggedOutView';
+
+// import Select from '../Components/Select/Select';
+import { Button } from '../components/Button/Button';
+import { Input } from '../components/Input/Input';
+
+// import { categories } from '../Utils/constants';
+import './styles/audioViewStyles.css';
+
+import { getEachItem } from '../util/helperFunctions';
+import { useAudioContext } from '../context/AudioContext';
+import { useAuthContext } from '../context/AuthContext';
+
+interface AudioViewProps {
+    width: number;
+    breakpoint: number;
+}
+
+const AudioView = (props: AudioViewProps) => {
+    const { width, breakpoint } = props;
+    const [search, setSearch] = useState('');
+    const {
+        setSearchFilter,
+        setSelectedTrack,
+        trackList,
+        filteredTracks,
+        setFilteredTracks,
+    } = useAudioContext();
+    // TODO: what is this?
+
+    const { userData, updateUserData, updateAuthStatus, isAuth } =
+        useAuthContext();
+
+    let navigate = useNavigate();
+
+    useEffect(() => {
+        if (!isValidJwt) {
+            updateUserData(null);
+            updateAuthStatus(false);
+            document.cookie =
+                'roop-verma-library= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
+            navigate('/');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        let searchResults = { ids: [], type: '' };
+        if (search === '') {
+            searchResults = { ...searchResults, type: 'all' };
+            setSearchFilter(searchResults);
+        } else {
+            const results = getEachItem(trackList, search);
+            if (results.length === 0) {
+                searchResults = { ...searchResults, type: 'none' };
+                setSearchFilter(searchResults);
+            } else if (results.length > 0) {
+                searchResults = { ids: results, type: 'some' };
+                setSearchFilter(searchResults);
+            } else {
+                searchResults = { ...searchResults, type: 'error' };
+                setSearchFilter(searchResults);
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [search]);
+
+    const searchItem = (e: ChangeEvent<HTMLInputElement>, id: string) => {
+        setTimeout(() => {
+            setSearch(e.target.value);
+        }, 1000);
+    };
+
+    const supriseMe = () => {
+        if (filteredTracks) {
+            const randomTrackNumber = Math.floor(Math.random() * 10);
+            const randomTrack = filteredTracks[randomTrackNumber];
+            setSelectedTrack(randomTrack);
+        }
+    };
+
+    const showAll = () => {
+        console.log(trackList);
+        setFilteredTracks(trackList);
+        setSearch('');
+    };
+
+    return (
+        <div className="audioview--container">
+            {isAuth === false ? <LoggedOutView /> : null}
+            <AudioPlayerContainer width={width} breakpoint={breakpoint} />
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginTop: '20px',
+                }}
+            >
+                <Input
+                    placeholder="Search Tracks"
+                    margin="0 0 0 0"
+                    padding="7px 15px"
+                    callback={(e: ChangeEvent<HTMLInputElement>, id: string) =>
+                        searchItem(e, id)
+                    }
+                />
+                <Button
+                    margin="0 0 0 15px"
+                    name="Show All"
+                    width="180px"
+                    callback={showAll}
+                    padding="8px 35px"
+                />
+                <Button
+                    margin="0 0 0 15px"
+                    name="Surprise Me"
+                    width="180px"
+                    callback={supriseMe}
+                    padding="8px 35px"
+                />
+            </div>
+            <TrackContainer />
+        </div>
+    );
+};
+
+export default AudioView;

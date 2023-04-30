@@ -22,7 +22,7 @@ interface AuthState {
     isAuth: boolean;
     userData: UserData | null;
     updateAuthStatus: (status: boolean) => void;
-    updateUserData: (data: UserData) => void;
+    updateUserData: (data: UserData | null) => void;
 }
 
 interface AuthContextProps {
@@ -46,13 +46,14 @@ export const AuthProvider = (props: AuthContextProps) => {
         setIsAuth(status);
     }
 
-    function updateUserData(data: UserData) {
+    function updateUserData(data: UserData | null) {
         setUserData(data);
     }
 
     useEffect(() => {
         console.log('AuthContext useEffect');
         const currentJwt = isValidJwt();
+        // currently firing 4 times initially
         if (currentJwt) {
             // TODO: update JWT to only have ID and/or stripeId
             const decoded = jwt_decode(currentJwt);

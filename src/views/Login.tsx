@@ -1,6 +1,6 @@
 import { ChangeEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Button from '../components/Button/Button';
+import { Button } from '../components/Button/Button';
 import { Input } from '../components/Input/Input';
 import axios from 'axios';
 
