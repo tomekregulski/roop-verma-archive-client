@@ -104,31 +104,30 @@ export const AudioProvider = (props: AudioContextProps) => {
     useEffect(() => {
         const fetchTracks = async () => {
             console.log('fetching tracks...');
-            // let response;
-            // setTracksMessage('Loading...');
+            let response;
+            setTracksMessage('Loading...');
             // const jwt = isValidJwt();
-            // try {
-            //     if (isAuth === true && jwt) {
-            //         response = await axios.get(
-            //             `${
-            //                 import.meta.env.VITE_API_ORIGIN
-            //             }/api/v1/track/${key}`,
-            //             {
-            //                 headers: { jwt: jwt },
-            //             }
-            //         );
-            //     } else {
-            //         response = await axios.get(
-            //             `${
-            //                 import.meta.env.VITE_API_ORIGIN
-            //             }/api/v1/track/public/${key}`
-            //         );
-            //     }
-            //     setTrackList(response.data);
-            // } catch (error) {
-            //     console.log(error);
-            // }
-            // setTracksMessage('');
+            try {
+                if (isAuth === true /* && jwt */) {
+                    response = await axios.get(
+                        `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${key}`
+                        // {
+                        //     headers: { jwt: jwt },
+                        // }
+                    );
+                } else {
+                    response = await axios.get(
+                        `${
+                            import.meta.env.VITE_API_ORIGIN
+                        }/api/v1/track/public/${key}`
+                    );
+                }
+                console.log(response.data);
+                setTrackList(response.data);
+            } catch (error) {
+                console.log(error);
+            }
+            setTracksMessage('');
         };
         // this will probably break if registered user !isAuth and then logs in => may need a flag to track this?
         if (!trackList) {

@@ -54,6 +54,7 @@ const AudioView = (props: AudioViewProps) => {
     }, []);
 
     useEffect(() => {
+        console.log('searching');
         let searchResults = { ids: [], type: '' };
         if (search === '') {
             searchResults = { ...searchResults, type: 'all' };
@@ -74,11 +75,12 @@ const AudioView = (props: AudioViewProps) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [search]);
 
-    const searchItem = (e: ChangeEvent<HTMLInputElement>, id: string) => {
-        setTimeout(() => {
-            setSearch(e.target.value);
-        }, 1000);
-    };
+    // const searchItem = (e: ChangeEvent<HTMLInputElement>) => {
+    //     console.log(e);
+    //     setTimeout(() => {
+    //         setSearch(e.target.value);
+    //     }, 1000);
+    // };
 
     const supriseMe = () => {
         if (filteredTracks) {
@@ -109,9 +111,17 @@ const AudioView = (props: AudioViewProps) => {
                     placeholder="Search Tracks"
                     margin="0 0 0 0"
                     padding="7px 15px"
-                    callback={(e: ChangeEvent<HTMLInputElement>, id: string) =>
-                        searchItem(e, id)
+                    // labelColor="white"
+                    callback={(e: ChangeEvent<HTMLInputElement>) =>
+                        // searchItem(e)
+                        setSearch(e.target.value)
                     }
+                    label="Seach Tracks"
+                    type="text"
+                    name="search-tracks"
+                    id="search-tracks-input"
+                    labelColor="white"
+                    value={search}
                 />
                 <Button
                     margin="0 0 0 15px"

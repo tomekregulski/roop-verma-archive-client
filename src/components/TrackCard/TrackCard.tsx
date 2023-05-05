@@ -1,8 +1,3 @@
-import React, { useContext } from 'react';
-// @ts-expect-error
-import { ReactComponent as Play } from '../../assets/play.svg';
-// @ts-expect-error
-import { ReactComponent as Pause } from '../../assets/pause.svg';
 import { getTrackTitle } from '../../util/getTrackTitle';
 
 import './trackCard.css';
@@ -62,11 +57,11 @@ const TrackCard = (props: TrackCardProps) => {
                     <div className="card--column-right">
                         {isSelected && (
                             <button className="play audio-controls--button">
-                                {isPlaying ? (
-                                    <Pause onClick={playPauseValidation} />
-                                ) : (
-                                    <Play onClick={playPauseValidation} />
-                                )}
+                                {isPlaying
+                                    ? // <Pause onClick={playPauseValidation} />
+                                      'Play'
+                                    : // <Play onClick={playPauseValidation} />
+                                      'Pause'}
                             </button>
                         )}
                     </div>

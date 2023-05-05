@@ -34,18 +34,19 @@ const TrackContainer = (props) => {
     useEffect(() => {
         // @ts-expect-error
         let rows = [];
-        if (filteredTracks) {
+        if (filteredTracks && filteredTracks.length > 0) {
+            console.log(filteredTracks);
             filteredTracks.map((item) => {
                 return rows.push({
                     id: item.id,
                     // event_name: item.tape.event.event_name,
                     // @ts-expect-error
-                    name: item.Raga.name,
+                    name: item.raga.name,
                     // date: item.tape.event.date,
                     // category: item.tape.event.category.name,
                     // location: item.tape.event.location.name,
                     // @ts-expect-error
-                    timeOfDay: item.Raga.time,
+                    timeOfDay: item.raga.time,
                     accompanied: item.accompanied,
                     plays: item.plays,
                 });

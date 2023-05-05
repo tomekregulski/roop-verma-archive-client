@@ -10,10 +10,20 @@ import { UserAccount } from './views/UserAccount';
 import AboutRoopji from './views/AboutRoopji';
 // import { useState } from 'react';
 import { AudioProvider } from './context/AudioContext';
+import { useEffect, useState } from 'react';
+import AudioView from './views/AudioView';
 
 export function App() {
-    // const [width, setWidth] = useState(window.innerWidth);
-    // const breakpoint = 850;
+    const [width, setWidth] = useState(window.innerWidth);
+    const breakpoint = 850;
+
+    useEffect(() => {
+        const handleResizeWindow = () => setWidth(window.innerWidth);
+        window.addEventListener('resize', handleResizeWindow);
+        return () => {
+            window.removeEventListener('resize', handleResizeWindow);
+        };
+    }, []);
 
     return (
         <div id="modal-root">
@@ -24,10 +34,13 @@ export function App() {
                         <Route path="/" element={<Welcome />} />
                         <Route
                             path="/audio"
-                            element={<div>Audio Library</div>}
+                            element={
+                                <AudioView
+                                    width={width}
+                                    breakpoint={breakpoint}
+                                />
+                            }
                         />
-                        {/* <Route path='audio' element={<AudioView width={width} breakpoint={breakpoint} />}
-                        /> */}
                         <Route path="/signup" element={<Signup />} />
                         <Route path="/register" element={<Register />} />
                         <Route

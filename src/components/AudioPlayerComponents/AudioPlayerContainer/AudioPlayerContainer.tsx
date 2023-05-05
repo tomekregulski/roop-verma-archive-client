@@ -1,7 +1,7 @@
 import React from 'react';
 
-import tanpuraRight from '../../assets/sitar.png';
-import tanpuraLeft from '../../assets/sitar-reverse.png';
+import tanpuraRight from '../../../assets/sitar.png';
+import tanpuraLeft from '../../../assets/sitar-reverse.png';
 import { AudioPlayer } from '../AudioPlayer/AudioPlayer';
 
 import './audioPlayerContainerStyles.css';
@@ -23,7 +23,7 @@ const AudioPlayerContainer = (props: AudioPlayerContainerProps) => {
                     alt="tanpura"
                 />
             )}
-            <AudioPlayer />
+            {/* <AudioPlayer /> */}
             {width > breakpoint && (
                 <img
                     className="tanpura__right"
