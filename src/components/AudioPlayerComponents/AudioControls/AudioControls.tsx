@@ -1,11 +1,7 @@
-// @ts-expect-error TOOD: figure out how to properly handle SVGs
-import { ReactComponent as Play } from '../../assets/play.svg';
-// @ts-expect-error TOOD: figure out how to properly handle SVGs
-import { ReactComponent as Pause } from '../../assets/pause.svg';
-// @ts-expect-error TOOD: figure out how to properly handle SVGs
-import { ReactComponent as Next } from '../../assets/next.svg';
-// @ts-expect-error TOOD: figure out how to properly handle SVGs
-import { ReactComponent as Prev } from '../../assets/prev.svg';
+import Play from '../../../assets/play.svg';
+import Pause from '../../../assets/pause.svg';
+import Next from '../../../assets/next.svg';
+import Prev from '../../../assets/prev.svg';
 
 import './audioControls.css';
 
@@ -26,7 +22,8 @@ const AudioControls = (props: AudioControlsProps) => {
                 aria-label="Previous"
                 onClick={onPrevClick}
             >
-                <Prev />
+                {/* <Prev /> */}
+                <span>Prev</span>
             </button>
             {isPlaying ? (
                 <button
@@ -35,7 +32,8 @@ const AudioControls = (props: AudioControlsProps) => {
                     onClick={() => onPlayPauseClick(false)}
                     aria-label="Pause"
                 >
-                    <Pause />
+                    {/* <Pause /> */}
+                    <span>Pause</span>
                 </button>
             ) : (
                 <button
@@ -44,7 +42,8 @@ const AudioControls = (props: AudioControlsProps) => {
                     onClick={() => onPlayPauseClick(true)}
                     aria-label="Play"
                 >
-                    <Play />
+                    {/* <Play /> */}
+                    <span>Play</span>
                 </button>
             )}
             <button
@@ -53,7 +52,8 @@ const AudioControls = (props: AudioControlsProps) => {
                 aria-label="Next"
                 onClick={onNextClick}
             >
-                <Next />
+                {/* <Next /> */}
+                <span>Next</span>
             </button>
         </div>
     );

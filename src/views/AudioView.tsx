@@ -65,6 +65,7 @@ const AudioView = (props: AudioViewProps) => {
                 searchResults = { ...searchResults, type: 'none' };
                 setSearchFilter(searchResults);
             } else if (results.length > 0) {
+                // @ts-expect-error ids typing to never[] - fix this
                 searchResults = { ids: results, type: 'some' };
                 setSearchFilter(searchResults);
             } else {
