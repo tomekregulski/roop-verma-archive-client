@@ -8,7 +8,6 @@ import { LoginGate } from './views/LoginGate';
 import Navbar from './components/Navbar/Navbar';
 import { UserAccount } from './views/UserAccount';
 import AboutRoopji from './views/AboutRoopji';
-// import { useState } from 'react';
 import { AudioProvider } from './context/AudioContext';
 import { useEffect, useState } from 'react';
 import AudioView from './views/AudioView';
