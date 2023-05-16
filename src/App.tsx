@@ -1,9 +1,64 @@
+import { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
+import Navbar from './components/Navbar/Navbar';
+// import { useState } from 'react';
+import { AudioProvider } from './context/AudioContext';
+import AboutRoopji from './views/AboutRoopji';
+import AudioView from './views/AudioView';
+import { CompleteRegistration } from './views/CompleteRegistration';
+import { LoginGate } from './views/LoginGate';
+import { ManageAccount } from './views/ManageAccount';
+import { Register } from './views/Register';
+import { Signup } from './views/Signup';
+import { UserAccount } from './views/UserAccount';
+import { Welcome } from './views/Welcome';
+
 export function App() {
-  console.log('App');
+  const [width, setWidth] = useState(window.innerWidth);
+  const breakpoint = 850;
+
+  useEffect(() => {
+    const handleResizeWindow = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResizeWindow);
+    return () => {
+      window.removeEventListener('resize', handleResizeWindow);
+    };
+  }, []);
 
   return (
-    <div>
-      <h1>hi</h1>
+    <div id="modal-root">
+      <Router>
+        <Navbar />
+        <AudioProvider>
+          <Routes>
+            <Route path="/" element={<Welcome />} />
+            <Route
+              path="/audio"
+              element={<AudioView width={width} breakpoint={breakpoint} />}
+            />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/complete-registration" element={<CompleteRegistration />} />
+            <Route path="/manage-account" element={<ManageAccount />} />
+            <Route path="/login-gate" element={<LoginGate />} />
+            <Route path="/roopji" element={<AboutRoopji />} />
+            {/* <Route path='library' element={<AboutLibrary />} /> */}
+            <Route path="/library" element={<div>About the Library and Help</div>} />
+            <Route path="/account" element={<UserAccount />} />
+          </Routes>
+        </AudioProvider>
+      </Router>
     </div>
   );
 }
+
+// export function App() {
+//   console.log('App');
+
+//   return (
+//     <div>
+//       <h1>hi</h1>
+//     </div>
+//   );
+// }

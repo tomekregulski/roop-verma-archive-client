@@ -1,0 +1,7 @@
+.container--logged-out-view p {
+  color: white;
+  text-align: center;
+  margin-bottom: 50px;
+  padding: 0 25px;
+  line-height: 1.5;
+}
