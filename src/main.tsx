@@ -1,13 +1,18 @@
 import './index.css';
 
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 
 import { App } from './App';
+// import { AuthProvider } from './context/AuthContext';
+// import { RegistrationProvider } from './context/RegistrationContext';
 
-ReactDOM.render(
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
+    {/* <RegistrationProvider> */}
+    {/* <AuthProvider> */}
     <App />
+    {/* </AuthProvider> */}
+    {/* </RegistrationProvider> */}
   </React.StrictMode>,
-  document.getElementById('root'),
 );
