@@ -1,12 +1,12 @@
-import { loadStripe } from '@stripe/stripe-js';
+// import { loadStripe } from '@stripe/stripe-js';
 import axios from 'axios';
 // import { FormEvent } from 'react';
 import { useLocation /*, useNavigate */ } from 'react-router-dom';
 // import tw from 'twin.macro';
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY!);
-const stripe = await stripePromise;
+// const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY!);
+// const stripe = await stripePromise;
 
 export function Register() {
   //   const navigate = useNavigate();
@@ -26,16 +26,16 @@ export function Register() {
     console.log(sessionId);
     // const stripe = await getStripe();
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const { error } = await stripe!.redirectToCheckout({
-      // Make the id field from the Checkout Session creation API response
-      // available to this file, so you can provide it as parameter here
-      // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
-      sessionId,
-    });
+    // const { error } = await stripe!.redirectToCheckout({
+    // Make the id field from the Checkout Session creation API response
+    // available to this file, so you can provide it as parameter here
+    // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
+    // sessionId,
+    // });
     // If `redirectToCheckout` fails due to a browser or network
     // error, display the localized error message to your customer
     // using `error.message`.
-    console.warn(error.message);
+    // console.warn(error.message);
   };
 
   return (

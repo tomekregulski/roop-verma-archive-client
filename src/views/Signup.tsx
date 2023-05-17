@@ -1,9 +1,9 @@
 import './styles/formStyles.css';
+import /* Link, useNavigate */ 'react-router-dom';
 
-import { loadStripe } from '@stripe/stripe-js';
+// import { loadStripe } from '@stripe/stripe-js';
 import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 
 import { Button } from '../components/Button/Button';
 import { Input } from '../components/Input/Input';
@@ -11,10 +11,10 @@ import { useRegistrationContext } from '../context/RegistrationContext';
 
 const key = import.meta.env.VITE_API_KEY;
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY!);
-const stripe = await stripePromise;
+// const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY!);
+// const stripe = await stripePromise;
 
-const product = 'price_1MdMKqBlr8UFcXJy83qKfDmx';
+// const product = 'price_1MdMKqBlr8UFcXJy83qKfDmx';
 
 export function Signup() {
   const [invalidEmail, setInvalidEmail] = useState('');
@@ -24,7 +24,7 @@ export function Signup() {
 
   const { updateRegistrationInfo, registrationInfo } = useRegistrationContext();
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -66,30 +66,30 @@ export function Signup() {
 
   const handleCheckout = async (stripeId: string) => {
     console.log('handle checkout');
-    try {
-      const subscriptionRes = await axios.get(
-        `${
-          import.meta.env.VITE_API_ORIGIN
-        }/api/v1/payment/checkout-session/${key}/${stripeId}`,
-      );
-      console.log('returned');
-      console.log(subscriptionRes);
-      const sessionId = subscriptionRes.data.id;
-      console.log(sessionId);
-      // const stripe = await getStripe();
-      const { error } = await stripe!.redirectToCheckout({
-        //     //     // Make the id field from the Checkout Session creation API response
-        //     //     // available to this file, so you can provide it as parameter here
-        //     //     // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
-        sessionId,
-      });
-      // If `redirectToCheckout` fails due to a browser or network
-      // error, display the localized error message to your customer
-      // using `error.message`.
-      console.warn(error.message);
-    } catch (error) {
-      console.log(error);
-    }
+    // try {
+    //   const subscriptionRes = await axios.get(
+    //     `${
+    //       import.meta.env.VITE_API_ORIGIN
+    //     }/api/v1/payment/checkout-session/${key}/${stripeId}`,
+    //   );
+    //   console.log('returned');
+    //   console.log(subscriptionRes);
+    //   const sessionId = subscriptionRes.data.id;
+    //   console.log(sessionId);
+    //   // const stripe = await getStripe();
+    //   const { error } = await stripe!.redirectToCheckout({
+    //     //     //     // Make the id field from the Checkout Session creation API response
+    //     //     //     // available to this file, so you can provide it as parameter here
+    //     //     //     // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
+    //     sessionId,
+    //   });
+    //   // If `redirectToCheckout` fails due to a browser or network
+    //   // error, display the localized error message to your customer
+    //   // using `error.message`.
+    //   console.warn(error.message);
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   const handleSignUp = async () => {
