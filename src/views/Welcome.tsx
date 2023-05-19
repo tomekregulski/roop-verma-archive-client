@@ -22,7 +22,7 @@ export function Welcome() {
             above. Additionally, you can explore the other pages to learn more about
             Roopji and this project
           </p>
-          {/* <Login /> */}
+          <Login />
         </>
       ) : (
         <>

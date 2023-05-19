@@ -1,4 +1,3 @@
-// import { loadStripe } from '@stripe/stripe-js';
 import axios from 'axios';
 import { init, send } from 'emailjs-com';
 import { useEffect, useState } from 'react';
@@ -6,10 +5,6 @@ import { useEffect, useState } from 'react';
 import { Button } from '../components/Button/Button';
 
 const key = import.meta.env.VITE_API_KEY;
-
-// const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY!);
-// const stripe = await stripePromise;
-// console.log(stripe);
 
 init('user_sWNT4oROPiAoUGksmqFlD');
 
