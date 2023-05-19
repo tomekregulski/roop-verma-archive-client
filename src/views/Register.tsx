@@ -1,12 +1,7 @@
-// import { loadStripe } from '@stripe/stripe-js';
 import axios from 'axios';
 // import { FormEvent } from 'react';
 import { useLocation /*, useNavigate */ } from 'react-router-dom';
 // import tw from 'twin.macro';
-
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-// const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY!);
-// const stripe = await stripePromise;
 
 export function Register() {
   //   const navigate = useNavigate();
