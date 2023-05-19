@@ -1,10 +1,6 @@
-// import { loadStripe } from '@stripe/stripe-js';
 import axios from 'axios';
-// import { FormEvent } from 'react';
-// import tw from 'twin.macro';
 
-// const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY!);
-// const stripe = await stripePromise;
+// import tw from 'twin.macro';
 
 export function ManageAccount() {
   const handlePortal = async () => {

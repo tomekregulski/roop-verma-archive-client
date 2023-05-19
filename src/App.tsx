@@ -9,7 +9,6 @@ import AudioView from './views/AudioView';
 import { CompleteRegistration } from './views/CompleteRegistration';
 import { LoginGate } from './views/LoginGate';
 import { ManageAccount } from './views/ManageAccount';
-import { Register } from './views/Register';
 import { Signup } from './views/Signup';
 import { UserAccount } from './views/UserAccount';
 import { Welcome } from './views/Welcome';
@@ -38,7 +37,6 @@ export function App() {
               element={<AudioView width={width} breakpoint={breakpoint} />}
             />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/register" element={<Register />} />
             <Route path="/complete-registration" element={<CompleteRegistration />} />
             <Route path="/manage-account" element={<ManageAccount />} />
             <Route path="/login-gate" element={<LoginGate />} />
