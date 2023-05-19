@@ -1,18 +1,14 @@
 import './styles/formStyles.css';
-import /* Link, useNavigate */ 'react-router-dom';
 
-// import { loadStripe } from '@stripe/stripe-js';
 import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
 
 import { Button } from '../components/Button/Button';
 import { Input } from '../components/Input/Input';
 import { useRegistrationContext } from '../context/RegistrationContext';
+import { getStripe, StripeResponseObject } from '../util/getStripe';
 
 const key = import.meta.env.VITE_API_KEY;
-
-// const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY!);
-// const stripe = await stripePromise;
 
 // const product = 'price_1MdMKqBlr8UFcXJy83qKfDmx';
 
@@ -21,6 +17,7 @@ export function Signup() {
   const [invalidFirstName, setInvalidFirstName] = useState('');
   const [invalidLastName, setInvalidLastName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [stripe, setStripe] = useState<StripeResponseObject | null>(null);
 
   const { updateRegistrationInfo, registrationInfo } = useRegistrationContext();
 
@@ -32,8 +29,12 @@ export function Signup() {
   };
 
   useEffect(() => {
-    console.log(registrationInfo);
-  }, [registrationInfo]);
+    const get = async () => {
+      const stripeResponse = await getStripe();
+      setStripe(stripeResponse);
+    };
+    get();
+  }, []);
 
   const validateEmail = () => {
     const validRegex =
@@ -66,62 +67,70 @@ export function Signup() {
 
   const handleCheckout = async (stripeId: string) => {
     console.log('handle checkout');
-    // try {
-    //   const subscriptionRes = await axios.get(
-    //     `${
-    //       import.meta.env.VITE_API_ORIGIN
-    //     }/api/v1/payment/checkout-session/${key}/${stripeId}`,
-    //   );
-    //   console.log('returned');
-    //   console.log(subscriptionRes);
-    //   const sessionId = subscriptionRes.data.id;
-    //   console.log(sessionId);
-    //   // const stripe = await getStripe();
-    //   const { error } = await stripe!.redirectToCheckout({
-    //     //     //     // Make the id field from the Checkout Session creation API response
-    //     //     //     // available to this file, so you can provide it as parameter here
-    //     //     //     // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
-    //     sessionId,
-    //   });
-    //   // If `redirectToCheckout` fails due to a browser or network
-    //   // error, display the localized error message to your customer
-    //   // using `error.message`.
-    //   console.warn(error.message);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    if (stripe && stripe.data) {
+      try {
+        const subscriptionRes = await axios.get(
+          `${
+            import.meta.env.VITE_API_ORIGIN
+          }/api/v1/payment/checkout-session/${key}/${stripeId}`,
+        );
+        console.log('returned');
+        console.log(subscriptionRes);
+        const sessionId = subscriptionRes.data.id;
+        console.log(sessionId);
+        // const stripe = await getStripe();
+        const { error } = await stripe.data.redirectToCheckout({
+          //     //     // Make the id field from the Checkout Session creation API response
+          //     //     // available to this file, so you can provide it as parameter here
+          //     //     // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
+          sessionId,
+        });
+        // If `redirectToCheckout` fails due to a browser or network
+        // error, display the localized error message to your customer
+        // using `error.message`.
+        console.warn(error.message);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      console.log('stripe not found');
+    }
   };
 
   const handleSignUp = async () => {
-    console.log('signup');
-    if (Object.values(registrationInfo).every((v) => v !== '') && invalidEmail === '') {
-      console.log(registrationInfo);
-      setInvalidFirstName('');
-      setInvalidLastName('');
-      const { firstName, lastName, email } = registrationInfo;
-      axios
-        .post(`${import.meta.env.VITE_API_ORIGIN}/api/v1/user/${key}`, {
-          firstName,
-          lastName,
-          email,
-        })
-        .then((response) => {
-          console.log(response.data);
-          handleCheckout(response.data.stripeId);
-        })
-        .catch((error) => {
-          setErrorMessage(error.response.data.error.message);
-        });
+    if (stripe && stripe.data) {
+      console.log('signup');
+      if (Object.values(registrationInfo).every((v) => v !== '') && invalidEmail === '') {
+        console.log(registrationInfo);
+        setInvalidFirstName('');
+        setInvalidLastName('');
+        const { firstName, lastName, email } = registrationInfo;
+        axios
+          .post(`${import.meta.env.VITE_API_ORIGIN}/api/v1/user/${key}`, {
+            firstName,
+            lastName,
+            email,
+          })
+          .then((response) => {
+            console.log(response.data);
+            handleCheckout(response.data.stripeId);
+          })
+          .catch((error) => {
+            setErrorMessage(error.response.data.error.message);
+          });
+      } else {
+        if (registrationInfo.firstName === '') {
+          setInvalidFirstName('Please enter a first name');
+        }
+        if (registrationInfo.lastName === '') {
+          setInvalidLastName('Please enter a last name');
+        }
+        if (registrationInfo.email === '') {
+          setInvalidEmail('Please enter an email address');
+        }
+      }
     } else {
-      if (registrationInfo.firstName === '') {
-        setInvalidFirstName('Please enter a first name');
-      }
-      if (registrationInfo.lastName === '') {
-        setInvalidLastName('Please enter a last name');
-      }
-      if (registrationInfo.email === '') {
-        setInvalidEmail('Please enter an email address');
-      }
+      console.log('stripe key not found');
     }
   };
 
