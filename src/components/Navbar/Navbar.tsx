@@ -30,7 +30,7 @@ const Navbar = () => {
             <Link to="library" className="nav--links-link">
               Help
             </Link>
-            {isAuth === true ? (
+            {/* {isAuth === true ? (
               <>
                 <Link to="account" className="nav--links-link">
                   Account Info
@@ -40,7 +40,7 @@ const Navbar = () => {
               <Link to="signup" className="nav--links-link">
                 Sign Up
               </Link>
-            )}
+            )} */}
           </span>
         </div>
       </div>
