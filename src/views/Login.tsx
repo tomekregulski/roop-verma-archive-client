@@ -21,7 +21,7 @@ export function Login() {
   };
 
   const sendLoginEmail = (name: string, emailKey: string) => {
-    send('rvdl_forms', 'template_lj7tqph', {
+    send('rvdl_forms', 'template_rgadtp9', {
       email,
       name,
       key: emailKey,
