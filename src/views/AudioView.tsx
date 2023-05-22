@@ -48,7 +48,7 @@ const AudioView = (props: AudioViewProps) => {
   }, []);
 
   useEffect(() => {
-    console.log('searching');
+    // console.log('searching');
     let searchResults = { ids: [], type: '' };
     if (search === '') {
       searchResults = { ...searchResults, type: 'all' };

@@ -20,10 +20,11 @@ export function Login() {
     setEmail(value);
   };
 
-  const sendConfirmationEmail = (name: string) => {
+  const sendLoginEmail = (name: string, emailKey: string) => {
     send('rvdl_forms', 'template_lj7tqph', {
       email,
       name,
+      key: emailKey,
     }).then(
       (response) => {
         console.log('SUCCESS!', response.status, response.text);
@@ -36,16 +37,18 @@ export function Login() {
   };
 
   const handleSignIn = async () => {
-    console.log('signing in...');
-    const token = await axios.post(
-      `${import.meta.env.VITE_API_ORIGIN}/api/v1/auth/login/${key}`,
-      {
-        email,
-      },
-    );
-    console.log(token);
-    // need to get name
-    sendConfirmationEmail(token.data.name);
+    try {
+      console.log('signing in...');
+      const emailKeyResponse = await axios.get(
+        `${import.meta.env.VITE_API_ORIGIN}/api/v1/auth/email-token/${key}/${email}`,
+      );
+      const token = emailKeyResponse.data.token;
+      console.log(token);
+      // need to get name
+      sendLoginEmail('Tomek', token);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   if (!emailSent) {

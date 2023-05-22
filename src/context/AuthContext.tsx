@@ -43,7 +43,6 @@ export const AuthProvider = (props: AuthContextProps) => {
   const [userData, setUserData] = useState<UserData | null>(null);
 
   function updateAuthStatus(status: boolean) {
-    // setIsAuth(status);
     console.log(status);
     setIsAuth(false);
   }
@@ -63,7 +62,7 @@ export const AuthProvider = (props: AuthContextProps) => {
       console.log('AuthContext: setting isAuth: true');
       setUserData(decoded as UserData);
       // setIsAuth(true);
-      setIsAuth(false);
+      setIsAuth(true);
     } else {
       console.log('AuthContext: setting isAuth: false');
       setIsAuth(false);
