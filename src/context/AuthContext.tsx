@@ -10,7 +10,7 @@ import React, {
 
 import { isValidJwt } from '../util/isValidJwt';
 
-interface UserData {
+export interface UserData {
   id: number;
   firstName: string;
   lastName: string;
@@ -44,7 +44,7 @@ export const AuthProvider = (props: AuthContextProps) => {
 
   function updateAuthStatus(status: boolean) {
     console.log(status);
-    setIsAuth(false);
+    setIsAuth(status);
   }
 
   function updateUserData(data: UserData | null) {

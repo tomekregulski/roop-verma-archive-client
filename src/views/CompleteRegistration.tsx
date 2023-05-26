@@ -54,7 +54,6 @@ export function CompleteRegistration() {
             sessionId,
           },
         );
-        console.log(session);
         const { name, email } = session.data.customer_details;
 
         const emailKeyResponse = await axios.get(
@@ -62,7 +61,6 @@ export function CompleteRegistration() {
         );
 
         const token = emailKeyResponse.data.token;
-        console.log(token.emailToken);
 
         setEmailInfo({
           name,
