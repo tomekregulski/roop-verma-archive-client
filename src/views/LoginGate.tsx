@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
 
@@ -7,6 +8,8 @@ const key = import.meta.env.VITE_API_KEY;
 
 export function LoginGate() {
   const { updateAuthStatus, updateUserData } = useAuthContext();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     // currently firing twice
@@ -16,19 +19,24 @@ export function LoginGate() {
       const emailKey = params[0].split('=')[1];
       const email = params[1].split('=')[1];
       console.log(email, emailKey);
-      await axios
-        .get(
-          `${
-            import.meta.env.VITE_API_ORIGIN
-          }/api/v1/auth/session-token/${key}/${email}/${emailKey}`,
-        )
-        .then((response) => {
-          console.log(response);
-          const token = response.data.authToken;
-          document.cookie = `roop-verma-library=${token}`;
-          updateAuthStatus(true);
-          updateUserData(response.data.userData);
-        });
+      try {
+        await axios
+          .get(
+            `${
+              import.meta.env.VITE_API_ORIGIN
+            }/api/v1/auth/session-token/${key}/${email}/${emailKey}`,
+          )
+          .then((response) => {
+            console.log(response);
+            const token = response.data.authToken;
+            document.cookie = `roop-verma-library=${token}`;
+            updateAuthStatus(true);
+            updateUserData(response.data.userData);
+            navigate('/');
+          });
+      } catch (e) {
+        console.log(e);
+      }
     };
     effect();
   }, []);

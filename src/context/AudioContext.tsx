@@ -11,6 +11,7 @@ import {
   useState,
 } from 'react';
 
+import { isValidJwt } from '../util/isValidJwt';
 // import { isValidJwt } from '../util/isValidJwt';
 import { useAuthContext } from './AuthContext';
 
@@ -102,25 +103,25 @@ export const AudioProvider = (props: AudioContextProps) => {
 
   useEffect(() => {
     const fetchTracks = async () => {
-      console.log('fetching tracks...');
-      let response;
+      // console.log('fetching tracks...');
       setTracksMessage('Loading...');
-      // const jwt = isValidJwt();
+      const jwt = isValidJwt();
       try {
-        if (isAuth === true /* && jwt */) {
-          response = await axios.get(
+        if (isAuth /* && jwt */) {
+          const response = await axios.get(
             `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${key}`,
-            // {
-            //     headers: { jwt: jwt },
-            // }
+            {
+              headers: { jwt: jwt },
+            },
           );
+          setTrackList(response.data);
         } else {
-          response = await axios.get(
+          const response = await axios.get(
             `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/public/${key}`,
           );
+          setTrackList(response.data);
+          console.log('public');
         }
-        console.log(response.data);
-        setTrackList(response.data);
       } catch (error) {
         console.log(error);
       }
@@ -171,7 +172,7 @@ export const AudioProvider = (props: AudioContextProps) => {
     console.log('increment');
     const { userId, trackId, secondsListened } = props;
     try {
-      const response = await axios.post(
+      /* const response = */ await axios.post(
         `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/track-play/${key}`,
         {
           userId,
@@ -179,7 +180,7 @@ export const AudioProvider = (props: AudioContextProps) => {
           secondsListened,
         },
       );
-      console.log(response);
+      // console.log(response);
     } catch (error) {
       console.log(error);
     }
@@ -204,8 +205,8 @@ export const AudioProvider = (props: AudioContextProps) => {
       if (!isPlaying) {
         // if (isReady.current) {
         if (isReady) {
-          console.log('play');
-          console.log(audioRef.current);
+          // console.log('play');
+          // console.log(audioRef.current);
           audioRef.current.play();
           setIsPlaying(true);
         } else {

@@ -9,7 +9,7 @@ export function Welcome() {
   return (
     <div className="welcome__container">
       <h2>Welcome {isAuth === true && userData && ` ${userData.firstName}`}!</h2>
-      {isAuth === false ? (
+      {!isAuth ? (
         <>
           <p>
             If you are a subscriber, please login through the form below. If you would
@@ -22,7 +22,7 @@ export function Welcome() {
             above. Additionally, you can explore the other pages to learn more about
             Roopji and this project
           </p>
-          {/* <Login /> */}
+          <Login />
         </>
       ) : (
         <>

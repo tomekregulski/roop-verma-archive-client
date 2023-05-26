@@ -10,7 +10,6 @@ import { CompleteRegistration } from './views/CompleteRegistration';
 import { LoginGate } from './views/LoginGate';
 import { ManageAccount } from './views/ManageAccount';
 import { Signup } from './views/Signup';
-import { UserAccount } from './views/UserAccount';
 import { Welcome } from './views/Welcome';
 
 export function App() {
@@ -43,7 +42,7 @@ export function App() {
             <Route path="/roopji" element={<AboutRoopji />} />
             {/* <Route path='library' element={<AboutLibrary />} /> */}
             <Route path="/library" element={<div>About the Library and Help</div>} />
-            <Route path="/account" element={<UserAccount />} />
+            <Route path="/account" element={<ManageAccount />} />
           </Routes>
         </AudioProvider>
       </Router>
