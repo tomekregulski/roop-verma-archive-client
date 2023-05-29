@@ -1,11 +1,20 @@
 import './navbarStyles.css';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../../context/AuthContext';
 
 const Navbar = () => {
-  const { isAuth } = useAuthContext();
+  const { isAuth, updateAuthStatus, updateUserData } = useAuthContext();
+
+  const navigate = useNavigate();
+
+  const handleLogOut = () => {
+    updateUserData(null);
+    updateAuthStatus(false);
+    document.cookie = 'roop-verma-library= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
+    navigate('/');
+  };
 
   return (
     <nav>
@@ -35,6 +44,12 @@ const Navbar = () => {
                 <Link to="account" className="nav--links-link">
                   Account Info
                 </Link>
+                {
+                  // eslint-disable-next-line jsx-a11y/anchor-is-valid
+                  <Link to="" onClick={() => handleLogOut()}>
+                    Log Out
+                  </Link>
+                }
               </>
             ) : (
               <Link to="signup" className="nav--links-link">
