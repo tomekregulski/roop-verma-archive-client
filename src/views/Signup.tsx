@@ -59,11 +59,11 @@ export function Signup() {
     validateEmail();
   }, [registrationInfo.email]);
 
-  const handleDeleteAllUsers = async () => {
-    await axios
-      .delete(`${import.meta.env.VITE_API_ORIGIN}/api/v1/user/${key}`)
-      .then((response) => console.log(response.data));
-  };
+  // const handleDeleteAllUsers = async () => {
+  //   await axios
+  //     .delete(`${import.meta.env.VITE_API_ORIGIN}/api/v1/user/${key}`)
+  //     .then((response) => console.log(response.data));
+  // };
 
   const handleCheckout = async (stripeId: string) => {
     console.log('handle checkout');
@@ -135,7 +135,16 @@ export function Signup() {
   };
 
   return (
-    <>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '400px',
+        margin: '0 auto',
+      }}
+    >
       <Input
         id="first-name-login-input"
         label="First Name"
@@ -170,13 +179,13 @@ export function Signup() {
       />
       {invalidEmail !== '' && <span className="form--alert">{invalidEmail}</span>}
 
-      <Button callback={handleSignUp} margin="10px 0 0 0" width="100%" name="Sign up" />
-      <Button
+      <Button callback={handleSignUp} margin="30px 0 0 0" width="200px" name="Sign up" />
+      {/* <Button
         callback={handleDeleteAllUsers}
         margin="10px 0 0 0"
         width="100%"
         name="Delete"
-      />
-    </>
+      /> */}
+    </div>
   );
 }

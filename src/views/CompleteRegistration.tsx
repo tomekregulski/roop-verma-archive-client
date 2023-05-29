@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { init, send } from 'emailjs-com';
+import jwt_decode from 'jwt-decode';
 import { useEffect, useState } from 'react';
 
 import { Button } from '../components/Button/Button';
+import { UserData } from '../context/AuthContext';
 
 const key = import.meta.env.VITE_API_KEY;
 
@@ -16,8 +18,9 @@ export function CompleteRegistration() {
     emailKey: '',
   });
 
-  const sendConfirmationEmail = () => {
-    send('rvdl_forms', 'template_lj7tqph', {
+  const sendLoginEmail = () => {
+    console.log(emailInfo);
+    send('rvdl_forms', 'template_rgadtp9', {
       email: emailInfo.email,
       name: emailInfo.name,
       key: emailInfo.emailKey,
@@ -30,12 +33,6 @@ export function CompleteRegistration() {
         console.log('FAILED...', error);
       },
     );
-  };
-
-  const handleSendEmail = () => {
-    if (!emailSent) {
-      sendConfirmationEmail();
-    }
   };
 
   useEffect(() => {
@@ -65,7 +62,7 @@ export function CompleteRegistration() {
         setEmailInfo({
           name,
           email,
-          emailKey: token.emailToken,
+          emailKey: token,
         });
       }
     };
@@ -74,23 +71,39 @@ export function CompleteRegistration() {
 
   if (!emailSent) {
     return (
-      <>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          margin: '0 auto',
+        }}
+      >
         <div>
           Your Registration is Almost Complete. Please press the button below to complete
           the process.
         </div>
         <Button
-          callback={handleSendEmail}
+          callback={sendLoginEmail}
           margin="10px 0 0 0"
-          width="100%"
-          name="Proceed"
+          width="300px"
+          name="Complete Registration"
         />
-      </>
+      </div>
     );
   }
   return (
     <>
-      <div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          margin: '0 auto',
+        }}
+      >
         We have sent you an email to confirm your subscription. Please check it and follow
         the link provided to log in.
       </div>
