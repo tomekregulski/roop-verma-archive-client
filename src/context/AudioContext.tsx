@@ -100,6 +100,7 @@ export const AudioProvider = (props: AudioContextProps) => {
   const key = import.meta.env.VITE_API_KEY;
 
   const { isAuth } = useAuthContext();
+  console.log(isAuth);
 
   useEffect(() => {
     const fetchTracks = async () => {
