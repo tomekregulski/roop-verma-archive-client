@@ -2,6 +2,8 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import './trackCard.css';
 
+import { ReactComponent as Pause } from '../../assets/pause.svg';
+import { ReactComponent as Play } from '../../assets/play.svg';
 import { /*  Track, */ useAudioContext } from '../../context/AudioContext';
 import { getTrackTitle } from '../../util/getTrackTitle';
 import { TrackInfo } from '../TrackContainer/TrackContainer';
@@ -56,15 +58,9 @@ const TrackCard = (props: TrackCardProps) => {
             {isSelected && (
               <button className="play audio-controls--button">
                 {isPlaying ? (
-                  // <Pause onClick={playPauseValidation} />
-                  <button type="button" onClick={playPauseValidation}>
-                    Play
-                  </button>
+                  <Pause onClick={playPauseValidation} />
                 ) : (
-                  // <Play onClick={playPauseValidation} />
-                  <button type="button" onClick={playPauseValidation}>
-                    Pause
-                  </button>
+                  <Play onClick={playPauseValidation} />
                 )}
               </button>
             )}
