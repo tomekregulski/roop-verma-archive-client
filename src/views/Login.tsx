@@ -23,10 +23,12 @@ export function Login() {
   };
 
   const sendLoginEmail = (name: string, emailKey: string) => {
+    console.log(emailKey);
     send('rvdl_forms', 'template_rgadtp9', {
       email,
       name,
       key: emailKey,
+      baseUrl: import.meta.env.VITE_API_ORIGIN,
     }).then(
       (response) => {
         console.log('SUCCESS!', response.status, response.text);
