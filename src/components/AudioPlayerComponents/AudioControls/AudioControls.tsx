@@ -1,9 +1,9 @@
 import './audioControls.css';
 
-import Next from '../../../assets/next.svg';
-import Pause from '../../../assets/pause.svg';
-import Play from '../../../assets/play.svg';
-import Prev from '../../../assets/prev.svg';
+import { ReactComponent as Next } from '../../../assets/next.svg';
+import { ReactComponent as Pause } from '../../../assets/pause.svg';
+import { ReactComponent as Play } from '../../../assets/play.svg';
+import { ReactComponent as Prev } from '../../../assets/prev.svg';
 
 interface AudioControlsProps {
   isPlaying: boolean;
@@ -22,8 +22,7 @@ const AudioControls = (props: AudioControlsProps) => {
         aria-label="Previous"
         onClick={onPrevClick}
       >
-        {/* <Prev /> */}
-        <span>Prev</span>
+        <Prev />
       </button>
       {isPlaying ? (
         <button
@@ -32,8 +31,7 @@ const AudioControls = (props: AudioControlsProps) => {
           onClick={() => onPlayPauseClick(false)}
           aria-label="Pause"
         >
-          {/* <Pause /> */}
-          <span>Pause</span>
+          <Pause />
         </button>
       ) : (
         <button
@@ -42,8 +40,7 @@ const AudioControls = (props: AudioControlsProps) => {
           onClick={() => onPlayPauseClick(true)}
           aria-label="Play"
         >
-          {/* <Play /> */}
-          <span>Play</span>
+          <Play />
         </button>
       )}
       <button
@@ -52,8 +49,7 @@ const AudioControls = (props: AudioControlsProps) => {
         aria-label="Next"
         onClick={onNextClick}
       >
-        {/* <Next /> */}
-        <span>Next</span>
+        <Next />
       </button>
     </div>
   );
