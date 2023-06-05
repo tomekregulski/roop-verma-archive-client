@@ -24,7 +24,7 @@ export function CompleteRegistration() {
       email: emailInfo.email,
       name: emailInfo.name,
       key: emailInfo.emailKey,
-      baseUrl: import.meta.env.VITE_API_ORIGIN,
+      baseUrl: import.meta.env.VITE_CLIENT_URL,
     }).then(
       (response) => {
         console.log('SUCCESS!', response.status, response.text);

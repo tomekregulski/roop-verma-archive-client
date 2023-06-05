@@ -103,10 +103,12 @@ export const AudioProvider = (props: AudioContextProps) => {
   console.log(isAuth);
 
   useEffect(() => {
+    console.log('fetching tracks');
     const fetchTracks = async () => {
       // console.log('fetching tracks...');
       setTracksMessage('Loading...');
       const jwt = isValidJwt();
+      console.log(isAuth);
       try {
         if (isAuth /* && jwt */) {
           const response = await axios.get(
@@ -116,6 +118,7 @@ export const AudioProvider = (props: AudioContextProps) => {
             },
           );
           setTrackList(response.data);
+          console.log('private');
         } else {
           const response = await axios.get(
             `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/public/${key}`,
@@ -129,9 +132,9 @@ export const AudioProvider = (props: AudioContextProps) => {
       setTracksMessage('');
     };
     // this will probably break if registered user !isAuth and then logs in => may need a flag to track this?
-    if (!trackList) {
-      fetchTracks();
-    }
+    // if (!trackList) {
+    fetchTracks();
+    // }
     // eslint rule for exhaustive deps was not found
   }, [isAuth]);
 
