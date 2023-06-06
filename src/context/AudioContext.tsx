@@ -12,30 +12,8 @@ import {
 } from 'react';
 
 import { isValidJwt } from '../util/isValidJwt';
-// import { isValidJwt } from '../util/isValidJwt';
 import { useAuthContext } from './AuthContext';
-
-export interface Track {
-  id: number;
-  trackId: number;
-  tapeId: number;
-  ragaId: number;
-  primaryArtistId: number;
-  plays: number;
-  alap: boolean;
-  jor: boolean;
-  jhalla: boolean;
-  slowGat: boolean;
-  mediumGat: boolean;
-  fastGat: boolean;
-  accompanied: boolean;
-  notes: string;
-  audioQuality: string;
-  master: boolean;
-  mediaTypeId: number;
-  public: boolean;
-  url: string;
-}
+import { Track } from './trackTypes';
 
 interface SearchFilter {
   ids: number[];

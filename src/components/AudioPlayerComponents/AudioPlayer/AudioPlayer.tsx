@@ -172,15 +172,15 @@ export function AudioPlayer() {
     <div className="audio-player--container">
       <div className="audio-player--track-info">
         <h2 className="audio-player--title">
-          {/* TODO: Figure this out */}
-          {/* {selectedTrack ? selectedTrack.raag : ''} */}Raga Name
+          {/* Perhaps unnecessary?*/}
+          {/* {selectedTrack ? selectedTrack.raga.name : ''} */}
         </h2>
         <p className="audio-player--track-marquee">
-          {/* <span>
-            {Object.keys(selectedTrack).length > 0
+          <span>
+            {selectedTrack
               ? `${selectedTrack.raga.name} - ${selectedTrack.tape.event.date}`
               : 'Select a track to begin'}
-          </span> */}
+          </span>
         </p>
         <AudioControls
           isPlaying={isPlaying}

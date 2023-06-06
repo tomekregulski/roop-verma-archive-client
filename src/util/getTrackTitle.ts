@@ -12,12 +12,12 @@ export const getTrackTitle = (trackInfo: TrackInfo) => {
   let eventInfo;
   if (name.toLowerCase() !== 'unknown') {
     title = name;
-    eventInfo = `${eventName !== 'n/a' ? eventName + ' - ' : ''}${date}${
-      location !== 'Unknown' ? ' - ' + location : ''
-    }`;
-  } else if (eventName !== 'n/a') {
+    eventInfo = `${eventName ? eventName + ' - ' : ''}${
+      date !== 'n/a' ? date : 'Missing Date'
+    }${location !== 'Unknown' ? ' - ' + location : ''}`;
+  } else if (eventName && eventName !== 'n/a') {
     title = eventName;
-    eventInfo = `${date}${location !== 'Unknown' ? ' - ' + location : ''}`;
+    eventInfo = `${eventName} - ${date}${location !== 'Unknown' ? ' - ' + location : ''}`;
   } else {
     title = 'Category Name';
     eventInfo = `${date}${location !== 'Unknown' ? ' - ' + location : ''}`;
