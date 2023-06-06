@@ -5,8 +5,10 @@ import jwt_decode from 'jwt-decode';
 import { ChangeEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { Alert } from '../components/Alert/Alert';
 import { Button } from '../components/Button/Button';
 import { Input } from '../components/Input/Input';
+import { LoadingNotification } from '../components/LoadingNotification/LoadingNotification';
 import { UserData } from '../context/AuthContext';
 
 const key = import.meta.env.VITE_API_KEY;
@@ -14,8 +16,10 @@ const key = import.meta.env.VITE_API_KEY;
 init('user_sWNT4oROPiAoUGksmqFlD');
 
 export function Login() {
-  const [email, setEmail] = useState<string>('');
+  const [email, setEmail] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState(false);
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target?.value;
@@ -34,6 +38,7 @@ export function Login() {
       (response) => {
         console.log('SUCCESS!', response.status, response.text);
         setEmailSent(true);
+        setLoading(false);
       },
       (error) => {
         console.log('FAILED...', error);
@@ -42,17 +47,25 @@ export function Login() {
   };
 
   const handleLogIn = async () => {
-    try {
-      console.log('signing in...');
-      const emailKeyResponse = await axios.get(
-        `${import.meta.env.VITE_API_ORIGIN}/api/v1/auth/email-token/${key}/${email}`,
-      );
-      const token = emailKeyResponse.data.token;
-      const decodedToken: UserData = jwt_decode(token);
-      const name = decodedToken.firstName;
-      sendLoginEmail(name, token);
-    } catch (e) {
-      console.log(e);
+    console.log('handling login');
+    console.log(email);
+    if (!email) {
+      setMessage('Please enter your email address.');
+      return;
+    } else {
+      try {
+        console.log('signing in...');
+        const emailKeyResponse = await axios.get(
+          `${import.meta.env.VITE_API_ORIGIN}/api/v1/auth/email-token/${key}/${email}`,
+        );
+        const token = emailKeyResponse.data.token;
+        const decodedToken: UserData = jwt_decode(token);
+        const name = decodedToken.firstName;
+        sendLoginEmail(name, token);
+        setLoading(true);
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 
@@ -70,7 +83,7 @@ export function Login() {
         <div style={{ width: '250px' }}>
           <Input
             label="Email"
-            value={email}
+            value={email ?? ''}
             type="email"
             callback={handleChange}
             name="email"
@@ -83,15 +96,24 @@ export function Login() {
         <div style={{ marginTop: '20px' }}>
           Dont&apos;t have an account? <Link to="/signup">Sign up!</Link>
         </div>
+        {message !== '' && (
+          <Alert closeAlert={() => setMessage('')} show={message !== '' ? true : false}>
+            {message}
+          </Alert>
+        )}
+        {loading && (
+          <LoadingNotification show={loading}>Please wait...</LoadingNotification>
+        )}
       </div>
     );
+  } else {
+    return (
+      <>
+        <div style={{ color: 'yellow' }}>
+          Thank you! An email with a login link to complete your login process has been
+          sent to your inbox.
+        </div>
+      </>
+    );
   }
-  return (
-    <>
-      <div style={{ color: 'yellow' }}>
-        Thank you! An email with a login link to complete your login process has been sent
-        to your inbox.
-      </div>
-    </>
-  );
 }
