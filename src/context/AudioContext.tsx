@@ -13,66 +13,7 @@ import {
 
 import { isValidJwt } from '../util/isValidJwt';
 import { useAuthContext } from './AuthContext';
-
-interface Location {
-  id: number;
-  name: string;
-}
-interface Category {
-  id: number;
-  name: string;
-}
-
-interface Raga {
-  id: number;
-  name: string;
-  alternateSpelling: string;
-  time: string;
-  rasa: string;
-  tracks: Track[];
-}
-
-interface Event {
-  id: number;
-  eventName: string;
-  date: string;
-  location: Location;
-  locationId: number;
-  category: Category;
-  categoryId: number;
-  notes: string;
-  tapes: Tape[];
-}
-interface Tape {
-  id: number;
-  eventId: number;
-  tapeId: number;
-  event: Event;
-}
-
-export interface Track {
-  id: number;
-  trackId: number;
-  tapeId: number;
-  ragaId: number;
-  primaryArtistId: number;
-  plays: number;
-  alap: boolean;
-  jor: boolean;
-  jhalla: boolean;
-  slowGat: boolean;
-  mediumGat: boolean;
-  fastGat: boolean;
-  accompanied: boolean;
-  notes: string;
-  audioQuality: string;
-  master: boolean;
-  mediaTypeId: number;
-  public: boolean;
-  url: string;
-  tape: Tape;
-  raga: Raga;
-}
+import { Track } from './trackTypes';
 
 interface SearchFilter {
   ids: number[];
