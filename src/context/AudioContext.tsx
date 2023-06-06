@@ -15,6 +15,33 @@ import { isValidJwt } from '../util/isValidJwt';
 // import { isValidJwt } from '../util/isValidJwt';
 import { useAuthContext } from './AuthContext';
 
+interface Location {
+  id: number;
+  name: string;
+}
+interface Category {
+  id: number;
+  name: string;
+}
+
+interface Event {
+  id: number;
+  eventName: string;
+  date: string;
+  location: Location;
+  locationId: number;
+  category: Category;
+  categoryId: number;
+  notes: string;
+  tapes: Tape[];
+}
+interface Tape {
+  id: number;
+  eventId: number;
+  tapeId: number;
+  event: Event;
+}
+
 export interface Track {
   id: number;
   trackId: number;
@@ -35,6 +62,7 @@ export interface Track {
   mediaTypeId: number;
   public: boolean;
   url: string;
+  tape: Tape;
 }
 
 interface SearchFilter {

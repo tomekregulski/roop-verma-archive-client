@@ -5,6 +5,33 @@ import { useEffect, useState } from 'react';
 import { useAudioContext } from '../../context/AudioContext';
 import TrackCard from '../TrackCard/TrackCard';
 
+interface Location {
+  id: number;
+  name: string;
+}
+interface Category {
+  id: number;
+  name: string;
+}
+
+interface Event {
+  id: number;
+  eventName: string;
+  date: string;
+  location: Location;
+  locationId: number;
+  category: Category;
+  categoryId: number;
+  notes: string;
+  tapes: Tape[];
+}
+interface Tape {
+  id: number;
+  eventId: number;
+  tapeId: number;
+  event: Event;
+}
+
 export interface TrackInfo {
   id: number;
   name: string;
@@ -33,16 +60,16 @@ const TrackContainer = () => {
     // @ts-expect-error need rows interface
     const rows = [];
     if (filteredTracks && filteredTracks.length > 0) {
-      // console.log(filteredTracks);
+      console.log(filteredTracks);
       filteredTracks.map((item) => {
         return rows.push({
           id: item.id,
-          // event_name: item.tape.event.event_name,
+          event_name: item.tape.event.eventName,
           // @ts-expect-error need interface for track here
           name: item.raga.name,
-          // date: item.tape.event.date,
-          // category: item.tape.event.category.name,
-          // location: item.tape.event.location.name,
+          date: item.tape.event.date,
+          category: item.tape.event.category.name,
+          location: item.tape.event.location.name,
           // @ts-expect-error need interface for track here
           timeOfDay: item.raga.time,
           accompanied: item.accompanied,
