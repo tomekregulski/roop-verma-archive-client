@@ -38,7 +38,7 @@ export interface Track {
 }
 
 interface SearchFilter {
-  ids: string[];
+  ids: number[];
   type: string;
 }
 
@@ -152,10 +152,10 @@ export const AudioProvider = (props: AudioContextProps) => {
           setTracksMessage('Sorry, there are no tracks that match your search');
           break;
         case 'some':
-          //TODO: fix this
+          //TODO: fix this - currently updates on render cycle
           // eslint-disable-next-line no-case-declarations
           const newTracks = trackList.filter((track) =>
-            searchFilter.ids.includes(track.id.toString()),
+            searchFilter.ids.includes(track.id),
           );
           setFilteredTracks(newTracks);
           setTracksMessage('');

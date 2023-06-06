@@ -51,21 +51,31 @@ const AudioView = (props: AudioViewProps) => {
   }, []);
 
   useEffect(() => {
-    // console.log('searching');
+    console.log('searching');
     let searchResults = { ids: [], type: '' };
     if (search === '') {
+      console.log('empty search');
       searchResults = { ...searchResults, type: 'all' };
       setSearchFilter(searchResults);
     } else {
+      console.log('not empty search');
+      console.log(search);
       const results = getEachItem(trackList, search);
+      console.log(trackList);
+      console.log(results);
       if (results.length === 0) {
         searchResults = { ...searchResults, type: 'none' };
+        console.log('searchResults === 0');
+        console.log(searchResults);
         setSearchFilter(searchResults);
       } else if (results.length > 0) {
+        console.log('else if');
         // @ts-expect-error ids typing to never[] - fix this
         searchResults = { ids: results, type: 'some' };
+        console.log(searchResults);
         setSearchFilter(searchResults);
       } else {
+        // this should never happen?
         searchResults = { ...searchResults, type: 'error' };
         setSearchFilter(searchResults);
       }
@@ -100,7 +110,7 @@ const AudioView = (props: AudioViewProps) => {
       <div
         style={{
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'end',
           marginTop: '20px',
         }}
       >
