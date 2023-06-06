@@ -12,7 +12,6 @@ import {
 } from 'react';
 
 import { isValidJwt } from '../util/isValidJwt';
-// import { isValidJwt } from '../util/isValidJwt';
 import { useAuthContext } from './AuthContext';
 
 interface Location {
@@ -22,6 +21,15 @@ interface Location {
 interface Category {
   id: number;
   name: string;
+}
+
+interface Raga {
+  id: number;
+  name: string;
+  alternateSpelling: string;
+  time: string;
+  rasa: string;
+  tracks: Track[];
 }
 
 interface Event {
@@ -63,6 +71,7 @@ export interface Track {
   public: boolean;
   url: string;
   tape: Tape;
+  raga: Raga;
 }
 
 interface SearchFilter {

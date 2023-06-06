@@ -65,12 +65,10 @@ const TrackContainer = () => {
         return rows.push({
           id: item.id,
           event_name: item.tape.event.eventName,
-          // @ts-expect-error need interface for track here
           name: item.raga.name,
           date: item.tape.event.date,
           category: item.tape.event.category.name,
           location: item.tape.event.location.name,
-          // @ts-expect-error need interface for track here
           timeOfDay: item.raga.time,
           accompanied: item.accompanied,
           plays: item.plays,
@@ -94,14 +92,7 @@ const TrackContainer = () => {
     <div className="track-list--container">
       {trackRows ? (
         trackRows.map((track, index) => {
-          return (
-            <TrackCard
-              key={index}
-              callback={clickHandle}
-              trackInfo={track}
-              // handleTriggerPlayPause={handleTriggerPlayPause}
-            />
-          );
+          return <TrackCard key={index} callback={clickHandle} trackInfo={track} />;
         })
       ) : (
         <p>{tracksMessage}</p>
