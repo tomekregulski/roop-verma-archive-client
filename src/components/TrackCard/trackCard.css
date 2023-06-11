@@ -1,12 +1,17 @@
 .card--container {
   margin: auto;
-  overflow: hidden;
   width: 95%;
-  height: 65px;
+  height: 100px;
   background: white;
   border-bottom: solid 1px rgba(0, 178, 249, 0.16);
   box-shadow: 5px 5px 15px rgba(gray);
   color: black;
+  cursor: pointer;
+}
+
+.card--container > div {
+  padding: 10px;
+  display: 'flex' !important;
 }
 
 .audio-controls--button {
@@ -19,13 +24,7 @@
   background: rgba(81, 152, 157, 0.194);
 }
 
-.card--body {
-  padding: 10px;
-}
-
-.card--track-name {
-  display: block;
-}
+/* .card--track-name {} */
 
 .card--columns {
   display: flex;

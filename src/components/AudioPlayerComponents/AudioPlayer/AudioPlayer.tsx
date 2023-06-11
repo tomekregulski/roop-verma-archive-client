@@ -130,12 +130,7 @@ export function AudioPlayer() {
   }, [isPlaying]);
 
   useEffect(() => {
-    // setRecordedPlay(false);
-    // console.log('test');
-    // console.log(secondsPlayed);
-    // console.log(secondsPlayed > 0);
     if (userData && selectedTrack && secondsPlayed > 0) {
-      // console.log('save');
       incrementPlays({
         userId: userData.id,
         trackId: selectedTrack.id,

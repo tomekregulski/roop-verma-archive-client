@@ -51,20 +51,23 @@ const TrackCard = (props: TrackCardProps) => {
       }
     >
       <div className="card--body" onClick={() => props.callback(id)}>
-        {renderTitle()}
-        <div className="card--columns">
-          {renderSubtitle()}
-          <div className="card--column-right">
-            {isSelected && (
-              <button className="play audio-controls--button">
-                {isPlaying ? (
-                  <Pause onClick={playPauseValidation} />
-                ) : (
-                  <Play onClick={playPauseValidation} />
-                )}
-              </button>
-            )}
+        <div className="card--info">
+          {renderTitle()}
+          <div className="card--columns">
+            {renderSubtitle()}
+            <div className="card--column-right"></div>
           </div>
+        </div>
+        <div className="card--buton">
+          {isSelected && (
+            <button className="play audio-controls--button">
+              {isPlaying ? (
+                <Pause onClick={playPauseValidation} />
+              ) : (
+                <Play onClick={playPauseValidation} />
+              )}
+            </button>
+          )}
         </div>
       </div>
     </div>

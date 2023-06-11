@@ -1,24 +1,10 @@
 import './styles/welcomeStyles.css';
 
-// import { useEffect } from 'react';
-// import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
-// import { isValidJwt } from '../util/isValidJwt';
 import { Login } from './Login';
 
 export function Welcome() {
-  const { userData, isAuth /* updateUserData, updateAuthStatus */ } = useAuthContext();
-
-  // const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   if (!isValidJwt) {
-  //     updateUserData(null);
-  //     updateAuthStatus(false);
-  //     document.cookie = 'roop-verma-library= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
-  //     navigate('/');
-  //   }
-  // }, []);
+  const { userData, isAuth } = useAuthContext();
 
   return (
     <div className="welcome__container">
