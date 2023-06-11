@@ -40,8 +40,9 @@ export function Login() {
         setLoading(false);
       },
       (error) => {
+        setLoading(false);
         console.log('Login email failed to send');
-        console.log(error);
+        console.log(error.text);
         const errorMessage = getErrorMessage(error);
         setMessage(`Login email failed to send: ${errorMessage}`);
       },
@@ -55,7 +56,9 @@ export function Login() {
     } else {
       try {
         const emailKeyResponse = await axios.get(
-          `${import.meta.env.VITE_API_ORIGIN}/api/v1/auth/email-token/${key}/${email}`,
+          `${
+            import.meta.env.VITE_API_ORIGIN
+          }/api/v1/auth/email-token/${key}/${email}asdfg`,
         );
         const token = emailKeyResponse.data.token;
         const decodedToken: UserData = jwt_decode(token);

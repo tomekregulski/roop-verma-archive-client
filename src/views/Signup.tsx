@@ -3,9 +3,11 @@ import './styles/formStyles.css';
 import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
 
+import { Alert } from '../components/Alert/Alert';
 import { Button } from '../components/Button/Button';
 import { Input } from '../components/Input/Input';
 import { useRegistrationContext } from '../context/RegistrationContext';
+import { getErrorMessage } from '../util/getErrorMessage';
 import { getStripe, StripeResponseObject } from '../util/getStripe';
 
 const key = import.meta.env.VITE_API_KEY;
@@ -18,6 +20,7 @@ export function Signup() {
   const [invalidLastName, setInvalidLastName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [stripe, setStripe] = useState<StripeResponseObject | null>(null);
+  const [message, setMessage] = useState('');
 
   const { updateRegistrationInfo, registrationInfo } = useRegistrationContext();
 
@@ -59,25 +62,16 @@ export function Signup() {
     validateEmail();
   }, [registrationInfo.email]);
 
-  // const handleDeleteAllUsers = async () => {
-  //   await axios
-  //     .delete(`${import.meta.env.VITE_API_ORIGIN}/api/v1/user/${key}`)
-  //     .then((response) => console.log(response.data));
-  // };
-
   const handleCheckout = async (stripeId: string) => {
-    console.log('handle checkout');
     if (stripe && stripe.data) {
       try {
         const subscriptionRes = await axios.get(
           `${
             import.meta.env.VITE_API_ORIGIN
-          }/api/v1/payment/checkout-session/${key}/${stripeId}`,
+          }/api/v1/payment/checkout-session/${key}/${stripeId}123456789`,
         );
-        console.log('returned');
-        console.log(subscriptionRes);
+
         const sessionId = subscriptionRes.data.id;
-        console.log(sessionId);
         // const stripe = await getStripe();
         const { error } = await stripe.data.redirectToCheckout({
           //     //     // Make the id field from the Checkout Session creation API response
@@ -90,7 +84,10 @@ export function Signup() {
         // using `error.message`.
         console.warn(error.message);
       } catch (error) {
+        console.log('Stripe checkout failed');
         console.log(error);
+        const errorMessage = getErrorMessage(error);
+        setMessage(`Failed to create checkout session - : ${errorMessage}`);
       }
     } else {
       console.log('stripe not found');
@@ -186,6 +183,11 @@ export function Signup() {
         width="100%"
         name="Delete"
       /> */}
+      {message !== '' && (
+        <Alert closeAlert={() => setMessage('')} show={message !== '' ? true : false}>
+          {message}
+        </Alert>
+      )}
     </div>
   );
 }

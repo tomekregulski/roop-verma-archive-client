@@ -31,11 +31,13 @@ export function CompleteRegistration() {
       (response) => {
         console.log('SUCCESS!', response.status, response.text);
         setEmailSent(true);
+
+        // setLading??
       },
       (error) => {
         console.log('Login email failed to send');
         console.log(error);
-        const errorMessage = getErrorMessage(error);
+        const errorMessage = getErrorMessage(error.text);
         setMessage(`Login email failed to send: ${errorMessage}`);
       },
     );

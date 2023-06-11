@@ -1,7 +1,8 @@
-import { ChangeEvent } from 'react';
+// import { ChangeEvent } from 'react';
 
 interface ButtonProps {
-  callback: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  callback: (e?: any) => void;
   width?: string;
   padding?: string;
   backgroundColor?: string;
