@@ -10,6 +10,7 @@ import { Button } from '../components/Button/Button';
 import { Input } from '../components/Input/Input';
 import { LoadingNotification } from '../components/LoadingNotification/LoadingNotification';
 import { UserData } from '../context/AuthContext';
+import { getErrorMessage } from '../util/getErrorMessage';
 
 const key = import.meta.env.VITE_API_KEY;
 
@@ -27,8 +28,6 @@ export function Login() {
   };
 
   const sendLoginEmail = (name: string, emailKey: string) => {
-    console.log(emailKey);
-    console.log(import.meta.env.VITE_CLIENT_URL);
     send('rvdl_forms', 'template_rgadtp9', {
       email,
       name,
@@ -41,30 +40,36 @@ export function Login() {
         setLoading(false);
       },
       (error) => {
-        console.log('FAILED...', error);
+        setLoading(false);
+        console.log('Login email failed to send');
+        console.log(error.text);
+        const errorMessage = getErrorMessage(error);
+        setMessage(`Login email failed to send: ${errorMessage}`);
       },
     );
   };
 
   const handleLogIn = async () => {
-    console.log('handling login');
-    console.log(email);
     if (!email) {
       setMessage('Please enter your email address.');
       return;
     } else {
       try {
-        console.log('signing in...');
         const emailKeyResponse = await axios.get(
-          `${import.meta.env.VITE_API_ORIGIN}/api/v1/auth/email-token/${key}/${email}`,
+          `${
+            import.meta.env.VITE_API_ORIGIN
+          }/api/v1/auth/email-token/${key}/${email}asdfg`,
         );
         const token = emailKeyResponse.data.token;
         const decodedToken: UserData = jwt_decode(token);
         const name = decodedToken.firstName;
         sendLoginEmail(name, token);
         setLoading(true);
-      } catch (e) {
-        console.log(e);
+      } catch (error) {
+        console.log('Failed to retrieve login token');
+        console.log(error);
+        const errorMessage = getErrorMessage(error);
+        setMessage(`Failed to retrieve login token: ${errorMessage}`);
       }
     }
   };

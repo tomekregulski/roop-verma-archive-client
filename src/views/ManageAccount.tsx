@@ -1,10 +1,15 @@
 import axios from 'axios';
+import { useState } from 'react';
 
+import { Alert } from '../components/Alert/Alert';
 import { useAuthContext } from '../context/AuthContext';
+import { getErrorMessage } from '../util/getErrorMessage';
 
 const key = import.meta.env.VITE_API_KEY;
 
 export function ManageAccount() {
+  const [message, setMessage] = useState('');
+
   const { userData } = useAuthContext();
 
   const handlePortal = async () => {
@@ -18,8 +23,11 @@ export function ManageAccount() {
       );
       const portalAddress = portalRes.data.session.url;
       window.location.href = portalAddress;
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.log('Access user account failed');
+      console.log(error);
+      const errorMessage = getErrorMessage(error);
+      setMessage(`Failed to create checkout session - : ${errorMessage}`);
     }
   };
   return (
@@ -27,6 +35,11 @@ export function ManageAccount() {
       <button id="portal-session-button" type="button" onClick={() => handlePortal()}>
         Manage Account
       </button>
+      {message !== '' && (
+        <Alert closeAlert={() => setMessage('')} show={message !== '' ? true : false}>
+          {message}
+        </Alert>
+      )}
     </div>
   );
 }

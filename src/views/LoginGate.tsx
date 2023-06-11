@@ -1,12 +1,15 @@
 import axios from 'axios';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { Alert } from '../components/Alert/Alert';
 import { useAuthContext } from '../context/AuthContext';
+import { getErrorMessage } from '../util/getErrorMessage';
 
 const key = import.meta.env.VITE_API_KEY;
 
 export function LoginGate() {
+  const [message, setMessage] = useState('');
   const { updateAuthStatus, updateUserData } = useAuthContext();
 
   const navigate = useNavigate();
@@ -18,7 +21,7 @@ export function LoginGate() {
       const params = url.split('?')[1].split('&');
       const emailKey = params[0].split('=')[1];
       const email = params[1].split('=')[1];
-      console.log(email, emailKey);
+
       try {
         await axios
           .get(
@@ -34,8 +37,11 @@ export function LoginGate() {
             updateUserData(response.data.userData);
             navigate('/');
           });
-      } catch (e) {
-        console.log(e);
+      } catch (error) {
+        console.log('Failed to log in');
+        console.log(error);
+        const errorMessage = getErrorMessage(error);
+        setMessage(`Failed to log in: ${errorMessage}`);
       }
     };
     effect();
@@ -44,6 +50,11 @@ export function LoginGate() {
   return (
     <>
       <div>Please wait a moment while we log you in...</div>
+      {message !== '' && (
+        <Alert closeAlert={() => setMessage('')} show={message !== '' ? true : false}>
+          {message}
+        </Alert>
+      )}
     </>
   );
 }

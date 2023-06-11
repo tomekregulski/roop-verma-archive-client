@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 // import { useState } from 'react';
 import { AudioProvider } from './context/AudioContext';
+import AboutLibrary from './views/AboutLibrary';
 import AboutRoopji from './views/AboutRoopji';
 import AudioView from './views/AudioView';
 import { CompleteRegistration } from './views/CompleteRegistration';
@@ -41,7 +42,7 @@ export function App() {
             <Route path="/login-gate" element={<LoginGate />} />
             <Route path="/roopji" element={<AboutRoopji />} />
             {/* <Route path='library' element={<AboutLibrary />} /> */}
-            <Route path="/library" element={<div>About the Library and Help</div>} />
+            <Route path="/library" element={<AboutLibrary />} />
             <Route path="/account" element={<ManageAccount />} />
           </Routes>
         </AudioProvider>

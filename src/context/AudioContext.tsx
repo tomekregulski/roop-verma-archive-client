@@ -11,6 +11,7 @@ import {
   useState,
 } from 'react';
 
+// import { getErrorMessage } from '../util/getErrorMessage';
 import { isValidJwt } from '../util/isValidJwt';
 import { useAuthContext } from './AuthContext';
 import { Track } from './trackTypes';
@@ -81,12 +82,9 @@ export const AudioProvider = (props: AudioContextProps) => {
   console.log(isAuth);
 
   useEffect(() => {
-    console.log('fetching tracks');
     const fetchTracks = async () => {
-      // console.log('fetching tracks...');
       setTracksMessage('Loading...');
       const jwt = isValidJwt();
-      console.log(isAuth);
       try {
         if (isAuth /* && jwt */) {
           const response = await axios.get(
@@ -96,16 +94,17 @@ export const AudioProvider = (props: AudioContextProps) => {
             },
           );
           setTrackList(response.data);
-          console.log('private');
         } else {
           const response = await axios.get(
             `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/public/${key}`,
           );
           setTrackList(response.data);
-          console.log('public');
         }
       } catch (error) {
+        console.log('Failed to retrieve audio library');
         console.log(error);
+        // const errorMessage = getErrorMessage(error);
+        // setMessage(`Failed to retrieve audio library: ${errorMessage}`);
       }
       setTracksMessage('');
     };
@@ -162,9 +161,11 @@ export const AudioProvider = (props: AudioContextProps) => {
           secondsListened,
         },
       );
-      // console.log(response);
     } catch (error) {
+      console.log('Failed to update track plays');
       console.log(error);
+      // const errorMessage = getErrorMessage(error);
+      // setMessage(`Failed to retrieve audio library: ${errorMessage}`);
     }
   };
 

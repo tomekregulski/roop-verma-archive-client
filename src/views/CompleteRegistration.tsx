@@ -3,7 +3,9 @@ import { init, send } from 'emailjs-com';
 // import jwt_decode from 'jwt-decode';
 import { useEffect, useState } from 'react';
 
+import { Alert } from '../components/Alert/Alert';
 import { Button } from '../components/Button/Button';
+import { getErrorMessage } from '../util/getErrorMessage';
 // import { UserData } from '../context/AuthContext';
 
 const key = import.meta.env.VITE_API_KEY;
@@ -17,9 +19,9 @@ export function CompleteRegistration() {
     email: '',
     emailKey: '',
   });
+  const [message, setMessage] = useState('');
 
   const sendLoginEmail = () => {
-    console.log(emailInfo);
     send('rvdl_forms', 'template_rgadtp9', {
       email: emailInfo.email,
       name: emailInfo.name,
@@ -29,12 +31,38 @@ export function CompleteRegistration() {
       (response) => {
         console.log('SUCCESS!', response.status, response.text);
         setEmailSent(true);
+
+        // setLading??
       },
       (error) => {
-        console.log('FAILED...', error);
+        console.log('Login email failed to send');
+        console.log(error);
+        const errorMessage = getErrorMessage(error.text);
+        setMessage(`Login email failed to send: ${errorMessage}`);
       },
     );
   };
+
+  async function getEmailKey(name: string, email: string) {
+    try {
+      const emailKeyResponse = await axios.get(
+        `${import.meta.env.VITE_API_ORIGIN}/api/v1/auth/email-token/${key}/${email}`,
+      );
+
+      const token = emailKeyResponse.data.token;
+
+      setEmailInfo({
+        name,
+        email,
+        emailKey: token,
+      });
+    } catch (error) {
+      console.log('Failed to retrieve login token');
+      console.log(error);
+      const errorMessage = getErrorMessage(error);
+      setMessage(`Failed to retrieve checkout session: ${errorMessage}`);
+    }
+  }
 
   useEffect(() => {
     const effect = async () => {
@@ -44,27 +72,24 @@ export function CompleteRegistration() {
         const sessionParam = params[1].split('&');
         const sessionId = sessionParam[0].split('=')[1];
 
-        const session = await axios.post(
-          `${
-            import.meta.env.VITE_API_ORIGIN
-          }/api/v1/payment/checkout-session-object/${key}`,
-          {
-            sessionId,
-          },
-        );
-        const { name, email } = session.data.customer_details;
+        try {
+          const session = await axios.post(
+            `${
+              import.meta.env.VITE_API_ORIGIN
+            }/api/v1/payment/checkout-session-object/${key}`,
+            {
+              sessionId,
+            },
+          );
+          const { name, email } = session.data.customer_details;
 
-        const emailKeyResponse = await axios.get(
-          `${import.meta.env.VITE_API_ORIGIN}/api/v1/auth/email-token/${key}/${email}`,
-        );
-
-        const token = emailKeyResponse.data.token;
-
-        setEmailInfo({
-          name,
-          email,
-          emailKey: token,
-        });
+          getEmailKey(name, email);
+        } catch (error) {
+          console.log('Failed to retrieve checkout session');
+          console.log(error);
+          const errorMessage = getErrorMessage(error);
+          setMessage(`Failed to retrieve checkout session: ${errorMessage}`);
+        }
       }
     };
     effect();
@@ -91,6 +116,11 @@ export function CompleteRegistration() {
           width="300px"
           name="Complete Registration"
         />
+        {message !== '' && (
+          <Alert closeAlert={() => setMessage('')} show={message !== '' ? true : false}>
+            {message}
+          </Alert>
+        )}
       </div>
     );
   }
