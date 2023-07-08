@@ -85,8 +85,10 @@ export const AudioProvider = (props: AudioContextProps) => {
     const fetchTracks = async () => {
       setTracksMessage('Loading...');
       const jwt = isValidJwt();
+      console.log(isAuth);
       try {
         if (isAuth /* && jwt */) {
+          console.log('fetching private tracks');
           const response = await axios.get(
             `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${key}`,
             {
@@ -95,6 +97,7 @@ export const AudioProvider = (props: AudioContextProps) => {
           );
           setTrackList(response.data);
         } else {
+          console.log('fetching public tracks');
           const response = await axios.get(
             `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/public/${key}`,
           );

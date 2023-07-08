@@ -41,6 +41,7 @@ export interface TrackInfo {
   eventName: string;
   location: string;
   date: string;
+  rasa: string;
 }
 
 const TrackContainer = () => {
@@ -72,6 +73,7 @@ const TrackContainer = () => {
           timeOfDay: item.raga.time,
           accompanied: item.accompanied,
           plays: item.plays,
+          rasa: item.raga.rasa,
         });
       });
     }
