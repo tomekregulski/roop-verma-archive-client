@@ -1,5 +1,8 @@
 import './styles/welcomeStyles.css';
 
+import { Link } from 'react-router-dom';
+
+import { Button } from '../components/Button/Button';
 import { useAuthContext } from '../context/AuthContext';
 import { Login } from './Login';
 
@@ -18,10 +21,17 @@ export function Welcome() {
           </p>
           <p>
             Otherwise, we have made a small selection of materials available to the
-            public. To explore those, please Click on the &quot;Audio Library&quot; link
-            above. Additionally, you can explore the other pages to learn more about
+            public. Additionally, you can explore the other pages to learn more about
             Roopji and this project
           </p>
+          <Link to="library">
+            <Button
+              name="Explore the Audio Library"
+              callback={() => {
+                return null;
+              }}
+            />
+          </Link>
           <Login />
         </>
       ) : (

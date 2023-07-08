@@ -14,12 +14,13 @@ interface TrackCardProps {
 }
 
 const TrackCard = (props: TrackCardProps) => {
-  const { id, timeOfDay, name } = props.trackInfo;
+  const { trackInfo, callback } = props;
+  const { id, timeOfDay, name, rasa } = trackInfo;
 
   const { selectedTrack, playPauseValidation, isPlaying } = useAudioContext();
 
   const isSelected = selectedTrack && selectedTrack.id === id;
-  const titleContent = getTrackTitle(props.trackInfo);
+  const titleContent = getTrackTitle(trackInfo);
 
   const renderTitle = () => {
     return (
@@ -35,11 +36,8 @@ const TrackCard = (props: TrackCardProps) => {
   const renderSubtitle = () => {
     return (
       <div className="card--column-left">
-        <span className="card--track-detail-item">
-          {/* {`${event_name !== 'n/a' ? event_name + ' - ' : ''
-        }${date}${location !== 'Unknown' ? ' - ' + location : ''}`} */}
-          {titleContent.eventInfo}
-        </span>
+        <span className="card--track-detail-item">{titleContent.eventInfo}</span>
+        {rasa && <span className="card--track-detail-item">{rasa}</span>}
       </div>
     );
   };
@@ -50,7 +48,7 @@ const TrackCard = (props: TrackCardProps) => {
         isSelected ? 'card--container card--container-playing' : 'card--container'
       }
     >
-      <div className="card--body" onClick={() => props.callback(id)}>
+      <div className="card--body" onClick={() => callback(id)}>
         <div className="card--info">
           {renderTitle()}
           <div className="card--columns">

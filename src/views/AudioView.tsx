@@ -50,29 +50,47 @@ const AudioView = (props: AudioViewProps) => {
     // }
   }, []);
 
+  const narrowSearch = (initialSearchResults: string[], searchTerms: string[]) => {
+    let finalResults: string[] = initialSearchResults;
+
+    for (let i = 1; i < searchTerms.length; i++) {
+      const results = getEachItem(trackList, searchTerms[i]);
+      console.log(results);
+      finalResults = finalResults.filter((result) => results.includes(result));
+    }
+    return finalResults;
+  };
+
+  const multiTermSearch = (searchTerms: string[]) => {
+    const initialSearchResults = getEachItem(trackList, searchTerms[0]);
+    const finalResults =
+      searchTerms.length > 1
+        ? narrowSearch(initialSearchResults, searchTerms)
+        : initialSearchResults;
+    return finalResults;
+  };
+
   useEffect(() => {
     console.log('searching');
     let searchResults = { ids: [], type: '' };
     if (search === '') {
-      console.log('empty search');
+      // console.log('empty search');
       searchResults = { ...searchResults, type: 'all' };
       setSearchFilter(searchResults);
     } else {
-      console.log('not empty search');
-      console.log(search);
-      const results = getEachItem(trackList, search);
-      console.log(trackList);
-      console.log(results);
+      // console.log('not empty search');
+      const searchTerms = search.split(' ');
+      const results = multiTermSearch(searchTerms);
       if (results.length === 0) {
         searchResults = { ...searchResults, type: 'none' };
-        console.log('searchResults === 0');
-        console.log(searchResults);
+        // console.log('searchResults === 0');
+        // console.log(searchResults);
         setSearchFilter(searchResults);
       } else if (results.length > 0) {
         console.log('else if');
         // @ts-expect-error ids typing to never[] - fix this
         searchResults = { ids: results, type: 'some' };
-        console.log(searchResults);
+        // console.log(searchResults);
         setSearchFilter(searchResults);
       } else {
         // this should never happen?
@@ -91,7 +109,7 @@ const AudioView = (props: AudioViewProps) => {
 
   const supriseMe = () => {
     if (filteredTracks) {
-      const randomTrackNumber = Math.floor(Math.random() * 10);
+      const randomTrackNumber = Math.floor(Math.random() * filteredTracks.length - 1);
       const randomTrack = filteredTracks[randomTrackNumber];
       setSelectedTrack(randomTrack);
     }
@@ -129,7 +147,9 @@ const AudioView = (props: AudioViewProps) => {
           id="search-tracks-input"
           labelColor="white"
           value={search}
+          tooltipContent="Search the library by raga, time of day, mood, data, or location"
         />
+
         <Button
           margin="0 0 0 15px"
           name="Show All"

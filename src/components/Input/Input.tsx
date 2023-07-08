@@ -1,3 +1,5 @@
+import { QuestionMarkCircledIcon } from '@radix-ui/react-icons';
+import { Tooltip } from 'antd';
 import { ChangeEvent } from 'react';
 
 interface InputProps {
@@ -11,6 +13,7 @@ interface InputProps {
   value: string | number;
   placeholder?: string;
   callback: (e: ChangeEvent<HTMLInputElement>, id: string) => void;
+  tooltipContent?: string;
 }
 
 export function Input(props: InputProps) {
@@ -25,6 +28,7 @@ export function Input(props: InputProps) {
     value,
     placeholder,
     callback,
+    tooltipContent,
   } = props;
 
   return (
@@ -38,6 +42,13 @@ export function Input(props: InputProps) {
     >
       <label style={{ color: labelColor }} htmlFor={name}>
         {label}
+        {tooltipContent && (
+          <span style={{ marginLeft: '8px' }}>
+            <Tooltip title={tooltipContent}>
+              <QuestionMarkCircledIcon />
+            </Tooltip>
+          </span>
+        )}
       </label>
       <input
         value={value}

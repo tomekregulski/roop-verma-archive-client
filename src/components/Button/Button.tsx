@@ -35,7 +35,7 @@ export function Button(props: ButtonProps) {
         type="submit"
         style={{
           display: 'block',
-          width: width || '80px',
+          width: width || 'auto',
           padding: padding || '10px 25px',
           backgroundColor: backgroundColor || 'white',
           margin: margin,

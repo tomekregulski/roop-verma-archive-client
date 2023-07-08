@@ -81,11 +81,12 @@ export function Login() {
           justifyContent: 'center',
           alignItems: 'center',
           width: '300px',
+          marginTop: '50px',
         }}
       >
         <div style={{ width: '250px' }}>
           <Input
-            label="Email"
+            label="Enter email to log in"
             value={email ?? ''}
             type="email"
             callback={handleChange}
@@ -93,6 +94,7 @@ export function Login() {
             labelColor="white"
             margin="10px 0 0 0"
             id="email-login-input"
+            placeholder="Email"
           />
         </div>
         <Button callback={handleLogIn} margin="30px 0 0 0" width="100%" name="Log in" />
