@@ -91,7 +91,7 @@ const AboutRoopji = () => {
           West Unity (Gurukula), Inc. (ISEWU), which is recognized as a tax-exempt
           educational organization, 501(c)(3).
         </p>
-        <p
+        <div
           style={{
             display: 'flex',
             flexDirection: 'column',
@@ -101,7 +101,7 @@ const AboutRoopji = () => {
         >
           <div>With love and light,</div>
           <div>Tracy Verma</div>
-        </p>
+        </div>
       </div>
     </div>
   );
