@@ -109,8 +109,10 @@ const AudioView = (props: AudioViewProps) => {
 
   const supriseMe = () => {
     if (filteredTracks) {
-      const randomTrackNumber = Math.floor(Math.random() * filteredTracks.length - 1);
+      const randomTrackNumber = Math.floor(Math.random() * filteredTracks.length);
       const randomTrack = filteredTracks[randomTrackNumber];
+      console.log(randomTrackNumber);
+      console.log(randomTrack);
       setSelectedTrack(randomTrack);
     }
   };
