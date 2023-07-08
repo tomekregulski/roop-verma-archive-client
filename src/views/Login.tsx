@@ -56,9 +56,7 @@ export function Login() {
     } else {
       try {
         const emailKeyResponse = await axios.get(
-          `${
-            import.meta.env.VITE_API_ORIGIN
-          }/api/v1/auth/email-token/${key}/${email}asdfg`,
+          `${import.meta.env.VITE_API_ORIGIN}/api/v1/auth/email-token/${key}/${email}`,
         );
         const token = emailKeyResponse.data.token;
         const decodedToken: UserData = jwt_decode(token);

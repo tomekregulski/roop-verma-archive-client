@@ -113,7 +113,8 @@ export function Signup() {
             handleCheckout(response.data.stripeId);
           })
           .catch((error) => {
-            setErrorMessage(error.response.data.error.message);
+            console.log(error.response.data.error.message);
+            setMessage(error.response.data.error.message);
           });
       } else {
         if (registrationInfo.firstName === '') {
