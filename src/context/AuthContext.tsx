@@ -1,5 +1,5 @@
 import jwt_decode from 'jwt-decode';
-import React, {
+import {
   createContext,
   ReactNode,
   useContext,
@@ -16,6 +16,7 @@ export interface UserData {
   lastName: string;
   email: string;
   stripeId: string;
+  subscriptionActive: boolean;
 }
 
 interface AuthState {
