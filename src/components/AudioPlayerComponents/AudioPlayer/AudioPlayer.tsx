@@ -171,13 +171,11 @@ export function AudioPlayer() {
         {/* Perhaps unnecessary?*/}
         {/* {selectedTrack ? selectedTrack.raga.name : ''} */}
       </h2>
-      <p className="audio-player--track-marquee">
-        <span>
-          {selectedTrack
-            ? `${selectedTrack.raga.name} - ${selectedTrack.tape.event.date}`
-            : 'Select a track to begin'}
-        </span>
-      </p>
+      <span className="audio-player--track-marquee">
+        {selectedTrack
+          ? `${selectedTrack.raga.name} - ${selectedTrack.tape.event.date}`
+          : 'Select a track to begin'}
+      </span>
       <AudioControls
         isPlaying={isPlaying}
         onPrevClick={toPrevTrackIndex}
@@ -185,7 +183,7 @@ export function AudioPlayer() {
         // onPlayPauseClick={setIsPlaying}
         onPlayPauseClick={playPauseValidation}
       />
-      <p>
+      <span className="w-full ml-10 self-center pb-4">
         {duration
           ? Math.floor(trackProgress / 60) < 10
             ? `0${Math.floor(trackProgress / 60)}:`
@@ -197,7 +195,7 @@ export function AudioPlayer() {
             : `${Math.floor(trackProgress % 60)}`
           : ''}
         {duration ? ` / ${Math.floor(duration / 60)}:${Math.floor(duration % 60)}` : ''}
-      </p>
+      </span>
       <input
         type="range"
         value={trackProgress}
