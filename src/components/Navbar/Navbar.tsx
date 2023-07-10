@@ -34,6 +34,9 @@ const Navbar = () => {
             <Link to="roopji" className="nav--links-link">
               About Roopji
             </Link>
+            <Link to="testimonials" className="nav--links-link">
+              Testimonials
+            </Link>
           </span>
           <span>
             <Link to="library" className="nav--links-link">

@@ -11,6 +11,8 @@ import { CompleteRegistration } from './views/CompleteRegistration';
 import { LoginGate } from './views/LoginGate';
 import { ManageAccount } from './views/ManageAccount';
 import { Signup } from './views/Signup';
+import { Testimonials } from './views/testimonials/Testimonials';
+import { TestimonialTextFull } from './views/testimonials/TestimonialTextFull';
 import { Welcome } from './views/Welcome';
 
 export function App() {
@@ -43,6 +45,8 @@ export function App() {
             <Route path="/roopji" element={<AboutRoopji />} />
             {/* <Route path='library' element={<AboutLibrary />} /> */}
             <Route path="/library" element={<AboutLibrary />} />
+            <Route path="/testimonials" element={<Testimonials />} />
+            <Route path="/testimonials/:id" element={<TestimonialTextFull />} />
             <Route path="/account" element={<ManageAccount />} />
           </Routes>
         </AudioProvider>
