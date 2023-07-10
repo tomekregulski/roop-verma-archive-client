@@ -208,7 +208,7 @@ export function AudioPlayer() {
         onChange={(e) => onScrub(parseInt(e.target.value))}
         onMouseUp={onScrubEnd}
         onKeyUp={onScrubEnd}
-        style={{ background: trackStyling }}
+        style={{ background: trackStyling, marginLeft: '50px' }}
       />
     </div>
     // </div>

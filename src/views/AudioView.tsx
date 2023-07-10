@@ -28,6 +28,7 @@ const AudioView = (props: AudioViewProps) => {
   const {
     setSearchFilter,
     setSelectedTrack,
+    selectedTrack,
     trackList,
     filteredTracks,
     setFilteredTracks,
@@ -124,49 +125,51 @@ const AudioView = (props: AudioViewProps) => {
   };
 
   return (
-    <div className="audioview--container">
-      {isAuth === false ? <LoggedOutView /> : null}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'end',
-          marginTop: '20px',
-        }}
-      >
-        <Input
-          placeholder="Search Tracks"
-          margin="0 0 0 0"
-          padding="7px 15px"
-          // labelColor="white"
-          callback={(e: ChangeEvent<HTMLInputElement>) =>
-            // searchItem(e)
-            setSearch(e.target.value)
-          }
-          label="Seach Tracks"
-          type="text"
-          name="search-tracks"
-          id="search-tracks-input"
-          labelColor="white"
-          value={search}
-          tooltipContent="Search the library by raga, time of day, mood, data, or location"
-        />
+    <div className="flex flex-col justify-center items-center w-screen">
+      <div className="audioview--container">
+        {isAuth === false ? <LoggedOutView /> : null}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'end',
+            marginTop: '20px',
+          }}
+        >
+          <Input
+            placeholder="Search Tracks"
+            margin="0 0 0 0"
+            padding="7px 15px"
+            // labelColor="white"
+            callback={(e: ChangeEvent<HTMLInputElement>) =>
+              // searchItem(e)
+              setSearch(e.target.value)
+            }
+            label="Seach Tracks"
+            type="text"
+            name="search-tracks"
+            id="search-tracks-input"
+            labelColor="white"
+            value={search}
+            tooltipContent="Search the library by raga, time of day, mood, data, or location"
+          />
 
-        <Button
-          margin="0 0 0 15px"
-          name="Show All"
-          width="180px"
-          callback={showAll}
-          padding="8px 35px"
-        />
-        <Button
-          margin="0 0 0 15px"
-          name="Surprise Me"
-          width="180px"
-          callback={supriseMe}
-          padding="8px 35px"
-        />
+          <Button
+            margin="0 0 0 15px"
+            name="Show All"
+            width="180px"
+            callback={showAll}
+            padding="8px 35px"
+          />
+          <Button
+            margin="0 0 0 15px"
+            name="Surprise Me"
+            width="180px"
+            callback={supriseMe}
+            padding="8px 35px"
+          />
+        </div>
+        <TrackContainer />
       </div>
-      <TrackContainer />
       <AudioPlayerContainer width={width} breakpoint={breakpoint} />
     </div>
   );
