@@ -1,0 +1,50 @@
+import { init, send } from 'emailjs-com';
+
+import { getErrorMessage } from './getErrorMessage';
+
+interface EmailErrorNotifyProps {
+  fn: string;
+  args: string;
+  errorMessage: string;
+  errorStack?: string;
+  userName: string;
+  userEmail: string;
+}
+
+init('user_sWNT4oROPiAoUGksmqFlD');
+
+export async function emailErrorNotify(props: EmailErrorNotifyProps) {
+  const { fn, args, errorMessage, errorStack, userName, userEmail } = props;
+
+  send('rvdl_forms', 'template_fn3hr8a', {
+    fn,
+    args,
+    errorMessage,
+    errorStack,
+    userName,
+    userEmail,
+  }).then(
+    (response) => {
+      console.log('SUCCESS!', response.status, response.text);
+      return { success: true, message: '' };
+    },
+    (error) => {
+      console.log('Error notify email failed to send');
+      console.log(error);
+      const errorMessage = getErrorMessage(error.text);
+      return { success: false, message: errorMessage };
+    },
+  );
+}
+
+/**
+ * Example Implementation:
+ * const response = await emailErrorNotify({
+      fn: 'handleSignUp',
+      args: JSON.stringify({ firstName, lastName, email }),
+      errorMessage: 'error message',
+      errorStack: 'error stack',
+      userName: `${firstName} ${lastName}`,
+      userEmail: email,
+    });
+ */

@@ -32,7 +32,7 @@ export function CompleteRegistration() {
         console.log('SUCCESS!', response.status, response.text);
         setEmailSent(true);
 
-        // setLading??
+        // setLoading??
       },
       (error) => {
         console.log('Login email failed to send');
