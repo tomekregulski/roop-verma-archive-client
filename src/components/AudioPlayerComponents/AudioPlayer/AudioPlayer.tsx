@@ -164,52 +164,53 @@ export function AudioPlayer() {
   }, []);
 
   return (
-    <div className="audio-player--container">
-      <div className="audio-player--track-info">
-        <h2 className="audio-player--title">
-          {/* Perhaps unnecessary?*/}
-          {/* {selectedTrack ? selectedTrack.raga.name : ''} */}
-        </h2>
-        <p className="audio-player--track-marquee">
-          <span>
-            {selectedTrack
-              ? `${selectedTrack.raga.name} - ${selectedTrack.tape.event.date}`
-              : 'Select a track to begin'}
-          </span>
-        </p>
-        <AudioControls
-          isPlaying={isPlaying}
-          onPrevClick={toPrevTrackIndex}
-          onNextClick={toNextTrackIndex}
-          // onPlayPauseClick={setIsPlaying}
-          onPlayPauseClick={playPauseValidation}
-        />
-        <p>
-          {duration
-            ? Math.floor(trackProgress / 60) < 10
-              ? `0${Math.floor(trackProgress / 60)}:`
-              : `${Math.floor(trackProgress / 60)}:`
-            : ''}
-          {duration
-            ? Math.floor(trackProgress % 60) < 10
-              ? `0${Math.floor(trackProgress % 60)}`
-              : `${Math.floor(trackProgress % 60)}`
-            : ''}
-          {duration ? ` / ${Math.floor(duration / 60)}:${Math.floor(duration % 60)}` : ''}
-        </p>
-        <input
-          type="range"
-          value={trackProgress}
-          step="1"
-          min="0"
-          max={duration ? duration : `${duration}`}
-          className="progress"
-          onChange={(e) => onScrub(parseInt(e.target.value))}
-          onMouseUp={onScrubEnd}
-          onKeyUp={onScrubEnd}
-          style={{ background: trackStyling }}
-        />
-      </div>
+    // <div className="audio-player--container">
+    // <div className="audio-player--track-info">
+    <div className="flex items-center justify-between w-full mt-8 p-0">
+      <h2 className="audio-player--title">
+        {/* Perhaps unnecessary?*/}
+        {/* {selectedTrack ? selectedTrack.raga.name : ''} */}
+      </h2>
+      <p className="audio-player--track-marquee">
+        <span>
+          {selectedTrack
+            ? `${selectedTrack.raga.name} - ${selectedTrack.tape.event.date}`
+            : 'Select a track to begin'}
+        </span>
+      </p>
+      <AudioControls
+        isPlaying={isPlaying}
+        onPrevClick={toPrevTrackIndex}
+        onNextClick={toNextTrackIndex}
+        // onPlayPauseClick={setIsPlaying}
+        onPlayPauseClick={playPauseValidation}
+      />
+      <p>
+        {duration
+          ? Math.floor(trackProgress / 60) < 10
+            ? `0${Math.floor(trackProgress / 60)}:`
+            : `${Math.floor(trackProgress / 60)}:`
+          : ''}
+        {duration
+          ? Math.floor(trackProgress % 60) < 10
+            ? `0${Math.floor(trackProgress % 60)}`
+            : `${Math.floor(trackProgress % 60)}`
+          : ''}
+        {duration ? ` / ${Math.floor(duration / 60)}:${Math.floor(duration % 60)}` : ''}
+      </p>
+      <input
+        type="range"
+        value={trackProgress}
+        step="1"
+        min="0"
+        max={duration ? duration : `${duration}`}
+        className="progress"
+        onChange={(e) => onScrub(parseInt(e.target.value))}
+        onMouseUp={onScrubEnd}
+        onKeyUp={onScrubEnd}
+        style={{ background: trackStyling }}
+      />
     </div>
+    // </div>
   );
 }

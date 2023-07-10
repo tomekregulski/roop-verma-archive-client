@@ -7,12 +7,14 @@
 }
 
 .tanpura__left {
-  height: 200px;
+  /* height: 200px; */
+  height: 50px;
   margin-right: 50px;
 }
 
 .tanpura__right {
-  height: 200px;
+  /* height: 200px; */
+  height: 50px;
   margin-left: 50px;
 }
 

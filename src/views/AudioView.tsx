@@ -126,7 +126,6 @@ const AudioView = (props: AudioViewProps) => {
   return (
     <div className="audioview--container">
       {isAuth === false ? <LoggedOutView /> : null}
-      <AudioPlayerContainer width={width} breakpoint={breakpoint} />
       <div
         style={{
           display: 'flex',
@@ -168,6 +167,7 @@ const AudioView = (props: AudioViewProps) => {
         />
       </div>
       <TrackContainer />
+      <AudioPlayerContainer width={width} breakpoint={breakpoint} />
     </div>
   );
 };
