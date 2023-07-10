@@ -1,6 +1,6 @@
 import { init, send } from 'emailjs-com';
 
-import { getErrorMessage } from '../util/getErrorMessage';
+import { getErrorMessage } from './getErrorMessage';
 
 interface EmailErrorNotifyProps {
   fn: string;
@@ -13,7 +13,7 @@ interface EmailErrorNotifyProps {
 
 init('user_sWNT4oROPiAoUGksmqFlD');
 
-export function useEmailErrorNotify(props: EmailErrorNotifyProps) {
+export async function emailErrorNotify(props: EmailErrorNotifyProps) {
   const { fn, args, errorMessage, errorStack, userName, userEmail } = props;
 
   send('rvdl_forms', 'template_fn3hr8a', {
@@ -36,3 +36,15 @@ export function useEmailErrorNotify(props: EmailErrorNotifyProps) {
     },
   );
 }
+
+/**
+ * Example Implementation:
+ * const response = await emailErrorNotify({
+      fn: 'handleSignUp',
+      args: JSON.stringify({ firstName, lastName, email }),
+      errorMessage: 'error message',
+      errorStack: 'error stack',
+      userName: `${firstName} ${lastName}`,
+      userEmail: email,
+    });
+ */
