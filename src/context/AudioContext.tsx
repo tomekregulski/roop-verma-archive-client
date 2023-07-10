@@ -99,7 +99,9 @@ export const AudioProvider = (props: AudioContextProps) => {
         } else {
           console.log('fetching public tracks');
           const response = await axios.get(
-            `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/public/${key}`,
+            // TEMPORARY CHANGE - TURN BACK BEFORE MERGE
+            // `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/public/${key}`,
+            `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${key}`,
           );
           setTrackList(response.data);
         }
@@ -174,7 +176,8 @@ export const AudioProvider = (props: AudioContextProps) => {
 
   useEffect(() => {
     if (selectedTrack) {
-      setTrackSrc(selectedTrack.url);
+      // setTrackSrc(selectedTrack.url);
+      console.log(selectedTrack);
     }
   }, [selectedTrack]);
 

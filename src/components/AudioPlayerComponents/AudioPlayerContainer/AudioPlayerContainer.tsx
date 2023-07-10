@@ -13,13 +13,13 @@ const AudioPlayerContainer = (props: AudioPlayerContainerProps) => {
   const { width, breakpoint } = props;
 
   return (
-    <div className="audioContainerWrapper">
+    <div className="flex items-center justify-between w-full mt-12 border">
       {width > breakpoint && (
-        <img className="tanpura__left" src={tanpuraLeft} alt="tanpura" />
+        <img className="h-[50px] mx-[50px]" src={tanpuraLeft} alt="tanpura" />
       )}
       <AudioPlayer />
       {width > breakpoint && (
-        <img className="tanpura__right" src={tanpuraRight} alt="tanpura" />
+        <img className="h-[50px] mx-[50px]" src={tanpuraRight} alt="tanpura" />
       )}
     </div>
   );

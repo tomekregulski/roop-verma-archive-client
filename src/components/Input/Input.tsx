@@ -40,7 +40,7 @@ export function Input(props: InputProps) {
         margin: margin,
       }}
     >
-      <label style={{ color: labelColor }} htmlFor={name}>
+      <label className="flex items-center" style={{ color: labelColor }} htmlFor={name}>
         {label}
         {tooltipContent && (
           <span style={{ marginLeft: '8px' }}>
