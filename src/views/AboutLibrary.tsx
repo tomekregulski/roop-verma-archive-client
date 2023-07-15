@@ -1,70 +1,6 @@
-import './styles/helpStyles.css';
-
-import { init, sendForm } from 'emailjs-com';
-import { ChangeEvent, FormEvent, /* useContext, useEffect,*/ useState } from 'react';
-
-// import { useNavigate } from 'react-router-dom';
-import { Alert } from '../components/Alert/Alert';
-import { Button } from '../components/Button/Button';
-import { Input } from '../components/Input/Input';
-import { useAuthContext } from '../context/AuthContext';
-import { getErrorMessage } from '../util/getErrorMessage';
-// import { isValidJwt } from '../util/isValidJwt';
-
-init('user_sWNT4oROPiAoUGksmqFlD');
+import { SupportForm } from '../components/SupportForm/SupportFOrm';
 
 const AboutLibrary = () => {
-  const { /* isAuth,*/ userData } = useAuthContext();
-
-  const [message, setMessage] = useState('');
-
-  // const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   if (!isValidJwt) {
-  //     setUserData({});
-  //     setIsAuth(false);
-  //     document.cookie = 'roop-verma-library= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
-  //     navigate('/');
-  //   }
-  // }, []);
-
-  const [helpInfo, setHelpInfo] = useState({
-    name: userData ? `${userData.firstName} ${userData.lastName}` : '',
-    email: userData ? userData.email : '',
-    message: '',
-  });
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-
-    setHelpInfo((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
-  const handleFormSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const form = document.querySelector('#contact-form')! as HTMLFormElement;
-
-    sendForm('rvdl_forms', 'template_xu5gbwo', '#contact-form').then(
-      (response) => {
-        setMessage('Message successfully sent');
-        // setLoading?
-        console.log('SUCCESS!', response.status, response.text);
-        form.reset();
-      },
-      (error) => {
-        console.log('Failed to send support email', error);
-        console.log(error);
-        const errorMessage = getErrorMessage(error.text);
-        setMessage(`Support email failed to send: ${errorMessage}`);
-      },
-    );
-  };
-
   return (
     <div className="help__container">
       <section className="help__section">
@@ -104,66 +40,8 @@ const AboutLibrary = () => {
           will allow for a higher level of specificity.
         </p>
       </section>
-      <section>
-        <form id="contact-form" onSubmit={(event) => handleFormSubmit(event)}>
-          <Input
-            id="support-message--name-input"
-            label="Name"
-            name="name"
-            value={helpInfo.name}
-            type="text"
-            callback={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
-            labelColor="white"
-            margin="10px 0 0 0"
-          />
-          {/* {firstnameMessage !== '' && (
-            <span className='form--alert'>{firstnameMessage}</span>
-          )} */}
-          <Input
-            id="support-message--email-input"
-            label="Email"
-            name="email"
-            value={helpInfo.email}
-            type="text"
-            callback={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
-            labelColor="white"
-            margin="20px 0 0 0"
-          />
-          {/* {lastnamelMessage !== '' && (
-            <span className='form--alert'>{lastnamelMessage}</span>
-          )} */}
-
-          <Input
-            id="support-message--message-input"
-            label="Message"
-            name="message"
-            value={helpInfo.message}
-            type="text"
-            callback={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
-            labelColor="white"
-            margin="20px 0 0 0"
-          />
-          {/* {emailMessage !== '' && (
-            <span className='form--alert'>{emailMessage}</span>
-          )} */}
-        </form>
-        <Button
-          callback={(e: FormEvent) => handleFormSubmit(e)}
-          margin="30px 0 0 0"
-          width="100%"
-          name="Send Message"
-        />
-      </section>
-      {message !== '' && (
-        <Alert
-          closeAlert={() => {
-            setMessage('');
-          }}
-          show={message !== '' ? true : false}
-        >
-          {message}
-        </Alert>
-      )}
+      {/** TODO: make into its own page */}
+      <SupportForm />
     </div>
   );
 };
