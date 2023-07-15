@@ -26,11 +26,11 @@ ul {
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: white;
   text-decoration: none;
 }
 a:hover {
-  color: #6065bc;
+  color: black;
 }
 a:visited {
   color: white;

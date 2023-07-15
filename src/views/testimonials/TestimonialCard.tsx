@@ -1,3 +1,5 @@
+import styled from '@emotion/styled';
+
 import type { Testimonial } from './Testimonials';
 import { TextContent } from './TextContent';
 import { VideoContent } from './VideoContent';
@@ -6,7 +8,7 @@ export function TestimonialCard(props: { testimonial: Testimonial }) {
   const { testimonial } = props;
   const { submittedBy, content, type } = testimonial;
 
-  const Content = () => {
+  const TestimonialContent = () => {
     switch (type) {
       case 'video':
         return <VideoContent src={content} />;
@@ -17,12 +19,15 @@ export function TestimonialCard(props: { testimonial: Testimonial }) {
     }
   };
 
+  const TextimonialCardWrapper = styled.div();
+  const TextimonialSubmittedBy = styled.div();
+
   return (
-    <div className="w-[350px] h-[350px] flex flex-col justify-start items-start border p-2">
-      <div className="my-0 mx-auto">Submitted by: {submittedBy}</div>
-      <div>
-        <Content />
-      </div>
-    </div>
+    <TextimonialCardWrapper className="w-[350px] h-[350px] flex flex-col justify-start items-start border p-2">
+      <TextimonialSubmittedBy className="my-0 mx-auto">
+        Submitted by: {submittedBy}
+      </TextimonialSubmittedBy>
+      <TestimonialContent />
+    </TextimonialCardWrapper>
   );
 }
