@@ -128,13 +128,7 @@ const AudioView = (props: AudioViewProps) => {
     <div className="flex flex-col justify-center items-center w-screen">
       <div className="audioview--container">
         {isAuth === false ? <LoggedOutView /> : null}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'end',
-            marginTop: '20px',
-          }}
-        >
+        <div className="flex items-end mt-[20px]">
           <Input
             placeholder="Search Tracks"
             margin="0 0 0 0"
@@ -152,7 +146,8 @@ const AudioView = (props: AudioViewProps) => {
             value={search}
             tooltipContent="Search the library by raga, time of day, mood, data, or location"
           />
-
+          {/** Add breakpoints */}
+          {/* <div className="s-flex"> */}
           <Button
             margin="0 0 0 15px"
             name="Show All"
@@ -167,6 +162,7 @@ const AudioView = (props: AudioViewProps) => {
             callback={supriseMe}
             padding="8px 35px"
           />
+          {/* </div> */}
         </div>
         <TrackContainer />
       </div>
