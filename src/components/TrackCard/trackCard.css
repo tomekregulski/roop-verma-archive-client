@@ -9,11 +9,6 @@
   cursor: pointer;
 }
 
-.card--container > div {
-  padding: 10px;
-  display: 'flex' !important;
-}
-
 .audio-controls--button {
   background: none;
   border: none;
@@ -22,33 +17,4 @@
 
 .card--container-playing {
   background: rgba(81, 152, 157, 0.194);
-}
-
-/* .card--track-name {} */
-
-.card--columns {
-  display: flex;
-  justify-content: space-between;
-}
-
-.card--column-left {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.card--column-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-end;
-}
-
-.card--track-name {
-  font-size: 20px;
-}
-
-.card--track-detail-item {
-  font-size: 14px;
-  margin-top: 2px;
 }

@@ -1,5 +1,4 @@
-import './trackContainerStyles.css';
-
+import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 
 import { useAudioContext } from '../../context/AudioContext';
@@ -43,6 +42,8 @@ export interface TrackInfo {
   date: string;
   rasa: string;
 }
+const TrackContainerWrapper = styled.div();
+const TrackList = styled.div();
 
 const TrackContainer = () => {
   const [trackRows, setTrackRows] = useState<TrackInfo[] | null>();
@@ -91,15 +92,17 @@ const TrackContainer = () => {
   };
 
   return (
-    <div className="track-list--container">
-      {trackRows ? (
-        trackRows.map((track, index) => {
-          return <TrackCard key={index} callback={clickHandle} trackInfo={track} />;
-        })
-      ) : (
-        <p>{tracksMessage}</p>
-      )}
-    </div>
+    <TrackContainerWrapper className="mt-[30px] w-[90vh] pt-[10px] overflow-scroll h-[50vh] flex justify-center items-center">
+      <TrackList className="w-[500px]">
+        {trackRows ? (
+          trackRows.map((track, index) => {
+            return <TrackCard key={index} callback={clickHandle} trackInfo={track} />;
+          })
+        ) : (
+          <p>{tracksMessage}</p>
+        )}
+      </TrackList>
+    </TrackContainerWrapper>
   );
 };
 

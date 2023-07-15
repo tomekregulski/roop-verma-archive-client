@@ -2,6 +2,8 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import './trackCard.css';
 
+import styled from '@emotion/styled';
+
 import { ReactComponent as Pause } from '../../assets/pause.svg';
 import { ReactComponent as Play } from '../../assets/play.svg';
 import { /*  Track, */ useAudioContext } from '../../context/AudioContext';
@@ -22,53 +24,69 @@ const TrackCard = (props: TrackCardProps) => {
   const isSelected = selectedTrack && selectedTrack.id === id;
   const titleContent = getTrackTitle(trackInfo);
 
+  const CardContainer = styled.div();
+  const CardBody = styled.div();
+  const CardInfo = styled.div();
+  const CardColumns = styled.div();
+  const CardColumnLeft = styled.div();
+  const CardColumnRight = styled.div();
+  const CardTrackDetailsItem = styled.span();
+  const CardTrackName = styled.div();
+
   const renderTitle = () => {
     return (
-      <div className="card--track-name">
+      <CardTrackName className="text-[20px]">
         {titleContent.title}
         {name !== 'unknown' && timeOfDay && (
-          <span className="card--track-detail-item">{' - ' + timeOfDay + ' Raga'}</span>
+          <CardTrackDetailsItem className="mt-2px">
+            {' - ' + timeOfDay + ' Raga'}
+          </CardTrackDetailsItem>
         )}
-      </div>
+      </CardTrackName>
     );
   };
 
   const renderSubtitle = () => {
     return (
-      <div className="card--column-left">
-        <span className="card--track-detail-item">{titleContent.eventInfo}</span>
-        {rasa && <span className="card--track-detail-item">{rasa}</span>}
-      </div>
+      <CardColumnLeft className="flex flex-col items-start">
+        <CardTrackDetailsItem className="text-[14px] mt-2px">
+          {titleContent.eventInfo}
+        </CardTrackDetailsItem>
+        {rasa && (
+          <CardTrackDetailsItem className="text-[14px] mt-2px">
+            {rasa}
+          </CardTrackDetailsItem>
+        )}
+      </CardColumnLeft>
     );
   };
 
   return (
-    <div
+    <CardContainer
       className={
         isSelected ? 'card--container card--container-playing' : 'card--container'
       }
     >
-      <div className="card--body" onClick={() => callback(id)}>
-        <div className="card--info">
+      <CardBody className="p-[10px]" onClick={() => callback(id)}>
+        <CardInfo>
           {renderTitle()}
-          <div className="card--columns">
+          <CardColumns className="flex justify-between">
             {renderSubtitle()}
-            <div className="card--column-right"></div>
-          </div>
-        </div>
-        <div className="card--buton">
-          {isSelected && (
-            <button className="play audio-controls--button">
-              {isPlaying ? (
-                <Pause onClick={playPauseValidation} />
-              ) : (
-                <Play onClick={playPauseValidation} />
+            <CardColumnRight>
+              {isSelected && (
+                <button className="play audio-controls--button pr-[20px]">
+                  {isPlaying ? (
+                    <Pause onClick={playPauseValidation} />
+                  ) : (
+                    <Play onClick={playPauseValidation} />
+                  )}
+                </button>
               )}
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
+            </CardColumnRight>
+          </CardColumns>
+        </CardInfo>
+      </CardBody>
+    </CardContainer>
   );
 };
 

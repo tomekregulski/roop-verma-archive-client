@@ -100,8 +100,8 @@ export const AudioProvider = (props: AudioContextProps) => {
           console.log('fetching public tracks');
           const response = await axios.get(
             // TEMPORARY CHANGE - TURN BACK BEFORE MERGE
-            // `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/public/${key}`,
-            `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${key}`,
+            `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/public/${key}`,
+            // `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${key}`,
           );
           setTrackList(response.data);
         }
