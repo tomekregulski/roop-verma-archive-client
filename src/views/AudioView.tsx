@@ -17,13 +17,13 @@ import { getEachItem } from '../util/helperFunctions';
 import { isValidJwt } from '../util/isValidJwt';
 import { LoggedOutView } from './LoggedOutView';
 
-interface AudioViewProps {
-  width: number;
-  breakpoint: number;
-}
+// interface AudioViewProps {
+//   width: number;
+//   breakpoint: number;
+// }
 
-const AudioView = (props: AudioViewProps) => {
-  const { width, breakpoint } = props;
+const AudioView = (/*props: AudioViewProps*/) => {
+  // const { width, breakpoint } = props;
   const [search, setSearch] = useState('');
   const {
     setSearchFilter,
@@ -166,7 +166,7 @@ const AudioView = (props: AudioViewProps) => {
         </div>
         <TrackContainer />
       </div>
-      <AudioPlayerContainer width={width} breakpoint={breakpoint} />
+      <AudioPlayerContainer /*width={width} breakpoint={breakpoint} */ />
     </div>
   );
 };

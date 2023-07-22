@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+// import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
-import Navbar from './components/Navbar/Navbar';
+import { Navbar } from './components/Navbar/Navbar';
 // import { useState } from 'react';
-import { AudioProvider } from './context/AudioContext';
+// import { AudioProvider } from './context/AudioContext';
 import AboutLibrary from './views/AboutLibrary';
 import AboutRoopji from './views/AboutRoopji';
 import AudioView from './views/AudioView';
@@ -16,40 +16,40 @@ import { TestimonialTextFull } from './views/testimonials/TestimonialTextFull';
 import { Welcome } from './views/Welcome';
 
 export function App() {
-  const [width, setWidth] = useState(window.innerWidth);
-  const breakpoint = 850;
+  // const [width, setWidth] = useState(window.innerWidth);
+  // const breakpoint = 850;
 
-  useEffect(() => {
-    const handleResizeWindow = () => setWidth(window.innerWidth);
-    window.addEventListener('resize', handleResizeWindow);
-    return () => {
-      window.removeEventListener('resize', handleResizeWindow);
-    };
-  }, []);
+  // useEffect(() => {
+  //   const handleResizeWindow = () => setWidth(window.innerWidth);
+  //   window.addEventListener('resize', handleResizeWindow);
+  //   return () => {
+  //     window.removeEventListener('resize', handleResizeWindow);
+  //   };
+  // }, []);
 
   return (
     <div id="modal-root">
       <Router>
         <Navbar />
-        <AudioProvider>
-          <Routes>
-            <Route path="/" element={<Welcome />} />
-            <Route
-              path="/audio"
-              element={<AudioView width={width} breakpoint={breakpoint} />}
-            />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/complete-registration" element={<CompleteRegistration />} />
-            <Route path="/manage-account" element={<ManageAccount />} />
-            <Route path="/login-gate" element={<LoginGate />} />
-            <Route path="/roopji" element={<AboutRoopji />} />
-            {/* <Route path='library' element={<AboutLibrary />} /> */}
-            <Route path="/library" element={<AboutLibrary />} />
-            <Route path="/testimonials" element={<Testimonials />} />
-            <Route path="/testimonials/:id" element={<TestimonialTextFull />} />
-            <Route path="/account" element={<ManageAccount />} />
-          </Routes>
-        </AudioProvider>
+        {/* <AudioProvider> */}
+        <Routes>
+          <Route path="/" element={<Welcome />} />
+          <Route
+            path="/audio"
+            element={<AudioView /*width={width} breakpoint={breakpoint}*/ />}
+          />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/complete-registration" element={<CompleteRegistration />} />
+          <Route path="/manage-account" element={<ManageAccount />} />
+          <Route path="/login-gate" element={<LoginGate />} />
+          <Route path="/roopji" element={<AboutRoopji />} />
+          {/* <Route path='library' element={<AboutLibrary />} /> */}
+          <Route path="/library" element={<AboutLibrary />} />
+          <Route path="/testimonials" element={<Testimonials />} />
+          <Route path="/testimonials/:id" element={<TestimonialTextFull />} />
+          <Route path="/account" element={<ManageAccount />} />
+        </Routes>
+        {/* </AudioProvider> */}
       </Router>
     </div>
   );
