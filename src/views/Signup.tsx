@@ -55,10 +55,6 @@ export function Signup() {
   };
 
   useEffect(() => {
-    console.log(errorMessage);
-  }, [errorMessage]);
-
-  useEffect(() => {
     validateEmail();
   }, [registrationInfo.email]);
 

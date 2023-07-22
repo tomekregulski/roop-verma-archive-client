@@ -138,7 +138,7 @@ const AudioView = (props: AudioViewProps) => {
               // searchItem(e)
               setSearch(e.target.value)
             }
-            label="Seach Tracks"
+            label="Search Tracks"
             type="text"
             name="search-tracks"
             id="search-tracks-input"

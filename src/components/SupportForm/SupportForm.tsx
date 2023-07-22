@@ -1,7 +1,12 @@
 import './helpStyles.css';
 
 import { init, sendForm } from 'emailjs-com';
-import { ChangeEvent, FormEvent, /* useContext, useEffect,*/ useState } from 'react';
+import {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  /* useContext, useEffect,*/ useState,
+} from 'react';
 
 import { useAuthContext } from '../../context/AuthContext';
 import { getErrorMessage } from '../../util/getErrorMessage';
@@ -18,6 +23,7 @@ export function SupportForm() {
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [emailMessage, setEmailMessage] = useState('');
   const [helpInfo, setHelpInfo] = useState({
     name: userData ? `${userData.firstName} ${userData.lastName}` : '',
     email: userData ? userData.email : '',
@@ -32,6 +38,26 @@ export function SupportForm() {
       [name]: value,
     }));
   };
+
+  const validateEmail = () => {
+    const validRegex =
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+    if (helpInfo.email !== '') {
+      if (helpInfo.email.match(validRegex)) {
+        setEmailMessage('');
+      } else {
+        setEmailMessage('Please enter a valid email address');
+      }
+    } else {
+      setEmailMessage('');
+    }
+  };
+
+  useEffect(() => {
+    console.log('email');
+    validateEmail();
+  }, [helpInfo.email]);
 
   const handleFormSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -101,9 +127,7 @@ export function SupportForm() {
             labelColor="white"
             margin="20px 0 0 0"
           />
-          {/* {emailMessage !== '' && (
-            <span className='form--alert'>{emailMessage}</span>
-          )} */}
+          {emailMessage !== '' && <span className="form--alert">{emailMessage}</span>}
         </form>
         <Button
           callback={(e: FormEvent) => handleFormSubmit(e)}
