@@ -18,7 +18,7 @@ export function Signup() {
   const [invalidEmail, setInvalidEmail] = useState('');
   const [invalidFirstName, setInvalidFirstName] = useState('');
   const [invalidLastName, setInvalidLastName] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  // const [errorMessage, setErrorMessage] = useState('');
   const [stripe, setStripe] = useState<StripeResponseObject | null>(null);
   const [message, setMessage] = useState('');
 

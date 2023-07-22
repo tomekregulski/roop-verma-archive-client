@@ -1,4 +1,4 @@
-import { SupportForm } from '../components/SupportForm/SupportFOrm';
+import { SupportForm } from '../components/SupportForm/SupportForm';
 
 const AboutLibrary = () => {
   return (

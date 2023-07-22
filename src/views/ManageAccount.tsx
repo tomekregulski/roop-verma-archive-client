@@ -1,6 +1,6 @@
 // import { loadStripe } from '@stripe/stripe-js';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { /* useEffect,*/ useState } from 'react';
 
 import { Alert } from '../components/Alert/Alert';
 import { useAuthContext } from '../context/AuthContext';
@@ -13,7 +13,7 @@ const key = import.meta.env.VITE_API_KEY;
 export function ManageAccount() {
   const [message, setMessage] = useState('');
 
-  const { userData, updateUserData } = useAuthContext();
+  const { userData /* updateUserData*/ } = useAuthContext();
 
   // useEffect(() => {
   //   async function getSubscriptions() {

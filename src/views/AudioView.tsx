@@ -28,7 +28,7 @@ const AudioView = (props: AudioViewProps) => {
   const {
     setSearchFilter,
     setSelectedTrack,
-    selectedTrack,
+    // selectedTrack,
     trackList,
     filteredTracks,
     setFilteredTracks,

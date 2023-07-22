@@ -1,11 +1,11 @@
-import React, { useContext, useEffect } from 'react';
+// import React, { useContext, useEffect } from 'react';
 
-import { useAuthContext } from '../context/AuthContext';
+// import { useAuthContext } from '../context/AuthContext';
 // import { useNavigate } from 'react-router-dom';
 // import { isValidJwt } from '../Utils/isValidJwt';
 
 const AboutRoopji = () => {
-  const { isAuth, userData } = useAuthContext();
+  // const { isAuth, userData } = useAuthContext();
 
   // let navigate = useNavigate();
 
