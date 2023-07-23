@@ -166,7 +166,6 @@ const AudioView = (/*props: AudioViewProps*/) => {
         </div>
         <TrackContainer />
       </div>
-      <AudioPlayerContainer /*width={width} breakpoint={breakpoint} */ />
     </div>
   );
 };
