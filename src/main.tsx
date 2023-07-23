@@ -3,7 +3,8 @@ import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import { App } from './App';
+import { AppContainer } from './AppContainer';
+// import { App } from './App';
 import { AudioProvider } from './context/AudioContext';
 import { AuthProvider } from './context/AuthContext';
 import { RegistrationProvider } from './context/RegistrationContext';
@@ -13,7 +14,8 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <RegistrationProvider>
       <AuthProvider>
         <AudioProvider>
-          <App />
+          {/* <App /> */}
+          <AppContainer />
         </AudioProvider>
       </AuthProvider>
     </RegistrationProvider>

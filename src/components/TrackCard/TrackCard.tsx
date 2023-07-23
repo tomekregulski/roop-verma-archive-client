@@ -63,9 +63,8 @@ const TrackCard = (props: TrackCardProps) => {
 
   return (
     <CardContainer
-      className={
-        isSelected ? 'card--container card--container-playing' : 'card--container'
-      }
+      className={`max-w-[500px]
+        ${isSelected ? 'card--container card--container-playing' : 'card--container'}`}
     >
       <CardBody className="p-[10px]" onClick={() => callback(id)}>
         <CardInfo>

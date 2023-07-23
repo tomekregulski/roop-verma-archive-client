@@ -1,12 +1,10 @@
 // import { categories } from '../Utils/constants';
-import './styles/audioViewStyles.css';
-
 import React, { ChangeEvent, useEffect, useState } from 'react';
 // import { TracksContextData } from '../Context/TracksContext';
 // import { AuthContext } from '../Context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-import AudioPlayerContainer from '../components/AudioPlayerComponents/AudioPlayerContainer/AudioPlayerContainer';
+// import AudioPlayerContainer from '../components/AudioPlayerComponents/AudioPlayerContainer/AudioPlayerContainer';
 // import Select from '../Components/Select/Select';
 import { Button } from '../components/Button/Button';
 import { Input } from '../components/Input/Input';
@@ -17,18 +15,18 @@ import { getEachItem } from '../util/helperFunctions';
 import { isValidJwt } from '../util/isValidJwt';
 import { LoggedOutView } from './LoggedOutView';
 
-interface AudioViewProps {
-  width: number;
-  breakpoint: number;
-}
+// interface AudioViewProps {
+//   width: number;
+//   breakpoint: number;
+// }
 
-const AudioView = (props: AudioViewProps) => {
-  const { width, breakpoint } = props;
+const AudioView = (/*props: AudioViewProps*/) => {
+  // const { width, breakpoint } = props;
   const [search, setSearch] = useState('');
   const {
     setSearchFilter,
     setSelectedTrack,
-    selectedTrack,
+    // selectedTrack,
     trackList,
     filteredTracks,
     setFilteredTracks,
@@ -125,48 +123,49 @@ const AudioView = (props: AudioViewProps) => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center w-screen">
-      <div className="audioview--container">
-        {isAuth === false ? <LoggedOutView /> : null}
-        <div className="flex items-end mt-[20px]">
-          <Input
-            placeholder="Search Tracks"
-            margin="0 0 0 0"
-            padding="7px 15px"
-            // labelColor="white"
-            callback={(e: ChangeEvent<HTMLInputElement>) =>
-              // searchItem(e)
-              setSearch(e.target.value)
-            }
-            label="Search Tracks"
-            type="text"
-            name="search-tracks"
-            id="search-tracks-input"
-            labelColor="white"
-            value={search}
-            tooltipContent="Search the library by raga, time of day, mood, data, or location"
-          />
-          {/** Add breakpoints */}
-          {/* <div className="s-flex"> */}
-          <Button
-            margin="0 0 0 15px"
-            name="Show All"
-            width="180px"
-            callback={showAll}
-            padding="8px 35px"
-          />
-          <Button
-            margin="0 0 0 15px"
-            name="Surprise Me"
-            width="180px"
-            callback={supriseMe}
-            padding="8px 35px"
-          />
-          {/* </div> */}
+    <div>
+      <div className="flex flex-col mt-[20px]">
+        <div className="flex flex-col justify-center items-center">
+          {isAuth === false ? <LoggedOutView /> : null}
+          <div className="flex items-end mt-[20px]">
+            <Input
+              placeholder="Search Tracks"
+              margin="0 0 0 0"
+              padding="7px 15px"
+              // labelColor="white"
+              callback={(e: ChangeEvent<HTMLInputElement>) =>
+                // searchItem(e)
+                setSearch(e.target.value)
+              }
+              label="Search Tracks"
+              type="text"
+              name="search-tracks"
+              id="search-tracks-input"
+              labelColor="white"
+              value={search}
+              tooltipContent="Search the library by raga, time of day, mood, data, or location"
+            />
+            {/** Add breakpoints */}
+            {/* <div className="s-flex"> */}
+            <Button
+              margin="0 0 0 15px"
+              name="Show All"
+              width="180px"
+              callback={showAll}
+              padding="8px 35px"
+            />
+            <Button
+              margin="0 0 0 15px"
+              name="Surprise Me"
+              width="180px"
+              callback={supriseMe}
+              padding="8px 35px"
+            />
+            {/* </div> */}
+          </div>
         </div>
         <TrackContainer />
       </div>
-      <AudioPlayerContainer width={width} breakpoint={breakpoint} />
     </div>
   );
 };
