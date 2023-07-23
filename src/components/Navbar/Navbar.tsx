@@ -16,7 +16,7 @@ export function Navbar() {
   };
 
   return (
-    <nav className="flex flex-col items-center justify-center">
+    <nav className="flex flex-col items-center justify-center pb-[16px] border-b-2">
       <div className="block mt-[15px] mb-[0] mx-auto">
         {/* Need mobile styling flex flex-col items-center text-[20px] */}
         <h1 className="">

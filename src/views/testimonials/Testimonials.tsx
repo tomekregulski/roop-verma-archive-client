@@ -88,7 +88,7 @@ export function Testimonials() {
         to SOMEMAIL@EMAIL.EMAIL
       </p>
       {/** breakpoint to justify-center at smaller screensizes */}
-      <TestimonialsList className="flex flex-wrap justify-start items-center mx-4 mt-8 gap-2">
+      <TestimonialsList className="flex flex-wrap justify-start items-center mx-auto mt-8 gap-2">
         {testimonials.map((testimonial) => (
           <TestimonialCard key={testimonial.id} testimonial={testimonial} />
         ))}

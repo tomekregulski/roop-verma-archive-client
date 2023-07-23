@@ -1,14 +1,16 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-// import Home from './ui/Home';
-// import Error from './ui/Error';
-// import Menu, { loader as menuLoader } from './features/menu/Menu';
-// import Cart from './features/cart/Cart';
-// import CreateOrder, { action as createOrderAction } from './features/order/CreateOrder';
-// import Order, { loader as orderLoader } from './features/order/Order';
-// import { action as updateOrderAction } from './features/order/UpdateOrder';
 import { AppLayout } from './layouts/AppLayout';
+import AboutLibrary from './views/AboutLibrary';
+// import Error from './ui/Error';
+import AboutRoopji from './views/AboutRoopji';
 import AudioView from './views/AudioView';
+import { CompleteRegistration } from './views/CompleteRegistration';
+import { LoginGate } from './views/LoginGate';
+import { ManageAccount } from './views/ManageAccount';
+import { Signup } from './views/Signup';
+import { Testimonials } from './views/testimonials/Testimonials';
+import { TestimonialTextFull } from './views/testimonials/TestimonialTextFull';
 import { Welcome } from './views/Welcome';
 
 const router = createBrowserRouter([
@@ -24,6 +26,38 @@ const router = createBrowserRouter([
       {
         path: '/audio',
         element: <AudioView />,
+      },
+      {
+        path: '/signup',
+        element: <Signup />,
+      },
+      {
+        path: '/complete-registration',
+        element: <CompleteRegistration />,
+      },
+      {
+        path: '/manage-account',
+        element: <ManageAccount />,
+      },
+      {
+        path: '/login-gate',
+        element: <LoginGate />,
+      },
+      {
+        path: '/roopji',
+        element: <AboutRoopji />,
+      },
+      {
+        path: '/library',
+        element: <AboutLibrary />,
+      },
+      {
+        path: '/testimonials',
+        element: <Testimonials />,
+      },
+      {
+        path: '/testimonials/:id',
+        element: <TestimonialTextFull />,
       },
     ],
   },

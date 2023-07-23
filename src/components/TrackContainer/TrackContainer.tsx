@@ -92,8 +92,8 @@ const TrackContainer = () => {
   };
 
   return (
-    <TrackContainerWrapper className="mt-[30px] w-[90vh] pt-[10px] overflow-scroll h-[50vh] flex justify-center items-center">
-      <TrackList className="w-[500px]">
+    <TrackContainerWrapper className="mt-[30px] overflow-scroll h-full flex justify-center items-center">
+      <TrackList>
         {trackRows ? (
           trackRows.map((track, index) => {
             return <TrackCard key={index} callback={clickHandle} trackInfo={track} />;
