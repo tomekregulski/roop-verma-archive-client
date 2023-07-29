@@ -42,7 +42,7 @@ export function Navbar() {
           </Link>
           {isAuth === true ? (
             <>
-              <Link to="account" className="nav--links-link">
+              <Link to="manage-account" className="nav--links-link">
                 Account Info
               </Link>
               {

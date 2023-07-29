@@ -47,7 +47,7 @@ export function App() {
           <Route path="/library" element={<AboutLibrary />} />
           <Route path="/testimonials" element={<Testimonials />} />
           <Route path="/testimonials/:id" element={<TestimonialTextFull />} />
-          <Route path="/account" element={<ManageAccount />} />
+          <Route path="/manage-account" element={<ManageAccount />} />
         </Routes>
         {/* </AudioProvider> */}
       </Router>

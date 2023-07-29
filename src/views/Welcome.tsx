@@ -37,6 +37,14 @@ export function Welcome() {
       ) : (
         <>
           <p>Please use the navigation above to move throught the app</p>
+          <Link to="library">
+            <Button
+              name="Explore the Audio Library"
+              callback={() => {
+                return null;
+              }}
+            />
+          </Link>
         </>
       )}
     </div>
