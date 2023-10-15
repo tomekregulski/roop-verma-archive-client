@@ -13,10 +13,11 @@ import {
 
 // import { getErrorMessage } from '../util/getErrorMessage';
 import { isValidJwt } from '../util/isValidJwt';
+// import { searchTracks } from '../util/searchTracks';
 import { useAuthContext } from './AuthContext';
 import { Track } from './trackTypes';
 
-interface SearchFilter {
+export interface SearchFilter {
   ids: number[];
   type: string;
 }
@@ -78,7 +79,7 @@ export const AudioProvider = (props: AudioContextProps) => {
 
   const key = import.meta.env.VITE_API_KEY;
 
-  const { isAuth } = useAuthContext();
+  const { isAuth, hasAllowedStatus } = useAuthContext();
   console.log(isAuth);
 
   useEffect(() => {
@@ -86,8 +87,9 @@ export const AudioProvider = (props: AudioContextProps) => {
       setTracksMessage('Loading...');
       const jwt = isValidJwt();
       console.log(isAuth);
+      console.log(hasAllowedStatus);
       try {
-        if (isAuth /* && jwt */) {
+        if (isAuth && hasAllowedStatus /* && jwt */) {
           console.log('fetching private tracks');
           const response = await axios.get(
             `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${key}`,
@@ -100,8 +102,8 @@ export const AudioProvider = (props: AudioContextProps) => {
           console.log('fetching public tracks');
           const response = await axios.get(
             // TEMPORARY CHANGE - TURN BACK BEFORE MERGE
-            // `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/public/${key}`,
-            `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${key}`,
+            `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/public/${key}`,
+            // `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${key}`,
           );
           setTrackList(response.data);
         }
@@ -151,6 +153,7 @@ export const AudioProvider = (props: AudioContextProps) => {
           setTracksMessage('');
           break;
       }
+      // searchTracks(searchFilter, trackList);
     }
   }, [searchFilter, trackList]);
 

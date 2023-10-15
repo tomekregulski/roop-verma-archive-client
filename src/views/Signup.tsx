@@ -106,7 +106,7 @@ export function Signup() {
           })
           .then((response) => {
             console.log(response.data);
-            handleCheckout(response.data.stripeId);
+            handleCheckout(response.data.newUserStripeId);
           })
           .catch((error) => {
             console.log(error.response.data.error.message);

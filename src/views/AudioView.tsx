@@ -1,4 +1,5 @@
 // import { categories } from '../Utils/constants';
+import { useQuery /* useQueryClient */ } from '@tanstack/react-query';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 // import { TracksContextData } from '../Context/TracksContext';
 // import { AuthContext } from '../Context/AuthContext';
@@ -11,6 +12,7 @@ import { Input } from '../components/Input/Input';
 import TrackContainer from '../components/TrackContainer/TrackContainer';
 import { useAudioContext } from '../context/AudioContext';
 import { useAuthContext } from '../context/AuthContext';
+import { fetchTracks } from '../queries/audioQueries';
 import { getEachItem } from '../util/helperFunctions';
 import { isValidJwt } from '../util/isValidJwt';
 import { LoggedOutView } from './LoggedOutView';
@@ -21,6 +23,12 @@ import { LoggedOutView } from './LoggedOutView';
 // }
 
 const AudioView = (/*props: AudioViewProps*/) => {
+  const { /* userData, */ updateUserData, updateAuthStatus, isAuth } = useAuthContext();
+  // const queryClient = useQueryClient();
+  const { isLoading, error, isError } = useQuery(['tracks'], () => fetchTracks(isAuth), {
+    staleTime: Infinity,
+    cacheTime: Infinity,
+  });
   // const { width, breakpoint } = props;
   const [search, setSearch] = useState('');
   const {
@@ -32,8 +40,6 @@ const AudioView = (/*props: AudioViewProps*/) => {
     setFilteredTracks,
   } = useAudioContext();
   // TODO: what is this?
-
-  const { /* userData, */ updateUserData, updateAuthStatus, isAuth } = useAuthContext();
 
   const navigate = useNavigate();
 
@@ -54,7 +60,7 @@ const AudioView = (/*props: AudioViewProps*/) => {
 
     for (let i = 1; i < searchTerms.length; i++) {
       const results = getEachItem(trackList, searchTerms[i]);
-      console.log(results);
+      // console.log(results);
       finalResults = finalResults.filter((result) => results.includes(result));
     }
     return finalResults;
@@ -121,6 +127,12 @@ const AudioView = (/*props: AudioViewProps*/) => {
     setFilteredTracks(trackList);
     setSearch('');
   };
+  if (isLoading) {
+    return <div>Loading</div>;
+  }
+  if (isError && error) {
+    return <div>{error.toString()}</div>;
+  }
 
   return (
     <div>

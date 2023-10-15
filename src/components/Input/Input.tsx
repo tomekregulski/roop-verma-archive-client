@@ -38,6 +38,7 @@ export function Input(props: InputProps) {
         flexDirection: 'column',
         width: '100%',
         margin: margin,
+        color: 'black',
       }}
     >
       <label className="flex items-center" style={{ color: labelColor }} htmlFor={name}>
