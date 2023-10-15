@@ -1,79 +1,94 @@
 // import { loadStripe } from '@stripe/stripe-js';
 import axios from 'axios';
-import { /* useEffect,*/ useState } from 'react';
+import { /* useEffect,*/ useEffect, useState } from 'react';
 
 import { Alert } from '../components/Alert/Alert';
 import { useAuthContext } from '../context/AuthContext';
 import { getErrorMessage } from '../util/getErrorMessage';
+// import { getStripe, StripeResponseObject } from '../util/getStripe';
 
 const key = import.meta.env.VITE_API_KEY;
-
-// const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+const accountUpdateKey = import.meta.env.VITE_ACCOUNT_UPDATE_KEY;
 
 export function ManageAccount() {
   const [message, setMessage] = useState('');
+  // const [stripe, setStripe] = useState<StripeResponseObject | null>(null);
+  // const { updateUserData } = useAuthContext();
 
   const { userData /* updateUserData*/ } = useAuthContext();
 
-  // useEffect(() => {
-  //   async function getSubscriptions() {
-  //     if (userData && stripe) {
-  //       const subscription = await stripe!.subscriptions.list({
-  //         customer: userData.id,
-  //         tatus: 'active',
-  //       });
-  //       console.log(subscription);
-  //     }
-  //   }
-  //   getSubscriptions();
-  // }, [userData, stripe]);
+  useEffect(() => {
+    const effect = async () => {
+      const url = window.location.href;
+      const params = url.split('?');
+      if (params && userData && params.includes('account-updated')) {
+        console.log(params);
+        console.log(accountUpdateKey);
+        //   try {
+        //     await axios
+        //       .get(
+        //         `${
+        //           import.meta.env.VITE_API_ORIGIN
+        //         }/api/v1/auth/account-update-token/${key}/${userData.email}/09876`,
+        //       )
+        //       .then((response) => {
+        //         console.log(response);
+        //         const token = response.data.authToken;
+        //         document.cookie = `roop-verma-library=${token}`;
+        //         updateUserData(response.data.userData);
+        //       });
+        //   } catch (error) {
+        //     console.log('Failed to update information');
+        //     console.log(error);
+        //     const errorMessage = getErrorMessage(error);
+        //     setMessage(`Failed to update info: ${errorMessage}`);
+        //   }
+      }
+    };
+    effect();
+  }, []);
 
-  // need to handle this properly when returning from session
-  // return from portal session with session id in url
-  // useEffect checks if this exists, and if so
-  // if it does, check stripe from customer subscription status
-  // if it is different than the status in userData, upate the status
-  // if status === false, update auth status.
   // useEffect(() => {
-  //   console.log(userData);
-  //   async function effect() {
-  //     let returnedFromPortalSession = false;
-  //     const url = window.location.href.split('?');
-  //     if (url.length > 1 && url[1].split('=')[1] === 'true') {
-  //       returnedFromPortalSession = true;
+  //   const get = async () => {
+  //     const stripeResponse = await getStripe();
+  //     setStripe(stripeResponse);
+  //   };
+  //   get();
+  // }, []);
+
+  // const handleResubscribe = async () => {
+  //   console.log('resubscribing');
+  //   console.log(userData?.stripeId);
+  //   if (stripe && stripe.data && userData) {
+  //     try {
+  //       const subscriptionRes = await axios.get(
+  //         `${
+  //           import.meta.env.VITE_API_ORIGIN
+  //         }/api/v1/payment/checkout-session-resubscribe/${key}/${userData?.stripeId}`,
+  //       );
+
+  //       const sessionId = subscriptionRes.data.id;
+  //       // const stripe = await getStripe();
+  //       const { error } = await stripe.data.redirectToCheckout({
+  //         //     //     // Make the id field from the Checkout Session creation API response
+  //         //     //     // available to this file, so you can provide it as parameter here
+  //         //     //     // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
+  //         sessionId,
+  //       });
+  //       // If `redirectToCheckout` fails due to a browser or network
+  //       // error, display the localized error message to your customer
+  //       // using `error.message`.
+  //       console.warn(error.message);
+  //     } catch (error) {
+  //       console.log('Stripe checkout failed');
+  //       console.log(error);
+  //       const errorMessage = getErrorMessage(error);
+  //       setMessage(`Failed to create checkout session - : ${errorMessage}`);
   //     }
-  //     console.log(returnedFromPortalSession);
-  //     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  //     console.log(userData!);
-  //     // get user info from Stripe
-  //     if (userData) {
-  //       try {
-  //         const res = await axios.post(
-  //           `${
-  //             import.meta.env.VITE_API_ORIGIN
-  //           }/api/v1/user/update-subscription-status/${key}`,
-  //           {
-  //             email: userData.email,
-  //             isSubscriptionActive: userData.subscriptionActive,
-  //           },
-  //         );
-  //         console.log(res);
-  //         if (res.data.userData.subscriptionActive !== userData.subscriptionActive) {
-  //           updateUserData(res.data.userData);
-  //         }
-  //       } catch (error) {
-  //         console.log('Failed to log in');
-  //         console.log(error);
-  //         const errorMessage = getErrorMessage(error);
-  //         console.log(`Failed to log in: ${errorMessage}`);
-  //       }
-  //     }
+  //   } else {
+  //     console.log('stripe not found');
   //   }
-  //   if (userData) {
-  //     effect();
-  //   }
-  // }, [userData]);
-  console.log(userData);
+  // };
 
   const handlePortal = async () => {
     try {
@@ -103,6 +118,11 @@ export function ManageAccount() {
           {message}
         </Alert>
       )}
+      {/* {userData?.subscriptionActive === false && (
+        <button type="button" onClick={() => handleResubscribe()}>
+          Resubscribe
+        </button>
+      )} */}
     </div>
   );
 }

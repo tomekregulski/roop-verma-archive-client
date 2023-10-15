@@ -62,7 +62,7 @@ const TrackContainer = () => {
     // @ts-expect-error need rows interface
     const rows = [];
     if (filteredTracks && filteredTracks.length > 0) {
-      console.log(filteredTracks);
+      // console.log(filteredTracks);
       filteredTracks.map((item) => {
         return rows.push({
           id: item.id,

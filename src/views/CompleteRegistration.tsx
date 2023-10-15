@@ -51,6 +51,12 @@ export function CompleteRegistration() {
 
       const token = emailKeyResponse.data.token;
 
+      console.log({
+        name,
+        email,
+        emailKey: token,
+      });
+
       setEmailInfo({
         name,
         email,
@@ -71,6 +77,7 @@ export function CompleteRegistration() {
         const params = url.split('?')[1].split('&');
         const sessionParam = params[1].split('&');
         const sessionId = sessionParam[0].split('=')[1];
+        console.log(params);
 
         try {
           const session = await axios.post(
@@ -82,16 +89,17 @@ export function CompleteRegistration() {
             },
           );
           const { name, email } = session.data.customer_details;
+          console.log(name, email);
 
-          await axios.post(
-            `${
-              import.meta.env.VITE_API_ORIGIN
-            }/api/v1/user/update-subscription-status/${key}`,
-            {
-              email,
-              isSubscriptionActive: true,
-            },
-          );
+          // await axios.post(
+          //   `${
+          //     import.meta.env.VITE_API_ORIGIN
+          //   }/api/v1/user/update-subscription-status/${key}`,
+          //   {
+          //     email,
+          //     isSubscriptionActive: true,
+          //   },
+          // );
 
           getEmailKey(name, email);
         } catch (error) {

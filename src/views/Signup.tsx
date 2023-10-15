@@ -64,7 +64,7 @@ export function Signup() {
         const subscriptionRes = await axios.get(
           `${
             import.meta.env.VITE_API_ORIGIN
-          }/api/v1/payment/checkout-session/${key}/${stripeId}123456789`,
+          }/api/v1/payment/checkout-session/${key}/${stripeId}`,
         );
 
         const sessionId = subscriptionRes.data.id;
@@ -106,7 +106,7 @@ export function Signup() {
           })
           .then((response) => {
             console.log(response.data);
-            handleCheckout(response.data.stripeId);
+            handleCheckout(response.data.newUserStripeId);
           })
           .catch((error) => {
             console.log(error.response.data.error.message);
