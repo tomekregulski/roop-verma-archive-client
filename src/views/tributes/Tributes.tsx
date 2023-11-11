@@ -79,16 +79,16 @@ const TributesList = styled.div();
 
 export function Tributes() {
   return (
-    <TributesWrapper className="mx-8 text-center">
+    <TributesWrapper className="mt-[32px] text-center mx-auto">
       <h1>Tributes</h1>
-      <p>
+      <p className="mt-[16px] max-w-[90%] mx-auto">
         Acharya Roop Verma touched the lives of countless individuals over the ocurse of
         his life. This page is a modest attempt to collect the testimonimals from some of
         those people. If you would like to contribute to this collection, please reach out
         to SOMEMAIL@EMAIL.EMAIL
       </p>
       {/** breakpoint to justify-center at smaller screensizes */}
-      <TributesList className="flex flex-wrap justify-start items-center mx-auto mt-8 gap-2">
+      <TributesList className="max-w-[90%] mx-auto flex flex-wrap justify-start mt-[64px] gap-2 overflow-auto mb-[130px] absolute top-[140px] bottom-0 right-0">
         {tributes.map((tribute) => (
           <TributeCard key={tribute.id} tribute={tribute} />
         ))}

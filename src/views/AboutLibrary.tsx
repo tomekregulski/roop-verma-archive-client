@@ -3,7 +3,7 @@ import { SupportForm } from '../components/SupportForm/SupportForm';
 const AboutLibrary = () => {
   return (
     <div className="help__container">
-      <section className="help__section">
+      <section className="help__section" style={{ marginTop: '32px' }}>
         <h2>Help / How to Use the Library</h2>
         <p>
           As the library expands, this page will grow as a resource for using its various

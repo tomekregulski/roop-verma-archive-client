@@ -35,6 +35,8 @@ interface AudioContextState {
   setTrackList: Dispatch<SetStateAction<Track[] | null>>;
   selectedTrack: Track | null;
   setSelectedTrack: Dispatch<SetStateAction<Track | null>>;
+  trackIsRandom: boolean;
+  setTrackIsRandom: Dispatch<SetStateAction<boolean>>;
   filteredTracks: Track[] | null;
   setFilteredTracks: Dispatch<SetStateAction<Track[] | null>>;
   tracksMessage: string;
@@ -66,6 +68,7 @@ export const AudioContext = createContext<AudioContextState | null>(null);
 export const AudioProvider = (props: AudioContextProps) => {
   const [trackList, setTrackList] = useState<Track[] | null>(null); // but need to fill out interface
   const [selectedTrack, setSelectedTrack] = useState<Track | null>(null); // but need to fill out interface
+  const [trackIsRandom, setTrackIsRandom] = useState<boolean>(false); // but need to fill out interface
   const [filteredTracks, setFilteredTracks] = useState<Track[] | null>(null); // but need to fill out interface
   // Does not need to be state???
   const [searchFilter, setSearchFilter] = useState<SearchFilter | null>(null);
@@ -85,7 +88,7 @@ export const AudioProvider = (props: AudioContextProps) => {
   useEffect(() => {
     const fetchTracks = async () => {
       setTracksMessage('Loading...');
-      const jwt = isValidJwt();
+      const currentJwt = isValidJwt();
       console.log(isAuth);
       console.log(hasAllowedStatus);
       try {
@@ -94,7 +97,7 @@ export const AudioProvider = (props: AudioContextProps) => {
           const response = await axios.get(
             `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${key}`,
             {
-              headers: { jwt: jwt },
+              headers: { jwt: currentJwt?.jwt },
             },
           );
           setTrackList(response.data);
@@ -102,8 +105,8 @@ export const AudioProvider = (props: AudioContextProps) => {
           console.log('fetching public tracks');
           const response = await axios.get(
             // TEMPORARY CHANGE - TURN BACK BEFORE MERGE
-            `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${key}`,
             // `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${key}`,
+            `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/public/${key}`,
           );
           setTrackList(response.data);
         }
@@ -223,6 +226,8 @@ export const AudioProvider = (props: AudioContextProps) => {
         setTrackList,
         selectedTrack,
         setSelectedTrack,
+        trackIsRandom,
+        setTrackIsRandom,
         filteredTracks,
         setFilteredTracks,
         tracksMessage,

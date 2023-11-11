@@ -4,13 +4,13 @@ import { isValidJwt } from '../util/isValidJwt';
 const apiKey = import.meta.env.VITE_API_KEY;
 
 export async function fetchTracks(isAuth: boolean) {
-  const jwt = isValidJwt();
+  const currentJwt = isValidJwt();
   if (isAuth /* && jwt */) {
     console.log('fetching private tracks');
     const response = await axios.get(
       `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${apiKey}`,
       {
-        headers: { jwt: jwt },
+        headers: { jwt: currentJwt?.jwt },
       },
     );
     console.log(response.data);

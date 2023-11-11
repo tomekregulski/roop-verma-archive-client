@@ -1,38 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AudioTopBar } from '../components/AudioPlayerComponents/AudioTopBar/AudioTopBar';
 import TrackContainer from '../components/TrackContainer/TrackContainer';
 import { useAuthContext } from '../context/AuthContext';
 import { fetchTracks } from '../queries/audioQueries';
-import { isValidJwt } from '../util/isValidJwt';
 
-// interface AudioViewProps {
-//   width: number;
-//   breakpoint: number;
-// }
-
-const AudioView = (/*props: AudioViewProps*/) => {
-  const { /* userData, */ updateUserData, updateAuthStatus, isAuth } = useAuthContext();
+const AudioView = () => {
+  const { isAuth } = useAuthContext();
   const { isLoading, error, isError } = useQuery(['tracks'], () => fetchTracks(isAuth), {
     staleTime: Infinity,
     cacheTime: Infinity,
   });
-  // const { width, breakpoint } = props;
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isValidJwt) {
-      updateUserData(null);
-      updateAuthStatus(false);
-      document.cookie = 'roop-verma-library= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
-      navigate('/');
-    }
-    // else {
-    //   updateAuthStatus(true);
-    // }
-  }, []);
 
   if (isLoading) {
     return <div>Loading</div>;
@@ -42,9 +20,11 @@ const AudioView = (/*props: AudioViewProps*/) => {
   }
 
   return (
-    <div className="flex flex-col justify-start mt-[56px] absolute">
+    <div className="mt-[-4px]">
       <AudioTopBar />
-      <TrackContainer />
+      <div className="absolute top-[140px] bottom-0 left-0 right-0 overflow-auto">
+        <TrackContainer />
+      </div>
     </div>
   );
 };

@@ -13,9 +13,12 @@ export function AudioTopBar() {
 
   const {
     setSearchFilter,
+    selectedTrack,
     setSelectedTrack,
     trackList,
     filteredTracks,
+    trackIsRandom,
+    setTrackIsRandom,
     setFilteredTracks,
   } = useAudioContext();
 
@@ -69,12 +72,13 @@ export function AudioTopBar() {
     }
   }, [search]);
 
-  // const searchItem = (e: ChangeEvent<HTMLInputElement>) => {
-  //     console.log(e);
-  //     setTimeout(() => {
-  //         setSearch(e.target.value);
-  //     }, 1000);
-  // };
+  useEffect(() => {
+    if (trackIsRandom && selectedTrack) {
+      const trackCard = document.getElementById(`${selectedTrack.id}`);
+      trackCard?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      setTrackIsRandom(false);
+    }
+  }, [trackIsRandom, selectedTrack]);
 
   const supriseMe = () => {
     if (filteredTracks) {
@@ -83,6 +87,7 @@ export function AudioTopBar() {
       console.log(randomTrackNumber);
       console.log(randomTrack);
       setSelectedTrack(randomTrack);
+      setTrackIsRandom(true);
     }
   };
 
@@ -91,23 +96,18 @@ export function AudioTopBar() {
     setFilteredTracks(trackList);
     setSearch('');
   };
-
   return (
     <div
-      className="flex flex-col justify-center items-center sticky h-[110px] top-[182px]"
-      style={{ backgroundColor: 'rgba(0, 180, 249)' }}
+      className="flex flex-col items-center sticky top-[126px] pt-[56px] pb-[48px]"
+      style={{ backgroundColor: 'rgba(0, 180, 249)', zIndex: 100 }}
     >
       {isAuth === false ? <LoggedOutView /> : null}
-      <div className="flex items-end mt-[20px]">
+      <div className="flex md:flex-row md:items-end sm:flex-col sm:gap-4 mt-[20px]">
         <Input
           placeholder="Search Tracks"
           margin="0 0 0 0"
           padding="7px 15px"
-          // labelColor="white"
-          callback={(e: ChangeEvent<HTMLInputElement>) =>
-            // searchItem(e)
-            setSearch(e.target.value)
-          }
+          callback={(e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
           label="Search Tracks"
           type="text"
           name="search-tracks"
@@ -116,8 +116,6 @@ export function AudioTopBar() {
           value={search}
           tooltipContent="Search the library by raga, time of day, mood, data, or location"
         />
-        {/** Add breakpoints */}
-        {/* <div className="s-flex"> */}
         <Button
           margin="0 0 0 15px"
           name="Show All"
@@ -132,7 +130,6 @@ export function AudioTopBar() {
           callback={supriseMe}
           padding="8px 35px"
         />
-        {/* </div> */}
       </div>
     </div>
   );

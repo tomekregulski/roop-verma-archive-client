@@ -1,46 +1,26 @@
-// import React, { useContext, useEffect } from 'react';
-
-// import { useAuthContext } from '../context/AuthContext';
-// import { useNavigate } from 'react-router-dom';
-// import { isValidJwt } from '../Utils/isValidJwt';
-
-const AboutRoopji = () => {
-  // const { isAuth, userData } = useAuthContext();
-
-  // let navigate = useNavigate();
-
-  // useEffect(() => {
-  //     if (!isValidJwt) {
-  //         setUserData({});
-  //         setIsAuth(false);
-  //         document.cookie =
-  //             'roop-verma-library= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
-  //         navigate('/');
-  //     }
-  //     // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
+export function AboutRoopji() {
   return (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        // alignItems: 'center',
-        // justifyContent: 'center',
-        // margin: '0 auto',
-        maxWidth: '1000px',
-        paddingTop: '160px',
+        margin: '32px auto 0',
+        // TODO: scroll is not working
+        overflow: 'scroll',
+        height: 'full',
       }}
     >
-      <h1>About the Acharya Roop Verma Library</h1>
+      <h1 className="text-center lg:text-[48px] md:text-[36px] sm:text-[20px]">
+        About the Acharya Roop Verma Library
+      </h1>
       <div
         style={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'start',
-          justifyContent: 'center',
-          margin: '25px auto 0',
+          justifyContent: 'start',
+          margin: '32px auto 0',
           maxWidth: '1000px',
+          gap: '16px',
+          overflow: 'scroll',
         }}
       >
         <p>
@@ -106,6 +86,4 @@ const AboutRoopji = () => {
       </div>
     </div>
   );
-};
-
-export default AboutRoopji;
+}

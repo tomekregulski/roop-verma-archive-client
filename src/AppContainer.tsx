@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AppLayout } from './layouts/AppLayout';
 import AboutLibrary from './views/AboutLibrary';
 // import Error from './ui/Error';
-import AboutRoopji from './views/AboutRoopji';
+import { AboutRoopji } from './views/AboutRoopji';
 import AudioView from './views/AudioView';
 import { CompleteRegistration } from './views/CompleteRegistration';
 import { LoginGate } from './views/LoginGate';

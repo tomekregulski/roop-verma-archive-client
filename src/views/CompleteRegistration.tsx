@@ -121,7 +121,7 @@ export function CompleteRegistration() {
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          margin: '0 auto',
+          margin: '46px auto 0',
         }}
       >
         <div>
