@@ -119,9 +119,9 @@ export const AuthProvider = (props: AuthContextProps) => {
     const currentJwt = isValidJwt();
     // currently firing 4 times initially
     async function user() {
-      if (currentJwt) {
+      if (currentJwt?.foundJwt) {
         // TODO: update JWT to only have ID and/or stripeId
-        const decoded = jwt_decode(currentJwt) as UserData;
+        const decoded = jwt_decode(currentJwt.jwt) as UserData;
         console.log(decoded);
         console.log(decoded.subscriptionActive);
         const { isValidated, isAllowed } = await isUserValidated(decoded.stripeId);

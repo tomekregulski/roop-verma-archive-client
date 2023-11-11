@@ -16,14 +16,15 @@ export function Navbar() {
   };
 
   return (
-    <nav className="flex flex-col items-center justify-center pb-[16px] border-b-2">
+    <nav
+      className="flex flex-col items-center justify-center pb-[16px] border-b-2 sticky top-0 left-0 h-[125px]"
+      style={{ backgroundColor: 'rgba(0, 180, 249)' }}
+    >
       <div className="block mt-[15px] mb-[0] mx-auto">
-        {/* Need mobile styling flex flex-col items-center text-[20px] */}
-        <h1 className="">
+        <h1 className="lg:text-[48px] md:text-[36px] sm:text-[20px]">
           <span>The Acharya Roop Verma </span>
           <span>Digital Library</span>
         </h1>
-        {/* Need mobile formatting flex-col mt-[20px] ??? */}
         <div className="mt-[10px] mx-auto flex justify-between items-center max-w-[500px]">
           <Link to="/" className="nav--links-link">
             Home
@@ -34,8 +35,8 @@ export function Navbar() {
           <Link to="roopji" className="nav--links-link">
             About Roopji
           </Link>
-          <Link to="testimonials" className="nav--links-link">
-            Testimonials
+          <Link to="tributes" className="nav--links-link">
+            Tributes
           </Link>
           <Link to="library" className="nav--links-link">
             Help

@@ -109,7 +109,14 @@ export function ManageAccount() {
     }
   };
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: '32px',
+      }}
+    >
       <button id="portal-session-button" type="button" onClick={() => handlePortal()}>
         Manage Account
       </button>

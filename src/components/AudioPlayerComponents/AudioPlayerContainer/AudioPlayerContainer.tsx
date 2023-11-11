@@ -1,26 +1,27 @@
 import './audioPlayerContainerStyles.css';
 
-// import tanpuraRight from '../../../assets/sitar.png';
-// import tanpuraLeft from '../../../assets/sitar-reverse.png';
+import styled from '@emotion/styled';
+
+import { useAudioContext } from '../../../context/AudioContext';
 import { AudioPlayer } from '../AudioPlayer/AudioPlayer';
 
-// interface AudioPlayerContainerProps {
-//   width: number;
-//   breakpoint: number;
-// }
+const EmptyFooter = styled.div();
 
-const AudioPlayerContainer = (/*props: AudioPlayerContainerProps*/) => {
-  // const { width, breakpoint } = props;
-
+const AudioPlayerContainer = () => {
+  const { selectedTrack } = useAudioContext();
   return (
-    <div className="flex items-center justify-between w-full mt-12 border">
-      {/* {width > breakpoint && (
-        <img className="h-[50px] mx-[50px]" src={tanpuraLeft} alt="tanpura" />
-      )} */}
-      <AudioPlayer />
-      {/* {width > breakpoint && (
-        <img className="h-[50px] mx-[50px]" src={tanpuraRight} alt="tanpura" />
-      )} */}
+    <div
+      style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: 'rgba(0, 180, 249)',
+      }}
+    >
+      <div className="flex items-center justify-between w-full border-t mt-[32px]">
+        {selectedTrack ? <AudioPlayer /> : <EmptyFooter className="h-[88.24px]" />}
+      </div>
     </div>
   );
 };

@@ -63,6 +63,7 @@ const TrackCard = (props: TrackCardProps) => {
 
   return (
     <CardContainer
+      id={`${id}`}
       className={`max-w-[500px]
         ${isSelected ? 'card--container card--container-playing' : 'card--container'}`}
     >

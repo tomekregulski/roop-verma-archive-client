@@ -136,7 +136,7 @@ export function Signup() {
         justifyContent: 'center',
         alignItems: 'center',
         width: '400px',
-        margin: '0 auto',
+        margin: '32px auto 0',
       }}
     >
       <Input

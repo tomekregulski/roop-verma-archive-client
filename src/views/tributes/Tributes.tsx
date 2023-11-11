@@ -1,17 +1,17 @@
 import styled from '@emotion/styled';
 
-import { TestimonialCard } from './TestimonialCard';
+import { TributeCard } from './TributeCard';
 
-type TestimonialType = 'text' | 'video';
+type TributeType = 'text' | 'video';
 
-export interface Testimonial {
+export interface Tribute {
   id: number;
   submittedBy: string;
-  type: TestimonialType;
+  type: TributeType;
   content: string;
 }
 
-const testimonials: Testimonial[] = [
+const tributes: Tribute[] = [
   {
     id: 1,
     submittedBy: 'Obcaecati Fuga',
@@ -74,25 +74,25 @@ const testimonials: Testimonial[] = [
   },
 ];
 
-const TestimonialsWrapper = styled.div();
-const TestimonialsList = styled.div();
+const TributesWrapper = styled.div();
+const TributesList = styled.div();
 
-export function Testimonials() {
+export function Tributes() {
   return (
-    <TestimonialsWrapper className="mx-8 text-center">
-      <h1>Testimonials</h1>
-      <p>
+    <TributesWrapper className="mt-[32px] text-center mx-auto">
+      <h1>Tributes</h1>
+      <p className="mt-[16px] max-w-[90%] mx-auto">
         Acharya Roop Verma touched the lives of countless individuals over the ocurse of
         his life. This page is a modest attempt to collect the testimonimals from some of
         those people. If you would like to contribute to this collection, please reach out
         to SOMEMAIL@EMAIL.EMAIL
       </p>
       {/** breakpoint to justify-center at smaller screensizes */}
-      <TestimonialsList className="flex flex-wrap justify-start items-center mx-auto mt-8 gap-2">
-        {testimonials.map((testimonial) => (
-          <TestimonialCard key={testimonial.id} testimonial={testimonial} />
+      <TributesList className="max-w-[90%] mx-auto flex flex-wrap justify-start mt-[64px] gap-2 overflow-auto mb-[130px] absolute top-[140px] bottom-0 right-0">
+        {tributes.map((tribute) => (
+          <TributeCard key={tribute.id} tribute={tribute} />
         ))}
-      </TestimonialsList>
-    </TestimonialsWrapper>
+      </TributesList>
+    </TributesWrapper>
   );
 }

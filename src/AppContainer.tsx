@@ -3,14 +3,14 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AppLayout } from './layouts/AppLayout';
 import AboutLibrary from './views/AboutLibrary';
 // import Error from './ui/Error';
-import AboutRoopji from './views/AboutRoopji';
+import { AboutRoopji } from './views/AboutRoopji';
 import AudioView from './views/AudioView';
 import { CompleteRegistration } from './views/CompleteRegistration';
 import { LoginGate } from './views/LoginGate';
 import { ManageAccount } from './views/ManageAccount';
 import { Signup } from './views/Signup';
-import { Testimonials } from './views/testimonials/Testimonials';
-import { TestimonialTextFull } from './views/testimonials/TestimonialTextFull';
+import { Tributes } from './views/tributes/Tributes';
+import { TributeTextFull } from './views/tributes/TributeTextFull';
 import { Welcome } from './views/Welcome';
 
 const router = createBrowserRouter([
@@ -52,12 +52,12 @@ const router = createBrowserRouter([
         element: <AboutLibrary />,
       },
       {
-        path: '/testimonials',
-        element: <Testimonials />,
+        path: '/tributes',
+        element: <Tributes />,
       },
       {
-        path: '/testimonials/:id',
-        element: <TestimonialTextFull />,
+        path: '/tributes/:id',
+        element: <TributeTextFull />,
       },
     ],
   },

@@ -10,7 +10,7 @@
 
   /* color-scheme: light dark; */
   color: rgba(255, 255, 255, 0.87);
-  background-color: rgba(0, 180, 249, 0.872);
+  background-color: rgba(0, 180, 249);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -46,6 +46,10 @@ pre,
 code {
   /* font-size: 100%; */
   font-family: inherit;
+}
+
+body {
+  min-height: 100vh;
 }
 
 /* body {
