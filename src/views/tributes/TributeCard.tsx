@@ -1,21 +1,21 @@
 import styled from '@emotion/styled';
 
-import type { Testimonial } from './Testimonials';
 import { TextContent } from './TextContent';
+import type { Tribute } from './Tributes';
 import { VideoContent } from './VideoContent';
 
-export function TestimonialCard(props: { testimonial: Testimonial }) {
-  const { testimonial } = props;
-  const { submittedBy, content, type } = testimonial;
+export function TributeCard(props: { tribute: Tribute }) {
+  const { tribute } = props;
+  const { submittedBy, content, type } = tribute;
 
-  const TestimonialContent = () => {
+  const TributeContent = () => {
     switch (type) {
       case 'video':
         return <VideoContent src={content} />;
       case 'text':
-        return <TextContent testimonial={testimonial} />;
+        return <TextContent tribute={tribute} />;
       default:
-        throw new Error('provided type is not a valid testimonial type.');
+        throw new Error('provided type is not a valid tribute type.');
     }
   };
 
@@ -27,7 +27,7 @@ export function TestimonialCard(props: { testimonial: Testimonial }) {
       <TextimonialSubmittedBy className="my-0 mx-auto">
         Submitted by: {submittedBy}
       </TextimonialSubmittedBy>
-      <TestimonialContent />
+      <TributeContent />
     </TextimonialCardWrapper>
   );
 }

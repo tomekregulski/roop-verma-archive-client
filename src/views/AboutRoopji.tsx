@@ -25,10 +25,11 @@ const AboutRoopji = () => {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        margin: '0 auto',
+        // alignItems: 'center',
+        // justifyContent: 'center',
+        // margin: '0 auto',
         maxWidth: '1000px',
+        paddingTop: '160px',
       }}
     >
       <h1>About the Acharya Roop Verma Library</h1>
@@ -38,7 +39,7 @@ const AboutRoopji = () => {
           flexDirection: 'column',
           alignItems: 'start',
           justifyContent: 'center',
-          margin: '0 auto',
+          margin: '25px auto 0',
           maxWidth: '1000px',
         }}
       >

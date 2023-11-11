@@ -92,8 +92,11 @@ const TrackContainer = () => {
   };
 
   return (
-    <TrackContainerWrapper className="mt-[30px] overflow-scroll h-full flex justify-center items-center">
-      <TrackList>
+    <TrackContainerWrapper
+      className="mt-[155px] flex justify-center items-center"
+      style={{ backgroundColor: 'rgba(0, 180, 249)' }}
+    >
+      <TrackList className="overflow-scroll">
         {trackRows ? (
           trackRows.map((track, index) => {
             return <TrackCard key={index} callback={clickHandle} trackInfo={track} />;

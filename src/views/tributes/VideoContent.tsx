@@ -1,15 +1,15 @@
 import styled from '@emotion/styled';
 import ReactPlayer from 'react-player/vimeo';
 
-const VideoTestimonialContainer = styled.div();
-const VideoTestimonialContent = styled.div();
+const VideoTributeContainer = styled.div();
+const VideoTributeContent = styled.div();
 
 export function VideoContent(props: { src: string }) {
   const { src } = props;
   console.log(src);
   return (
-    <VideoTestimonialContainer className="flex items-center justify-center h-full w-full p-[20px]">
-      <VideoTestimonialContent>
+    <VideoTributeContainer className="flex items-center justify-center h-full w-full p-[20px]">
+      <VideoTributeContent>
         <ReactPlayer
           className="react-player video"
           url="https://vimeo.com/482533185"
@@ -17,7 +17,7 @@ export function VideoContent(props: { src: string }) {
           height="200px"
           width="200px"
         />
-      </VideoTestimonialContent>
-    </VideoTestimonialContainer>
+      </VideoTributeContent>
+    </VideoTributeContainer>
   );
 }

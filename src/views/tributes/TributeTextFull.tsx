@@ -1,9 +1,9 @@
 import { useLocation } from 'react-router-dom';
 
-export function TestimonialTextFull() {
+export function TributeTextFull() {
   const location = useLocation();
-  const { testimonial } = location.state;
-  const { submittedBy, content } = testimonial;
+  const { tribute } = location.state;
+  const { submittedBy, content } = tribute;
 
   return (
     <div className="mx-8">

@@ -16,7 +16,14 @@ export function Navbar() {
   };
 
   return (
-    <nav className="flex flex-col items-center justify-center pb-[16px] border-b-2">
+    // <div
+    //   className="sticky top-0 h-[125px]"
+    //   style={{ backgroundColor: 'rgba(0, 180, 249)' }}
+    // >
+    <nav
+      className="flex flex-col items-center justify-center pb-[16px] border-b-2 sticky top-0 left-0 h-[125px]"
+      style={{ backgroundColor: 'rgba(0, 180, 249)' }}
+    >
       <div className="block mt-[15px] mb-[0] mx-auto">
         {/* Need mobile styling flex flex-col items-center text-[20px] */}
         <h1 className="">
@@ -34,8 +41,8 @@ export function Navbar() {
           <Link to="roopji" className="nav--links-link">
             About Roopji
           </Link>
-          <Link to="testimonials" className="nav--links-link">
-            Testimonials
+          <Link to="tributes" className="nav--links-link">
+            Tributes
           </Link>
           <Link to="library" className="nav--links-link">
             Help
@@ -60,5 +67,6 @@ export function Navbar() {
         </div>
       </div>
     </nav>
+    // </div>
   );
 }
