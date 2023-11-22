@@ -5,6 +5,7 @@ import { /* useEffect,*/ useEffect, useState } from 'react';
 import { Alert } from '../components/Alert/Alert';
 import { useAuthContext } from '../context/AuthContext';
 import { getErrorMessage } from '../util/getErrorMessage';
+import { getStripe, StripeResponseObject } from '../util/getStripe';
 // import { getStripe, StripeResponseObject } from '../util/getStripe';
 
 const key = import.meta.env.VITE_API_KEY;
@@ -12,10 +13,21 @@ const accountUpdateKey = import.meta.env.VITE_ACCOUNT_UPDATE_KEY;
 
 export function ManageAccount() {
   const [message, setMessage] = useState('');
+  const [stripe, setStripe] = useState<StripeResponseObject | null>(null);
   // const [stripe, setStripe] = useState<StripeResponseObject | null>(null);
   // const { updateUserData } = useAuthContext();
 
-  const { userData /* updateUserData*/ } = useAuthContext();
+  const { userData, hasAllowedStatus /* updateUserData*/ } = useAuthContext();
+
+  useEffect(() => {
+    if (userData?.subscriptionActive) {
+      const get = async () => {
+        const stripeResponse = await getStripe();
+        setStripe(stripeResponse);
+      };
+      get();
+    }
+  }, []);
 
   useEffect(() => {
     const effect = async () => {
@@ -90,6 +102,38 @@ export function ManageAccount() {
   //   }
   // };
 
+  const handleCheckout = async () => {
+    if (stripe && stripe.data && userData) {
+      try {
+        const subscriptionRes = await axios.get(
+          `${
+            import.meta.env.VITE_API_ORIGIN
+          }/api/v1/payment/checkout-session-resubscribe/${key}/${userData.stripeId}`,
+        );
+
+        const sessionId = subscriptionRes.data.id;
+        // const stripe = await getStripe();
+        const { error } = await stripe.data.redirectToCheckout({
+          //     //     // Make the id field from the Checkout Session creation API response
+          //     //     // available to this file, so you can provide it as parameter here
+          //     //     // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
+          sessionId,
+        });
+        // If `redirectToCheckout` fails due to a browser or network
+        // error, display the localized error message to your customer
+        // using `error.message`.
+        console.warn(error.message);
+      } catch (error) {
+        console.log('Stripe checkout failed');
+        console.log(error);
+        const errorMessage = getErrorMessage(error);
+        setMessage(`Failed to create checkout session - : ${errorMessage}`);
+      }
+    } else {
+      console.log('stripe not found');
+    }
+  };
+
   const handlePortal = async () => {
     try {
       const portalRes = await axios.post(
@@ -112,6 +156,7 @@ export function ManageAccount() {
     <div
       style={{
         display: 'flex',
+        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: '32px',
@@ -120,6 +165,11 @@ export function ManageAccount() {
       <button id="portal-session-button" type="button" onClick={() => handlePortal()}>
         Manage Account
       </button>
+      {!hasAllowedStatus && (
+        <button type="button" onClick={() => handleCheckout()}>
+          resubscribe
+        </button>
+      )}
       {message !== '' && (
         <Alert closeAlert={() => setMessage('')} show={message !== '' ? true : false}>
           {message}

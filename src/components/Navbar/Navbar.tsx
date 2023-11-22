@@ -25,7 +25,7 @@ export function Navbar() {
           <span>The Acharya Roop Verma </span>
           <span>Digital Library</span>
         </h1>
-        <div className="mt-[10px] mx-auto flex justify-between items-center max-w-[500px]">
+        <div className="mt-[10px] mx-auto flex justify-center items-center gap-4">
           <Link to="/" className="nav--links-link">
             Home
           </Link>

@@ -24,7 +24,7 @@ export function Welcome() {
             public. Additionally, you can explore the other pages to learn more about
             Roopji and this project
           </p>
-          <Link to="library">
+          <Link to="audio">
             <Button
               name="Explore the Audio Library"
               callback={() => {
@@ -37,7 +37,7 @@ export function Welcome() {
       ) : (
         <>
           <p>Please use the navigation above to move throught the app</p>
-          <Link to="library">
+          <Link to="audio">
             <Button
               name="Explore the Audio Library"
               callback={() => {
