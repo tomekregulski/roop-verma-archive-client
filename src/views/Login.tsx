@@ -4,6 +4,7 @@ import { init, send } from 'emailjs-com';
 import jwt_decode from 'jwt-decode';
 import { ChangeEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { logNetworkError } from 'util/logNetworkError';
 
 import { Alert } from '../components/Alert/Alert';
 import { Button } from '../components/Button/Button';
@@ -27,10 +28,10 @@ export function Login() {
     setEmail(value);
   };
 
-  const sendLoginEmail = (name: string, emailKey: string) => {
-    send('rvdl_forms', 'template_rgadtp9', {
+  const sendLoginEmail = (user: UserData, emailKey: string) => {
+    send('rvdl_forms', 'template_rgadtp912345', {
       email,
-      name,
+      name: user.firstName,
       key: emailKey,
       baseUrl: import.meta.env.VITE_CLIENT_URL,
     }).then(
@@ -39,12 +40,22 @@ export function Login() {
         setEmailSent(true);
         setLoading(false);
       },
-      (error) => {
+      async (error) => {
         setLoading(false);
         console.log('Login email failed to send');
         console.log(error.text);
-        const errorMessage = getErrorMessage(error);
-        setMessage(`Login email failed to send: ${errorMessage}`);
+        // const errorMessage = getErrorMessage(error.text);
+        setMessage(
+          `Unable to complete login process. If this issue persists, please reach out to RVDL_EMAIL_ADDRESS`,
+        );
+        await logNetworkError({
+          errorCode: error.status,
+          errorMessage: error.text,
+          isRegisteredUser: true,
+          userId: user.id,
+          userEmailAddress: user.email,
+          userName: `${user.firstName} ${user.lastName}`,
+        });
       },
     );
   };
@@ -60,14 +71,14 @@ export function Login() {
         );
         const token = emailKeyResponse.data.token;
         const decodedToken: UserData = jwt_decode(token);
-        const name = decodedToken.firstName;
-        sendLoginEmail(name, token);
+        // const name = decodedToken.firstName;
+        sendLoginEmail(decodedToken, token);
         setLoading(true);
       } catch (error) {
-        console.log('Failed to retrieve login token');
+        console.log('Login failed');
         console.log(error);
         const errorMessage = getErrorMessage(error);
-        setMessage(`Failed to retrieve login token: ${errorMessage}`);
+        setMessage(`Login error: ${errorMessage}`);
       }
     }
   };
@@ -115,8 +126,10 @@ export function Login() {
     return (
       <>
         <div style={{ color: 'yellow' }}>
-          Thank you! An email with a login link to complete your login process has been
-          sent to your inbox.
+          Thank you! An email containing a link to complete your login process has been
+          sent to your email address. It should appear within the next minute or so, and
+          will have the subject line &quotYour Login Link - The Acharya Roop Verma Digital
+          Library&quot.
         </div>
       </>
     );

@@ -12,7 +12,7 @@ export function VideoContent(props: { src: string }) {
       <VideoTributeContent>
         <ReactPlayer
           className="react-player video"
-          url="https://vimeo.com/482533185"
+          url="https://vimeo.com/482533185" // replace with {src}
           controls
           height="200px"
           width="200px"
