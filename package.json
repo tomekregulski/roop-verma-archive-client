@@ -1,9 +1,7 @@
 {
   "name": "roop-verma-archive-client",
   "version": "0.0.0",
-  "engines": {
-    "pnpm": "9.1.2"
-  },
+  "packageManager": "pnpm@9.1.2",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
