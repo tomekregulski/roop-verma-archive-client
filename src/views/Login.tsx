@@ -4,7 +4,6 @@ import { init, send } from 'emailjs-com';
 import jwt_decode from 'jwt-decode';
 import { ChangeEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { logNetworkError } from 'util/logNetworkError';
 
 import { Alert } from '../components/Alert/Alert';
 import { Button } from '../components/Button/Button';
@@ -12,6 +11,7 @@ import { Input } from '../components/Input/Input';
 import { LoadingNotification } from '../components/LoadingNotification/LoadingNotification';
 import { UserData } from '../context/AuthContext';
 import { getErrorMessage } from '../util/getErrorMessage';
+import { logNetworkError } from '../util/logNetworkError';
 
 const key = import.meta.env.VITE_API_KEY;
 
