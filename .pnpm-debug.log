@@ -1,0 +1,22 @@
+{
+  "0 debug pnpm:scope": {
+    "selected": 1
+  },
+  "1 error pnpm": {
+    "code": "ERR_PNPM_UNSUPPORTED_ENGINE",
+    "packageId": "/Users/tomekregulski/Desktop/projects/active_projects/roop-verma-archive-client",
+    "wanted": {
+      "pnpm": "9.1.2"
+    },
+    "current": {
+      "node": "v18.15.0",
+      "pnpm": "6.24.2"
+    },
+    "err": {
+      "name": "pnpm",
+      "message": "Unsupported engine for /Users/tomekregulski/Desktop/projects/active_projects/roop-verma-archive-client: wanted: {\"pnpm\":\"9.1.2\"} (current: {\"node\":\"v18.15.0\",\"pnpm\":\"6.24.2\"})",
+      "code": "ERR_PNPM_UNSUPPORTED_ENGINE",
+      "stack": "pnpm: Unsupported engine for /Users/tomekregulski/Desktop/projects/active_projects/roop-verma-archive-client: wanted: {\"pnpm\":\"9.1.2\"} (current: {\"node\":\"v18.15.0\",\"pnpm\":\"6.24.2\"})\n    at checkEngine (/Users/tomekregulski/.node/corepack/pnpm/6.24.2/dist/pnpm.cjs:41135:16)\n    at checkPackage (/Users/tomekregulski/.node/corepack/pnpm/6.24.2/dist/pnpm.cjs:43223:104)\n    at packageIsInstallable (/Users/tomekregulski/.node/corepack/pnpm/6.24.2/dist/pnpm.cjs:43247:61)\n    at tryReadProjectManifest (/Users/tomekregulski/.node/corepack/pnpm/6.24.2/dist/pnpm.cjs:43565:55)\n    at async handler (/Users/tomekregulski/.node/corepack/pnpm/6.24.2/dist/pnpm.cjs:118528:48)\n    at async /Users/tomekregulski/.node/corepack/pnpm/6.24.2/dist/pnpm.cjs:183648:21\n    at async run (/Users/tomekregulski/.node/corepack/pnpm/6.24.2/dist/pnpm.cjs:183622:34)\n    at async runPnpm (/Users/tomekregulski/.node/corepack/pnpm/6.24.2/dist/pnpm.cjs:183834:5)\n    at async /Users/tomekregulski/.node/corepack/pnpm/6.24.2/dist/pnpm.cjs:183826:7"
+    }
+  }
+}
