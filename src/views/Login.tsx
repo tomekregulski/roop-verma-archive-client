@@ -29,7 +29,13 @@ export function Login() {
   };
 
   const sendLoginEmail = (user: UserData, emailKey: string) => {
-    send('rvdl_forms', 'template_rgadtp912345', {
+    console.log({
+      email,
+      name: user.firstName,
+      key: emailKey,
+      baseUrl: import.meta.env.VITE_CLIENT_URL,
+    });
+    send('rvdl_forms', 'template_rgadtp9', {
       email,
       name: user.firstName,
       key: emailKey,
