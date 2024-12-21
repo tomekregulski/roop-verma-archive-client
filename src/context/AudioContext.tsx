@@ -83,14 +83,13 @@ export const AudioProvider = (props: AudioContextProps) => {
   const key = import.meta.env.VITE_API_KEY;
 
   const { isAuth, hasAllowedStatus } = useAuthContext();
-  console.log(isAuth);
 
   useEffect(() => {
     const fetchTracks = async () => {
-      setTracksMessage('Loading...');
+      setTracksMessage('Loading Tracks...');
       const currentJwt = isValidJwt();
-      console.log(isAuth);
-      console.log(hasAllowedStatus);
+      console.log('isAuth: ', isAuth);
+      console.log('hasAllowedStatus: ', hasAllowedStatus);
       try {
         if (isAuth && hasAllowedStatus /* && jwt */) {
           console.log('fetching private tracks');
@@ -100,6 +99,7 @@ export const AudioProvider = (props: AudioContextProps) => {
               headers: { jwt: currentJwt?.jwt },
             },
           );
+          console.log('setting private tracks');
           setTrackList(response.data);
         } else {
           console.log('fetching public tracks');
@@ -108,6 +108,7 @@ export const AudioProvider = (props: AudioContextProps) => {
             // `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${key}`,
             `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/public/${key}`,
           );
+          console.log('fetching public tracks');
           setTrackList(response.data);
         }
       } catch (error) {
@@ -119,9 +120,9 @@ export const AudioProvider = (props: AudioContextProps) => {
       setTracksMessage('');
     };
     // this will probably break if registered user !isAuth and then logs in => may need a flag to track this?
-    // if (!trackList) {
-    fetchTracks();
-    // }
+    if (!trackList) {
+      fetchTracks();
+    }
     // eslint rule for exhaustive deps was not found
   }, [isAuth]);
 
@@ -161,8 +162,8 @@ export const AudioProvider = (props: AudioContextProps) => {
   }, [searchFilter, trackList]);
 
   const incrementPlays = async (props: IncrementPlaysProps) => {
-    console.log('increment');
     const { userId, trackId, secondsListened } = props;
+    console.log(`increment plays for userId ${userId} and trackId ${trackId}`);
     try {
       /* const response = */ await axios.post(
         `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/track-play/${key}`,

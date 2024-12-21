@@ -12,8 +12,6 @@ import { getStripe, StripeResponseObject } from '../util/getStripe';
 
 const key = import.meta.env.VITE_API_KEY;
 
-// const product = 'price_1MdMKqBlr8UFcXJy83qKfDmx';
-
 export function Signup() {
   const [invalidEmail, setInvalidEmail] = useState('');
   const [invalidFirstName, setInvalidFirstName] = useState('');
@@ -23,8 +21,6 @@ export function Signup() {
   const [message, setMessage] = useState('');
 
   const { updateRegistrationInfo, registrationInfo } = useRegistrationContext();
-
-  // const navigate = useNavigate();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -174,12 +170,7 @@ export function Signup() {
       {invalidEmail !== '' && <span className="form--alert">{invalidEmail}</span>}
 
       <Button callback={handleSignUp} margin="30px 0 0 0" width="200px" name="Sign up" />
-      {/* <Button
-        callback={handleDeleteAllUsers}
-        margin="10px 0 0 0"
-        width="100%"
-        name="Delete"
-      /> */}
+
       {message !== '' && (
         <Alert closeAlert={() => setMessage('')} show={message !== '' ? true : false}>
           {message}

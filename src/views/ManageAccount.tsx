@@ -14,8 +14,6 @@ const accountUpdateKey = import.meta.env.VITE_ACCOUNT_UPDATE_KEY;
 export function ManageAccount() {
   const [message, setMessage] = useState('');
   const [stripe, setStripe] = useState<StripeResponseObject | null>(null);
-  // const [stripe, setStripe] = useState<StripeResponseObject | null>(null);
-  // const { updateUserData } = useAuthContext();
 
   const { userData, hasAllowedStatus /* updateUserData*/ } = useAuthContext();
 
@@ -165,6 +163,7 @@ export function ManageAccount() {
       <button id="portal-session-button" type="button" onClick={() => handlePortal()}>
         Manage Account
       </button>
+      {/* This causes the database to crash  */}
       {!hasAllowedStatus && (
         <button type="button" onClick={() => handleCheckout()}>
           resubscribe
