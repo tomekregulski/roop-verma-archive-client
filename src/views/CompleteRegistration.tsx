@@ -40,6 +40,7 @@ export function CompleteRegistration() {
       (error) => {
         console.log('Login email failed to send');
         console.log(error);
+        setLoading(false);
         const errorMessage = getErrorMessage(error.text);
         setMessage(`Login email failed to send: ${errorMessage}`);
       },
@@ -190,8 +191,11 @@ export function CompleteRegistration() {
               margin: '0 auto',
             }}
           >
-            We have sent you an email to confirm your subscription. Please check it and
-            follow the link provided to log in.
+            <p>
+              We have sent you an email to confirm your subscription. Please check it and
+              follow the link provided to log in.
+            </p>
+            <p>You may close this window now.</p>
           </div>
         )}
         {loading && (

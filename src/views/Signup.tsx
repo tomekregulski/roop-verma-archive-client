@@ -6,6 +6,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { Alert } from '../components/Alert/Alert';
 import { Button } from '../components/Button/Button';
 import { Input } from '../components/Input/Input';
+import { LoadingNotification } from '../components/LoadingNotification/LoadingNotification';
 import { useRegistrationContext } from '../context/RegistrationContext';
 import { getErrorMessage } from '../util/getErrorMessage';
 import { getStripe, StripeResponseObject } from '../util/getStripe';
@@ -19,6 +20,7 @@ export function Signup() {
   // const [errorMessage, setErrorMessage] = useState('');
   const [stripe, setStripe] = useState<StripeResponseObject | null>(null);
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const { updateRegistrationInfo, registrationInfo } = useRegistrationContext();
 
@@ -90,6 +92,7 @@ export function Signup() {
     if (stripe && stripe.data) {
       console.log('signup');
       if (Object.values(registrationInfo).every((v) => v !== '') && invalidEmail === '') {
+        setLoading(true);
         console.log(registrationInfo);
         setInvalidFirstName('');
         setInvalidLastName('');
@@ -101,10 +104,12 @@ export function Signup() {
             email,
           })
           .then((response) => {
+            setLoading(false);
             console.log(response.data);
             handleCheckout(response.data.newUserStripeId);
           })
           .catch((error) => {
+            setLoading(false);
             console.log(error.response.data.error.message);
             setMessage(error.response.data.error.message);
           });
@@ -175,6 +180,9 @@ export function Signup() {
         <Alert closeAlert={() => setMessage('')} show={message !== '' ? true : false}>
           {message}
         </Alert>
+      )}
+      {loading && (
+        <LoadingNotification show={loading}>Please wait...</LoadingNotification>
       )}
     </div>
   );
