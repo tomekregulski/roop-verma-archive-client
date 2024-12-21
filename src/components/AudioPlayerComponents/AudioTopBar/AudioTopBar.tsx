@@ -43,13 +43,13 @@ export function AudioTopBar() {
   };
 
   useEffect(() => {
-    console.log('searching');
     let searchResults = { ids: [], type: '' };
     if (search === '') {
       // console.log('empty search');
       searchResults = { ...searchResults, type: 'all' };
       setSearchFilter(searchResults);
     } else {
+      console.log('searching');
       // console.log('not empty search');
       const searchTerms = search.split(' ');
       const results = multiTermSearch(searchTerms);

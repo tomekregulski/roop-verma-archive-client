@@ -14,13 +14,14 @@ import { getErrorMessage } from '../util/getErrorMessage';
 import { logNetworkError } from '../util/logNetworkError';
 
 const key = import.meta.env.VITE_API_KEY;
+const supportEmailAddress = import.meta.env.RVDL_EMAIL_ADDRESS;
 
 init('user_sWNT4oROPiAoUGksmqFlD');
 
 export function Login() {
   const [email, setEmail] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -51,9 +52,10 @@ export function Login() {
         console.log('Login email failed to send');
         console.log(error.text);
         // const errorMessage = getErrorMessage(error.text);
-        setMessage(
-          `Unable to complete login process. If this issue persists, please reach out to RVDL_EMAIL_ADDRESS`,
-        );
+        setMessage([
+          `Login process failed with error message: ${error.text}.`,
+          `If this issue persists, please reach out to ${supportEmailAddress}`,
+        ]);
         await logNetworkError({
           errorCode: error.status,
           errorMessage: error.text,
@@ -68,7 +70,7 @@ export function Login() {
 
   const handleLogIn = async () => {
     if (!email) {
-      setMessage('Please enter your email address.');
+      setMessage(['Please enter your email address.']);
       return;
     } else {
       try {
@@ -84,7 +86,7 @@ export function Login() {
         console.log('Login failed');
         console.log(error);
         const errorMessage = getErrorMessage(error);
-        setMessage(`Login error: ${errorMessage}`);
+        setMessage([`Login error: ${errorMessage}`]);
       }
     }
   };
@@ -118,9 +120,11 @@ export function Login() {
         <div style={{ marginTop: '20px' }}>
           Dont&apos;t have an account? <Link to="/signup">Sign up!</Link>
         </div>
-        {message !== '' && (
-          <Alert closeAlert={() => setMessage('')} show={message !== '' ? true : false}>
-            {message}
+        {message.length && (
+          <Alert closeAlert={() => setMessage([])} show={message.length ? true : false}>
+            {message.map((string, i) => (
+              <p key={i}>{string}</p>
+            ))}
           </Alert>
         )}
         {loading && (

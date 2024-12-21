@@ -11,7 +11,7 @@ export function Welcome() {
 
   return (
     <div className="welcome__container">
-      <h2>Welcome {isAuth === true && userData && ` ${userData.firstName}`}!</h2>
+      <h2>Welcome{isAuth === true && userData && ` ${userData.firstName}`}!</h2>
       {!isAuth ? (
         <>
           <p>

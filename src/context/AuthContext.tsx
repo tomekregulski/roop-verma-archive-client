@@ -81,10 +81,11 @@ interface AuthContextProps {
 }
 
 async function isUserValidated(stripeId: string) {
+  const key = import.meta.env.VITE_API_KEY;
   const res = await axios.get(
     `${
       import.meta.env.VITE_API_ORIGIN
-    }/api/v1/user/find-by-stripe-id?stripeId=${stripeId}`,
+    }/api/v1/user/find-by-stripe-id/${key}?stripeId=${stripeId}`,
   );
   const user = res.data.existingUser as UserData;
   const isValidated = user ? true : false;
@@ -122,10 +123,11 @@ export const AuthProvider = (props: AuthContextProps) => {
       if (currentJwt?.foundJwt) {
         // TODO: update JWT to only have ID and/or stripeId
         const decoded = jwt_decode(currentJwt.jwt) as UserData;
-        console.log(decoded);
-        console.log(decoded.subscriptionActive);
+        // console.log(decoded);
+        // console.log(decoded.subscriptionActive);
         const { isValidated, isAllowed } = await isUserValidated(decoded.stripeId);
-        console.log({ isValidated, isAllowed });
+        console.log('isValidated: ', isValidated);
+        console.log('isAllowed: ', isAllowed);
         // TODO: clean this up
         if (!isValidated) {
           console.log('AuthContext: setting isAuth: false');
@@ -135,19 +137,19 @@ export const AuthProvider = (props: AuthContextProps) => {
         } else {
           console.log('AuthContext: setting isAuth: true');
           setUserData(decoded);
-          console.log('checking isAllowed');
+          console.log('settng isAllowed: ', isAllowed);
           setHasAllowedStatus(isAllowed);
           // setIsAuth(true);
           setIsAuth(true);
         }
       } else {
-        console.log('AuthContext: setting isAuth: false');
+        console.log('AuthContext: setting isAuth: false and userData: null');
         setIsAuth(false);
         setUserData(null);
       }
     }
     user();
-  }, [isAuth]);
+  }, []);
 
   const value = useMemo(
     () => ({
