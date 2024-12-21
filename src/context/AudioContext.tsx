@@ -120,9 +120,9 @@ export const AudioProvider = (props: AudioContextProps) => {
       setTracksMessage('');
     };
     // this will probably break if registered user !isAuth and then logs in => may need a flag to track this?
-    if (!trackList) {
-      fetchTracks();
-    }
+    // if (!trackList) {
+    fetchTracks();
+    // }
     // eslint rule for exhaustive deps was not found
   }, [isAuth]);
 
