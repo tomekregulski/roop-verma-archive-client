@@ -71,8 +71,6 @@ export function Signup() {
     setInvalidEmail(validationResponse);
   }, [registrationInfo.email]);
 
-  console.log(stripe);
-
   const handleSignUp = async () => {
     console.log(stripe);
     if (stripe) {
