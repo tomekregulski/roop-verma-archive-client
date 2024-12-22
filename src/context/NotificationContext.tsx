@@ -7,8 +7,8 @@ import { LoadingNotification } from '../components/LoadingNotification/LoadingNo
 interface NotificationState {
   isLoading: boolean;
   updateLoadingState: (loading: boolean) => void;
-  alertMessage: string | null;
-  updateAlertMessage: (message: string | null) => void;
+  alertMessage: string[] | null;
+  updateAlertMessage: (message: string[] | null) => void;
 }
 
 interface NotificationContextProps extends PropsWithChildren {
@@ -22,12 +22,12 @@ export const NotificationContext = createContext<NotificationState | null>(null)
 
 export function NotificationProvider(props: NotificationContextProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [alertMessage, setAlertMessage] = useState<string | null>('');
+  const [alertMessage, setAlertMessage] = useState<string[] | null>(null);
 
   function updateLoadingState(loading: boolean) {
     setIsLoading(loading);
   }
-  function updateAlertMessage(message: string | null) {
+  function updateAlertMessage(message: string[] | null) {
     setAlertMessage(message);
   }
 

@@ -8,11 +8,11 @@ import { Button } from '../components/Button/Button';
 import { LoadingNotification } from '../components/LoadingNotification/LoadingNotification';
 import { getErrorMessage } from '../util/getErrorMessage';
 import { logNetworkError } from '../util/logNetworkError';
-// import { UserData } from '../context/AuthContext';
 
 const key = import.meta.env.VITE_API_KEY;
+const emailJsUser = import.meta.env.VITE_EMAILJS_USER;
 
-init('user_sWNT4oROPiAoUGksmqFlD');
+init(emailJsUser);
 
 export function CompleteRegistration() {
   const [isSuccess, setIsSuccess] = useState(false);

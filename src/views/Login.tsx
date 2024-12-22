@@ -5,24 +5,24 @@ import jwt_decode from 'jwt-decode';
 import { ChangeEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { Alert } from '../components/Alert/Alert';
 import { Button } from '../components/Button/Button';
 import { Input } from '../components/Input/Input';
-import { LoadingNotification } from '../components/LoadingNotification/LoadingNotification';
 import { UserData } from '../context/AuthContext';
+import { useNotificationContext } from '../context/NotificationContext';
 import { getErrorMessage } from '../util/getErrorMessage';
 import { logNetworkError } from '../util/logNetworkError';
 
 const key = import.meta.env.VITE_API_KEY;
-const supportEmailAddress = import.meta.env.RVDL_EMAIL_ADDRESS;
+const supportEmailAddress = import.meta.env.VITE_RVDL_EMAIL_ADDRESS;
+const emailJsUser = import.meta.env.VITE_EMAILJS_USER;
 
-init('user_sWNT4oROPiAoUGksmqFlD');
+init(emailJsUser);
 
 export function Login() {
   const [email, setEmail] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState(false);
-  const [message, setMessage] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+
+  const { updateLoadingState, updateAlertMessage } = useNotificationContext();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target?.value;
@@ -45,14 +45,13 @@ export function Login() {
       (response) => {
         console.log('SUCCESS!', response.status, response.text);
         setEmailSent(true);
-        setLoading(false);
+        updateLoadingState(false);
       },
       async (error) => {
-        setLoading(false);
-        console.log('Login email failed to send');
-        console.log(error.text);
-        // const errorMessage = getErrorMessage(error.text);
-        setMessage([
+        updateLoadingState(false);
+        console.error('Login email failed to send');
+        console.error(error.text);
+        updateAlertMessage([
           `Login process failed with error message: ${error.text}.`,
           `If this issue persists, please reach out to ${supportEmailAddress}`,
         ]);
@@ -70,23 +69,29 @@ export function Login() {
 
   const handleLogIn = async () => {
     if (!email) {
-      setMessage(['Please enter your email address.']);
+      updateAlertMessage(['Please enter your email address.']);
       return;
     } else {
       try {
+        updateLoadingState(true);
         const emailKeyResponse = await axios.get(
           `${import.meta.env.VITE_API_ORIGIN}/api/v1/auth/email-token/${key}/${email}`,
         );
         const token = emailKeyResponse.data.token;
         const decodedToken: UserData = jwt_decode(token);
-        // const name = decodedToken.firstName;
         sendLoginEmail(decodedToken, token);
-        setLoading(true);
       } catch (error) {
+        updateLoadingState(false);
         console.log('Login failed');
-        console.log(error);
         const errorMessage = getErrorMessage(error);
-        setMessage([`Login error: ${errorMessage}`]);
+        logNetworkError({
+          errorCode: 500, // TODO: actual error code
+          errorMessage: errorMessage,
+          isRegisteredUser: false,
+          userEmailAddress: 'N/A',
+          userName: 'N/A',
+        });
+        updateAlertMessage([`Login error: ${errorMessage}`]);
       }
     }
   };
@@ -103,33 +108,22 @@ export function Login() {
           marginTop: '50px',
         }}
       >
-        <div style={{ width: '250px' }}>
-          <Input
-            label="Enter email to log in"
-            value={email ?? ''}
-            type="email"
-            callback={handleChange}
-            name="email"
-            labelColor="white"
-            margin="10px 0 0 0"
-            id="email-login-input"
-            placeholder="Email"
-          />
-        </div>
+        <Input
+          label="Enter email to log in"
+          value={email ?? ''}
+          type="email"
+          callback={handleChange}
+          name="email"
+          labelColor="white"
+          margin="10px 0 0 0"
+          id="email-login-input"
+          placeholder="Email"
+          width="250px"
+        />
         <Button callback={handleLogIn} margin="30px 0 0 0" width="100%" name="Log in" />
         <div style={{ marginTop: '20px' }}>
           Dont&apos;t have an account? <Link to="/signup">Sign up!</Link>
         </div>
-        {message.length && (
-          <Alert closeAlert={() => setMessage([])} show={message.length ? true : false}>
-            {message.map((string, i) => (
-              <p key={i}>{string}</p>
-            ))}
-          </Alert>
-        )}
-        {loading && (
-          <LoadingNotification show={loading}>Please wait...</LoadingNotification>
-        )}
       </div>
     );
   } else {
