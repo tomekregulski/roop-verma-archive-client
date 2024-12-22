@@ -1,13 +1,13 @@
+import { Stripe } from '@stripe/stripe-js';
 import axios from 'axios';
 
 import { getErrorMessage } from '../../util/getErrorMessage';
-import { StripeResponseObject } from '../../util/getStripe';
 
 const key = import.meta.env.VITE_API_KEY;
 
 interface HandleCheckoutProps {
   stripeId: string;
-  stripe: StripeResponseObject['data'];
+  stripe: Stripe;
 }
 
 export async function handleCheckout(props: HandleCheckoutProps) {
@@ -21,7 +21,6 @@ export async function handleCheckout(props: HandleCheckoutProps) {
     );
 
     const sessionId = subscriptionRes.data.id;
-    // const stripe = await getStripe();
     const { error } = await stripe!.redirectToCheckout({
       //     //     // Make the id field from the Checkout Session creation API response
       //     //     // available to this file, so you can provide it as parameter here
