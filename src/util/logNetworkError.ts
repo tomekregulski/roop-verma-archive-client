@@ -24,15 +24,17 @@ export async function logNetworkError({
   userEmailAddress,
   userName,
 }: CreateNetworkErrorProps) {
+  const errorData = {
+    errorCode,
+    errorMessage,
+    isRegisteredUser,
+    userId,
+    userEmailAddress,
+  };
+  console.log(errorData);
   try {
-    await axios.post(`${import.meta.env.VITE_API_ORIGIN}/api/v1/error/${key}`, {
-      data: {
-        errorCode,
-        errorMessage,
-        isRegisteredUser,
-        userId,
-        userEmailAddress,
-      },
+    await axios.post(`${import.meta.env.VITE_API_ORIGIN}/api/v1/network-error/${key}`, {
+      ...errorData,
     });
     console.log('Successfully logged network error', {
       errorCode,
@@ -58,5 +60,5 @@ export async function logNetworkError({
       userEmail: userEmailAddress || 'N/A',
     });
   }
-  // dispatch errorNotification(userFriendlyErrorMessage)
+  // setAlertMessage errorNotification(userFriendlyErrorMessage)
 }

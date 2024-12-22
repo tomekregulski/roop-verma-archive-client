@@ -1,101 +1,89 @@
 import './styles/formStyles.css';
 
+import { useStripe } from '@stripe/react-stripe-js';
 import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
 
-import { Alert } from '../components/Alert/Alert';
 import { Button } from '../components/Button/Button';
 import { Input } from '../components/Input/Input';
-import { LoadingNotification } from '../components/LoadingNotification/LoadingNotification';
+import { useNotificationContext } from '../context/NotificationContext';
 import { useRegistrationContext } from '../context/RegistrationContext';
-import { getErrorMessage } from '../util/getErrorMessage';
-import { getStripe, StripeResponseObject } from '../util/getStripe';
+import { logNetworkError } from '../util/logNetworkError';
+import { validateEmail } from '../util/validateEmail';
+import { handleCheckout } from './Signup/handleCheckout';
 
 const key = import.meta.env.VITE_API_KEY;
 
 export function Signup() {
-  const [invalidEmail, setInvalidEmail] = useState('');
-  const [invalidFirstName, setInvalidFirstName] = useState('');
-  const [invalidLastName, setInvalidLastName] = useState('');
-  // const [errorMessage, setErrorMessage] = useState('');
-  const [stripe, setStripe] = useState<StripeResponseObject | null>(null);
-  const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [invalidEmail, setInvalidEmail] = useState<string | false>(false);
+  const [invalidFirstName, setInvalidFirstName] = useState<string | false>(false);
+  const [invalidLastName, setInvalidLastName] = useState<string | false>(false);
 
   const { updateRegistrationInfo, registrationInfo } = useRegistrationContext();
+  const { updateLoadingState, updateAlertMessage } = useNotificationContext();
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const stripe = useStripe();
+
+  const isFormInvalid = invalidEmail || invalidFirstName || invalidLastName;
+  const isStripeNotFound = !stripe;
+  const isSubmitDisabled = isFormInvalid || isStripeNotFound;
+
+  function getTooltipMessage() {
+    if (isStripeNotFound) {
+      return 'Error initializing stripe';
+    } else if (isFormInvalid) {
+      return 'Please correct the form errors';
+    }
+  }
+
+  const tooltipMessage = getTooltipMessage();
+
+  const handleRegistrationInfo = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     updateRegistrationInfo({ [name]: value });
   };
 
-  useEffect(() => {
-    const get = async () => {
-      const stripeResponse = await getStripe();
-      setStripe(stripeResponse);
-    };
-    get();
-  }, []);
-
-  const validateEmail = () => {
-    const validRegex =
-      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-
-    if (registrationInfo.email !== '') {
-      if (registrationInfo.email.match(validRegex)) {
-        setInvalidEmail('');
-      } else {
-        setInvalidEmail('Please enter a valid email address');
+  async function handleCheckoutAction(stripeId: string) {
+    if (stripe) {
+      const response: { errorMessage: string } | undefined = await handleCheckout({
+        stripeId,
+        stripe,
+      });
+      if (response?.errorMessage) {
+        logNetworkError({
+          errorCode: 500, // TODO: actual error code
+          errorMessage: response.errorMessage,
+          isRegisteredUser: false,
+          userEmailAddress: 'N/A',
+          userName: 'N/A',
+        });
+        updateAlertMessage(
+          `Failed to create checkout session - : ${response.errorMessage}`,
+        );
       }
     } else {
-      setInvalidEmail('');
+      console.error('Stripe data not found');
     }
-  };
+  }
 
   useEffect(() => {
-    validateEmail();
+    const validationResponse = validateEmail(registrationInfo.email);
+    setInvalidEmail(validationResponse);
   }, [registrationInfo.email]);
 
-  const handleCheckout = async (stripeId: string) => {
-    if (stripe && stripe.data) {
-      try {
-        const subscriptionRes = await axios.get(
-          `${
-            import.meta.env.VITE_API_ORIGIN
-          }/api/v1/payment/checkout-session/${key}/${stripeId}`,
-        );
-
-        const sessionId = subscriptionRes.data.id;
-        // const stripe = await getStripe();
-        const { error } = await stripe.data.redirectToCheckout({
-          //     //     // Make the id field from the Checkout Session creation API response
-          //     //     // available to this file, so you can provide it as parameter here
-          //     //     // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
-          sessionId,
-        });
-        // If `redirectToCheckout` fails due to a browser or network
-        // error, display the localized error message to your customer
-        // using `error.message`.
-        console.warn(error.message);
-      } catch (error) {
-        console.log('Stripe checkout failed');
-        console.log(error);
-        const errorMessage = getErrorMessage(error);
-        setMessage(`Failed to create checkout session - : ${errorMessage}`);
-      }
-    } else {
-      console.log('stripe not found');
-    }
-  };
+  console.log(stripe);
 
   const handleSignUp = async () => {
-    if (stripe && stripe.data) {
-      console.log('signup');
-      if (Object.values(registrationInfo).every((v) => v !== '') && invalidEmail === '') {
-        setLoading(true);
+    console.log(stripe);
+    if (stripe) {
+      if (
+        Object.values(registrationInfo).every((v) => v !== false) &&
+        invalidEmail === false
+      ) {
+        updateLoadingState(true);
         console.log(registrationInfo);
-        setInvalidFirstName('');
-        setInvalidLastName('');
+        setInvalidFirstName(false);
+        setInvalidLastName(false);
         const { firstName, lastName, email } = registrationInfo;
         axios
           .post(`${import.meta.env.VITE_API_ORIGIN}/api/v1/user/${key}`, {
@@ -104,14 +92,21 @@ export function Signup() {
             email,
           })
           .then((response) => {
-            setLoading(false);
+            updateLoadingState(false);
             console.log(response.data);
-            handleCheckout(response.data.newUserStripeId);
+            handleCheckoutAction(response.data.newUserStripeId);
           })
           .catch((error) => {
-            setLoading(false);
+            updateLoadingState(false);
             console.log(error.response.data.error.message);
-            setMessage(error.response.data.error.message);
+            logNetworkError({
+              errorCode: 500, // TODO: actual error code
+              errorMessage: error.response.data.error.message,
+              isRegisteredUser: false,
+              userEmailAddress: 'N/A',
+              userName: 'N/A',
+            });
+            updateAlertMessage(error.response.data.error.message);
           });
       } else {
         if (registrationInfo.firstName === '') {
@@ -129,8 +124,15 @@ export function Signup() {
     }
   };
 
+  // function handleSubmit() {
+  //   if (!isSubmitDisabled) {
+  //     handleSignUp();
+  //   }
+  // }
+
   return (
-    <div
+    <form
+      id="signup-form"
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -139,6 +141,7 @@ export function Signup() {
         width: '400px',
         margin: '32px auto 0',
       }}
+      // onSubmit={handleSubmit}
     >
       <Input
         id="first-name-login-input"
@@ -146,7 +149,7 @@ export function Signup() {
         name="firstName"
         value={registrationInfo.firstName}
         type="text"
-        callback={handleChange}
+        callback={handleRegistrationInfo}
         labelColor="white"
         margin="10px 0 0 0"
       />
@@ -157,7 +160,7 @@ export function Signup() {
         name="lastName"
         value={registrationInfo.lastName}
         type="text"
-        callback={handleChange}
+        callback={handleRegistrationInfo}
         labelColor="white"
         margin="20px 0 0 0"
       />
@@ -166,7 +169,7 @@ export function Signup() {
         label="Email"
         value={registrationInfo.email}
         type="email"
-        callback={handleChange}
+        callback={handleRegistrationInfo}
         name="email"
         labelColor="white"
         margin="10px 0 0 0"
@@ -174,16 +177,17 @@ export function Signup() {
       />
       {invalidEmail !== '' && <span className="form--alert">{invalidEmail}</span>}
 
-      <Button callback={handleSignUp} margin="30px 0 0 0" width="200px" name="Sign up" />
-
-      {message !== '' && (
-        <Alert closeAlert={() => setMessage('')} show={message !== '' ? true : false}>
-          {message}
-        </Alert>
-      )}
-      {loading && (
-        <LoadingNotification show={loading}>Please wait...</LoadingNotification>
-      )}
-    </div>
+      <Button
+        // form="signup-form"
+        // type="submit"
+        callback={handleSignUp}
+        margin="30px 0 0 0"
+        width="200px"
+        name="Sign up"
+        isDisabledMessage={
+          isSubmitDisabled && tooltipMessage ? 'Form is disabled' : undefined
+        }
+      />
+    </form>
   );
 }

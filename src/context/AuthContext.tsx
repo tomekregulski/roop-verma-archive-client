@@ -45,8 +45,6 @@ export const subscriptionStatuses = {
 type SubscriptionStatuses = AllowedSubscriptionStatuses | NotAllowedSubscriptionStatuses;
 
 export const isAllowedSubscriptionStatus = (subscriptionStatus: SubscriptionStatuses) => {
-  console.log(subscriptionStatus);
-  console.log(allowedSubscriptionStatuses.includes(subscriptionStatus));
   return allowedSubscriptionStatuses.includes(subscriptionStatus);
 };
 // subscriptionStatus === typeOf AllowedSubscriptionStatuses
@@ -76,10 +74,6 @@ export const OUTSIDE_AUTH_PROVIDER_ERROR =
 
 export const AuthContext = createContext<AuthState | null>(null);
 
-interface AuthContextProps {
-  children: ReactNode;
-}
-
 async function isUserValidated(stripeId: string) {
   const key = import.meta.env.VITE_API_KEY;
   const res = await axios.get(
@@ -99,7 +93,6 @@ export const AuthProvider = (props: AuthContextProps) => {
   const [hasAllowedStatus, setHasAllowedStatus] = useState<boolean>(false);
 
   function updateAuthStatus(status: boolean) {
-    console.log(status);
     setIsAuth(status);
   }
 
@@ -116,34 +109,29 @@ export const AuthProvider = (props: AuthContextProps) => {
   }
 
   useEffect(() => {
-    console.log('AuthContext useEffect');
     const currentJwt = isValidJwt();
     // currently firing 4 times initially
     async function user() {
       if (currentJwt?.foundJwt) {
         // TODO: update JWT to only have ID and/or stripeId
         const decoded = jwt_decode(currentJwt.jwt) as UserData;
-        // console.log(decoded);
-        // console.log(decoded.subscriptionActive);
         const { isValidated, isAllowed } = await isUserValidated(decoded.stripeId);
-        console.log('isValidated: ', isValidated);
-        console.log('isAllowed: ', isAllowed);
         // TODO: clean this up
         if (!isValidated) {
-          console.log('AuthContext: setting isAuth: false');
+          // console.log('AuthContext: setting isAuth: false');
           setIsAuth(false);
           setUserData(null);
           setHasAllowedStatus(false);
         } else {
-          console.log('AuthContext: setting isAuth: true');
+          // console.log('AuthContext: setting isAuth: true');
           setUserData(decoded);
-          console.log('settng isAllowed: ', isAllowed);
+          // console.log('settng isAllowed: ', isAllowed);
           setHasAllowedStatus(isAllowed);
           // setIsAuth(true);
           setIsAuth(true);
         }
       } else {
-        console.log('AuthContext: setting isAuth: false and userData: null');
+        // console.log('AuthContext: setting isAuth: false and userData: null');
         setIsAuth(false);
         setUserData(null);
       }
