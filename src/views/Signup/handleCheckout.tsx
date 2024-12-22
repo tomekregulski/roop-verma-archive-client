@@ -5,12 +5,19 @@ import { getErrorMessage } from '../../util/getErrorMessage';
 
 const key = import.meta.env.VITE_API_KEY;
 
+interface HandleCheckoutResponseType {
+  status: 'success' | 'error';
+  message: string;
+}
+
 interface HandleCheckoutProps {
   stripeId: string;
   stripe: Stripe;
 }
 
-export async function handleCheckout(props: HandleCheckoutProps) {
+export async function handleCheckout(
+  props: HandleCheckoutProps,
+): Promise<HandleCheckoutResponseType> {
   const { stripeId, stripe } = props;
 
   try {
@@ -30,10 +37,13 @@ export async function handleCheckout(props: HandleCheckoutProps) {
     // If `redirectToCheckout` fails due to a browser or network
     // error, display the localized error message to your customer
     // using `error.message`.
-    console.warn(error.message);
+    const errorMessage = getErrorMessage(error.message);
+    if (errorMessage) {
+      return { status: 'error', message: errorMessage };
+    }
+    return { status: 'success', message: 'success' };
   } catch (error) {
-    console.log('Stripe checkout failed');
     const errorMessage = getErrorMessage(error);
-    return { errorMessage };
+    return { status: 'error', message: errorMessage };
   }
 }

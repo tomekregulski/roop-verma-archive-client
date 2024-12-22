@@ -14,6 +14,7 @@ interface InputProps {
   placeholder?: string;
   callback: (e: ChangeEvent<HTMLInputElement>, id: string) => void;
   tooltipContent?: string;
+  width?: string;
 }
 
 export function Input(props: InputProps) {
@@ -27,6 +28,7 @@ export function Input(props: InputProps) {
     label,
     value,
     placeholder,
+    width,
     callback,
     tooltipContent,
   } = props;
@@ -36,7 +38,7 @@ export function Input(props: InputProps) {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        width: '100%',
+        width: width ? width : '100%',
         margin: margin,
         color: 'black',
       }}

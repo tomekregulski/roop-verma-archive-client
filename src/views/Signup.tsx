@@ -13,6 +13,7 @@ import { validateEmail } from '../util/validateEmail';
 import { handleCheckout } from './Signup/handleCheckout';
 
 const key = import.meta.env.VITE_API_KEY;
+const supportEmail = import.meta.env.VITE_RVDL_EMAIL_ADDRESS;
 
 export function Signup() {
   const [invalidEmail, setInvalidEmail] = useState<string | false>(false);
@@ -30,7 +31,7 @@ export function Signup() {
 
   function getTooltipMessage() {
     if (isStripeNotFound) {
-      return 'Error initializing stripe';
+      return `Error initializing stripe, please refresh the page. Contact ${supportEmail} if the issue does not resolve`;
     } else if (isFormInvalid) {
       return 'Please correct the form errors';
     }
@@ -45,21 +46,19 @@ export function Signup() {
 
   async function handleCheckoutAction(stripeId: string) {
     if (stripe) {
-      const response: { errorMessage: string } | undefined = await handleCheckout({
+      const { status, message } = await handleCheckout({
         stripeId,
         stripe,
       });
-      if (response?.errorMessage) {
+      if (status === 'error') {
         logNetworkError({
           errorCode: 500, // TODO: actual error code
-          errorMessage: response.errorMessage,
+          errorMessage: message,
           isRegisteredUser: false,
           userEmailAddress: 'N/A',
           userName: 'N/A',
         });
-        updateAlertMessage(
-          `Failed to create checkout session - : ${response.errorMessage}`,
-        );
+        updateAlertMessage([`Failed to create checkout session - : ${message}`]);
       }
     } else {
       console.error('Stripe data not found');
@@ -72,53 +71,48 @@ export function Signup() {
   }, [registrationInfo.email]);
 
   const handleSignUp = async () => {
-    console.log(stripe);
-    if (stripe) {
-      if (
-        Object.values(registrationInfo).every((v) => v !== false) &&
-        invalidEmail === false
-      ) {
-        updateLoadingState(true);
-        console.log(registrationInfo);
-        setInvalidFirstName(false);
-        setInvalidLastName(false);
-        const { firstName, lastName, email } = registrationInfo;
-        axios
-          .post(`${import.meta.env.VITE_API_ORIGIN}/api/v1/user/${key}`, {
-            firstName,
-            lastName,
-            email,
-          })
-          .then((response) => {
-            updateLoadingState(false);
-            console.log(response.data);
-            handleCheckoutAction(response.data.newUserStripeId);
-          })
-          .catch((error) => {
-            updateLoadingState(false);
-            console.log(error.response.data.error.message);
-            logNetworkError({
-              errorCode: 500, // TODO: actual error code
-              errorMessage: error.response.data.error.message,
-              isRegisteredUser: false,
-              userEmailAddress: 'N/A',
-              userName: 'N/A',
-            });
-            updateAlertMessage(error.response.data.error.message);
+    if (
+      Object.values(registrationInfo).every((v) => v !== false) &&
+      invalidEmail === false
+    ) {
+      updateLoadingState(true);
+      console.log(registrationInfo);
+      setInvalidFirstName(false);
+      setInvalidLastName(false);
+      const { firstName, lastName, email } = registrationInfo;
+      axios
+        .post(`${import.meta.env.VITE_API_ORIGIN}/api/v1/user/${key}`, {
+          firstName,
+          lastName,
+          email,
+        })
+        .then((response) => {
+          updateLoadingState(false);
+          console.log(response.data);
+          handleCheckoutAction(response.data.newUserStripeId);
+        })
+        .catch((error) => {
+          updateLoadingState(false);
+          console.log(error.response.data.error.message);
+          logNetworkError({
+            errorCode: 500, // TODO: actual error code
+            errorMessage: error.response.data.error.message,
+            isRegisteredUser: false,
+            userEmailAddress: 'N/A',
+            userName: 'N/A',
           });
-      } else {
-        if (registrationInfo.firstName === '') {
-          setInvalidFirstName('Please enter a first name');
-        }
-        if (registrationInfo.lastName === '') {
-          setInvalidLastName('Please enter a last name');
-        }
-        if (registrationInfo.email === '') {
-          setInvalidEmail('Please enter an email address');
-        }
-      }
+          updateAlertMessage(error.response.data.error.message);
+        });
     } else {
-      console.log('stripe key not found');
+      if (registrationInfo.firstName === '') {
+        setInvalidFirstName('Please enter a first name');
+      }
+      if (registrationInfo.lastName === '') {
+        setInvalidLastName('Please enter a last name');
+      }
+      if (registrationInfo.email === '') {
+        setInvalidEmail('Please enter an email address');
+      }
     }
   };
 
