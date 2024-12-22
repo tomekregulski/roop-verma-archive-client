@@ -8,6 +8,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 import { AppContainer } from './AppContainer';
+import { AdminProvider } from './context/AdminContext';
 import { AudioProvider } from './context/AudioContext';
 import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
@@ -18,19 +19,21 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <Elements stripe={stripePromise}>
-      <QueryClientProvider client={queryClient}>
-        <NotificationProvider>
-          <RegistrationProvider>
-            <AuthProvider>
-              <AudioProvider>
-                <AppContainer />
-              </AudioProvider>
-            </AuthProvider>
-          </RegistrationProvider>
-        </NotificationProvider>
-        <ReactQueryDevtools />
-      </QueryClientProvider>
-    </Elements>
+    <AdminProvider>
+      <Elements stripe={stripePromise}>
+        <QueryClientProvider client={queryClient}>
+          <NotificationProvider>
+            <RegistrationProvider>
+              <AuthProvider>
+                <AudioProvider>
+                  <AppContainer />
+                </AudioProvider>
+              </AuthProvider>
+            </RegistrationProvider>
+          </NotificationProvider>
+          <ReactQueryDevtools />
+        </QueryClientProvider>
+      </Elements>
+    </AdminProvider>
   </React.StrictMode>,
 );
