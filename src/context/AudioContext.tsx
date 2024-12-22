@@ -88,31 +88,29 @@ export const AudioProvider = (props: AudioContextProps) => {
     const fetchTracks = async () => {
       setTracksMessage('Loading Tracks...');
       const currentJwt = isValidJwt();
-      console.log('isAuth: ', isAuth);
-      console.log('hasAllowedStatus: ', hasAllowedStatus);
       try {
         if (isAuth && hasAllowedStatus /* && jwt */) {
-          console.log('fetching private tracks');
+          // console.log('fetching private tracks');
           const response = await axios.get(
             `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${key}`,
             {
               headers: { jwt: currentJwt?.jwt },
             },
           );
-          console.log('setting private tracks');
+          // console.log('setting private tracks');
           setTrackList(response.data);
         } else {
-          console.log('fetching public tracks');
+          // console.log('fetching public tracks');
           const response = await axios.get(
             // TEMPORARY CHANGE - TURN BACK BEFORE MERGE
             // `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${key}`,
             `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/public/${key}`,
           );
-          console.log('fetching public tracks');
+          // console.log('fetching public tracks');
           setTrackList(response.data);
         }
       } catch (error) {
-        console.log('Failed to retrieve audio library');
+        // console.log('Failed to retrieve audio library');
         console.log(error);
         // const errorMessage = getErrorMessage(error);
         // setMessage(`Failed to retrieve audio library: ${errorMessage}`);

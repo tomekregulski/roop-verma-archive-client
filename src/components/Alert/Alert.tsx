@@ -22,17 +22,7 @@ export function Alert(props: AlertProps) {
   }
   return (
     <>
-      <div
-        // style={{
-        //   margin: '0 auto',
-        //   backgroundColor: 'red',
-        //   height: '100vh',
-        //   width: '100vh',
-        // }}
-        onMouseDown={closeAlert}
-        role="alert"
-        className="modal--backdrop"
-      >
+      <div onMouseDown={closeAlert} role="alert" className="modal--backdrop">
         <div className="modal--card-container">
           <div className="modal--content-body">{children}</div>
           <div className="modal--buttons-div">
