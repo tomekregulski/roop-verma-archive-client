@@ -3,14 +3,14 @@ import { init, send } from 'emailjs-com';
 // import jwt_decode from 'jwt-decode';
 import { useEffect, useState } from 'react';
 
-import { Alert } from '../components/Alert/Alert';
 import { Button } from '../components/Button/Button';
-import { LoadingNotification } from '../components/LoadingNotification/LoadingNotification';
+import { useNotificationContext } from '../context/NotificationContext';
 import { getErrorMessage } from '../util/getErrorMessage';
 import { logNetworkError } from '../util/logNetworkError';
 
 const key = import.meta.env.VITE_API_KEY;
 const emailJsUser = import.meta.env.VITE_EMAILJS_USER;
+const supportEmailAddress = import.meta.env.VITE_RVDL_EMAIL_ADDRESS;
 
 init(emailJsUser);
 
@@ -22,10 +22,10 @@ export function CompleteRegistration() {
     email: '',
     emailKey: '',
   });
-  const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(false);
 
-  const sendEmail = () => {
+  const { updateLoadingState, updateAlertMessage } = useNotificationContext();
+
+  const sendEmail = async () => {
     send('rvdl_forms', 'template_rgadtp9', {
       email: emailInfo.email,
       name: emailInfo.name,
@@ -35,21 +35,26 @@ export function CompleteRegistration() {
       (response) => {
         console.log('SUCCESS!', response.status, response.text);
         setEmailSent(true);
-        setLoading(false);
+        updateLoadingState(false);
       },
-      (error) => {
+      async (error) => {
+        // TODO: EmailJS error type?
         console.log('Login email failed to send');
-        console.log(error);
-        setLoading(false);
-        const errorMessage = getErrorMessage(error.text);
-        setMessage(`Login email failed to send: ${errorMessage}`);
+        updateLoadingState(false);
+        const { errorMessage, errorCode } = getErrorMessage(error.text);
+        await logNetworkError({
+          errorCode: errorCode,
+          errorMessage: errorMessage,
+          isRegisteredUser: false,
+        });
+        updateAlertMessage(['Login email failed to send:', errorMessage]);
       },
     );
   };
 
   const sendLoginEmail = () => {
+    updateLoadingState(true);
     sendEmail();
-    setLoading(true);
   };
 
   async function getEmailKey(name: string, email: string) {
@@ -57,8 +62,6 @@ export function CompleteRegistration() {
       const emailKeyResponse = await axios.get(
         `${import.meta.env.VITE_API_ORIGIN}/api/v1/auth/email-token/${key}/${email}`,
       );
-
-      console.log(emailKeyResponse);
 
       const token = emailKeyResponse.data.token;
 
@@ -75,9 +78,15 @@ export function CompleteRegistration() {
       });
     } catch (error) {
       console.log('Failed to retrieve login token');
-      console.log(error);
-      const errorMessage = getErrorMessage(error);
-      setMessage(`Failed to retrieve login token: ${errorMessage}`);
+      const { errorMessage, errorCode } = getErrorMessage(error);
+      await logNetworkError({
+        errorCode: errorCode,
+        errorMessage: errorMessage,
+        isRegisteredUser: true,
+        userEmailAddress: email,
+        userName: name,
+      });
+      updateAlertMessage(['Failed to retrieve login token:', errorMessage]);
     }
   }
 
@@ -97,7 +106,7 @@ export function CompleteRegistration() {
         const params = url.split('?')[1].split('&');
         const sessionParam = params[1].split('&');
         const sessionId = sessionParam[0].split('=')[1];
-        console.log('sessionId: ', sessionId);
+
         try {
           const session = await axios.post(
             `${
@@ -107,10 +116,7 @@ export function CompleteRegistration() {
               sessionId,
             },
           );
-          console.log('session: ', session);
           const { name, email } = session.data.customer_details;
-          console.log(name, email);
-
           // await axios.post(
           //   `${
           //     import.meta.env.VITE_API_ORIGIN
@@ -123,17 +129,21 @@ export function CompleteRegistration() {
 
           getEmailKey(name, email);
         } catch (error) {
-          console.log('Failed to retrieve checkout session');
+          console.log('Failed to complete the registration process');
           console.log(error);
-          const errorMessage = getErrorMessage(error);
+          const { errorMessage, errorCode } = getErrorMessage(error);
           logNetworkError({
-            errorCode: 0,
-            errorMessage: `Failed to retrieve checkout session: ${errorMessage}`,
+            errorCode,
+            errorMessage: `Failed to complete the registration process: ${errorMessage}`,
             isRegisteredUser: false,
             userEmailAddress: 'N/A',
             userName: 'N/A',
           });
-          setMessage(`Failed to retrieve checkout session: ${errorMessage}`);
+          updateAlertMessage([
+            'Failed to complete the registration process:',
+            errorMessage,
+            `Please reach out to ${supportEmailAddress} with a reference to this message`,
+          ]);
         }
       }
     };
@@ -172,14 +182,6 @@ export function CompleteRegistration() {
               width="300px"
               name="Complete Registration"
             />
-            {message !== '' && (
-              <Alert
-                closeAlert={() => setMessage('')}
-                show={message !== '' ? true : false}
-              >
-                {message}
-              </Alert>
-            )}
           </div>
         ) : (
           <div
@@ -197,9 +199,6 @@ export function CompleteRegistration() {
             </p>
             <p>You may close this window now.</p>
           </div>
-        )}
-        {loading && (
-          <LoadingNotification show={loading}>Please wait...</LoadingNotification>
         )}
       </>
     );

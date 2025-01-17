@@ -1,16 +1,17 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Alert } from '../components/Alert/Alert';
 import { useAuthContext } from '../context/AuthContext';
+import { useNotificationContext } from '../context/NotificationContext';
 import { getErrorMessage } from '../util/getErrorMessage';
+import { logNetworkError } from '../util/logNetworkError';
 
 const key = import.meta.env.VITE_API_KEY;
 
 export function LoginGate() {
-  const [message, setMessage] = useState('');
   const { updateAuthStatus, updateUserData } = useAuthContext();
+  const { updateLoadingState, updateAlertMessage } = useNotificationContext();
 
   const navigate = useNavigate();
 
@@ -22,6 +23,8 @@ export function LoginGate() {
       const emailKey = params[0].split('=')[1];
       const email = params[1].split('=')[1];
 
+      updateLoadingState(true);
+
       try {
         await axios
           .get(
@@ -30,31 +33,27 @@ export function LoginGate() {
             }/api/v1/auth/session-token/${key}/${email}/${emailKey}`,
           )
           .then((response) => {
-            console.log(response);
             const token = response.data.authToken;
             document.cookie = `roop-verma-library=${token}`;
             updateAuthStatus(true);
             updateUserData(response.data.userData);
+            updateLoadingState(false);
             navigate('/');
           });
       } catch (error) {
-        console.log('Failed to log in');
-        console.log(error);
-        const errorMessage = getErrorMessage(error);
-        setMessage(`Failed to log in: ${errorMessage}`);
+        console.error('Failed to log in');
+        const errorObj = getErrorMessage(error);
+        await logNetworkError({
+          errorCode: errorObj.errorCode,
+          errorMessage: errorObj.errorMessage,
+          isRegisteredUser: true,
+        });
+        updateLoadingState(false);
+        updateAlertMessage([`Failed to log in: `, errorObj.errorMessage]);
       }
     };
     effect();
   }, []);
 
-  return (
-    <>
-      <div>Please wait a moment while we log you in...</div>
-      {message !== '' && (
-        <Alert closeAlert={() => setMessage('')} show={message !== '' ? true : false}>
-          {message}
-        </Alert>
-      )}
-    </>
-  );
+  return <div>Please wait a moment while we log you in...</div>;
 }

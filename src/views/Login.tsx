@@ -56,7 +56,7 @@ export function Login() {
           `If this issue persists, please reach out to ${supportEmailAddress}`,
         ]);
         await logNetworkError({
-          errorCode: error.status,
+          errorCode: error.status, // TODO: check this
           errorMessage: error.text,
           isRegisteredUser: true,
           userId: user.id,
@@ -83,15 +83,15 @@ export function Login() {
       } catch (error) {
         updateLoadingState(false);
         console.log('Login failed');
-        const errorMessage = getErrorMessage(error);
+        const errorObj = getErrorMessage(error);
         logNetworkError({
-          errorCode: 500, // TODO: actual error code
-          errorMessage: errorMessage,
+          errorCode: errorObj.errorCode,
+          errorMessage: errorObj.errorMessage,
           isRegisteredUser: false,
           userEmailAddress: 'N/A',
           userName: 'N/A',
         });
-        updateAlertMessage([`Login error: ${errorMessage}`]);
+        updateAlertMessage([`Login error: ${errorObj.errorMessage}`]);
       }
     }
   };

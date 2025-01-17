@@ -27,7 +27,7 @@ export function Signup() {
 
   const isFormInvalid = invalidEmail || invalidFirstName || invalidLastName;
   const isStripeNotFound = !stripe;
-  const isSubmitDisabled = isFormInvalid || isStripeNotFound;
+  // const isSubmitDisabled = isFormInvalid || isStripeNotFound;
 
   function getTooltipMessage() {
     if (isStripeNotFound) {
@@ -46,22 +46,20 @@ export function Signup() {
 
   async function handleCheckoutAction(stripeId: string) {
     if (stripe) {
-      const { status, message } = await handleCheckout({
+      const { status, message, errorCode } = await handleCheckout({
         stripeId,
         stripe,
       });
       if (status === 'error') {
         logNetworkError({
-          errorCode: 500, // TODO: actual error code
+          errorCode: errorCode,
           errorMessage: message,
           isRegisteredUser: false,
           userEmailAddress: 'N/A',
           userName: 'N/A',
         });
-        updateAlertMessage([`Failed to create checkout session - : ${message}`]);
+        updateAlertMessage(['There was an error accessing the checkout page:', message]);
       }
-    } else {
-      console.error('Stripe data not found');
     }
   }
 
@@ -176,9 +174,7 @@ export function Signup() {
         margin="30px 0 0 0"
         width="200px"
         name="Sign up"
-        isDisabledMessage={
-          isSubmitDisabled && tooltipMessage ? 'Form is disabled' : undefined
-        }
+        isDisabledMessage={tooltipMessage}
       />
     </form>
   );
