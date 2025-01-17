@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { init, send } from 'emailjs-com';
-// import jwt_decode from 'jwt-decode';
 import { useEffect, useState } from 'react';
 
 import { Button } from '../components/Button/Button';
@@ -204,5 +203,5 @@ export function CompleteRegistration() {
     );
   }
 
-  return <>{isSuccess ? <RenderSuccess /> : <RenderCancel />}</>;
+  return isSuccess ? <RenderSuccess /> : <RenderCancel />;
 }

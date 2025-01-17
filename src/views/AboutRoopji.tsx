@@ -11,7 +11,7 @@ export function AboutRoopji() {
       <h1 className="text-center lg:text-[48px] md:text-[36px] sm:text-[20px]">
         About the Acharya Roop Verma Library
       </h1>
-      <div
+      <section
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -83,7 +83,7 @@ export function AboutRoopji() {
           <div>With love and light,</div>
           <div>Tracy Verma</div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

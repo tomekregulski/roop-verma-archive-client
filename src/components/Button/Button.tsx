@@ -1,8 +1,9 @@
 import { Tooltip } from 'antd';
+import { MouseEventHandler } from 'react';
 
 interface ButtonProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  callback?: (e?: any) => void;
+  callback?: MouseEventHandler<HTMLButtonElement>;
   isDisabledMessage?: string;
   width?: string;
   padding?: string;

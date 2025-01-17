@@ -21,15 +21,13 @@ export function Alert(props: AlertProps) {
     return null;
   }
   return (
-    <>
-      <div onMouseDown={closeAlert} role="alert" className="modal--backdrop">
-        <div className="modal--card-container">
-          <div className="modal--content-body">{children}</div>
-          <div className="modal--buttons-div">
-            <Button name="Ok" callback={closeAlert} margin="0 0 0 20px" />
-          </div>
+    <div onMouseDown={closeAlert} role="alert" className="modal--backdrop">
+      <div className="modal--card-container">
+        <div className="modal--content-body">{children}</div>
+        <div className="modal--buttons-div">
+          <Button name="Ok" callback={closeAlert} margin="0 0 0 20px" />
         </div>
       </div>
-    </>
+    </div>
   );
 }
