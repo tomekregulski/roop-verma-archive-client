@@ -1,34 +1,26 @@
 import './helpStyles.css';
 
 import { init, sendForm } from 'emailjs-com';
-import {
-  ChangeEvent,
-  FormEvent,
-  useEffect,
-  /* useContext, useEffect,*/ useState,
-} from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 
 import { useAuthContext } from '../../context/AuthContext';
+import { useNotificationContext } from '../../context/NotificationContext';
 import { getErrorMessage } from '../../util/getErrorMessage';
-// import { useNavigate } from 'react-router-dom';
-import { Alert } from '../Alert/Alert';
 import { Button } from '../Button/Button';
 import { Input } from '../Input/Input';
-import { LoadingNotification } from '../LoadingNotification/LoadingNotification';
 
 init('user_sWNT4oROPiAoUGksmqFlD');
 
 export function SupportForm() {
-  const { /* isAuth,*/ userData } = useAuthContext();
-
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
+  const { userData } = useAuthContext();
   const [emailMessage, setEmailMessage] = useState('');
   const [helpInfo, setHelpInfo] = useState({
     name: userData ? `${userData.firstName} ${userData.lastName}` : '',
     email: userData ? userData.email : '',
     message: '',
   });
+
+  const { updateLoadingState, updateAlertMessage } = useNotificationContext();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -62,27 +54,26 @@ export function SupportForm() {
   const handleFormSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (helpInfo.name !== '' && helpInfo.email !== '' && helpInfo.message !== '') {
-      setLoading(true);
+      updateLoadingState(true);
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const form = document.querySelector('#contact-form')! as HTMLFormElement;
       sendForm('rvdl_forms', 'template_xu5gbwo', '#contact-form').then(
         (response) => {
-          setLoading(false);
-          setMessage('Message successfully sent');
-          // setLoading?
+          updateLoadingState(false);
+          updateAlertMessage(['Message successfully sent']);
           console.log('SUCCESS!', response.status, response.text);
           form.reset();
         },
         (error) => {
-          setLoading(false);
+          updateLoadingState(false);
           console.log('Failed to send support email', error);
           console.log(error);
           const errorMessage = getErrorMessage(error.text);
-          setMessage(`Support email failed to send: ${errorMessage}`);
+          updateAlertMessage([`Support email failed to send: ${errorMessage}`]);
         },
       );
     } else {
-      setMessage('Please fill out the form before submitting.');
+      updateAlertMessage(['Please fill out the form before submitting.']);
     }
   };
 
@@ -100,9 +91,6 @@ export function SupportForm() {
             labelColor="white"
             margin="10px 0 0 0"
           />
-          {/* {firstnameMessage !== '' && (
-            <span className='form--alert'>{firstnameMessage}</span>
-          )} */}
           <Input
             id="support-message--email-input"
             label="Email"
@@ -113,10 +101,6 @@ export function SupportForm() {
             labelColor="white"
             margin="20px 0 0 0"
           />
-          {/* {lastnamelMessage !== '' && (
-            <span className='form--alert'>{lastnamelMessage}</span>
-          )} */}
-
           <Input
             id="support-message--message-input"
             label="Message"
@@ -136,19 +120,6 @@ export function SupportForm() {
           name="Send Message"
         />
       </section>
-      {loading && (
-        <LoadingNotification show={loading}>Please wait...</LoadingNotification>
-      )}
-      {message !== '' && (
-        <Alert
-          closeAlert={() => {
-            setMessage('');
-          }}
-          show={message !== '' ? true : false}
-        >
-          {message}
-        </Alert>
-      )}
     </>
   );
 }

@@ -128,14 +128,12 @@ export function Login() {
     );
   } else {
     return (
-      <>
-        <div style={{ color: 'yellow' }}>
-          Thank you! An email containing a link to complete your login process has been
-          sent to your email address. It should appear within the next minute or so, and
-          will have the subject line &quotYour Login Link - The Acharya Roop Verma Digital
-          Library&quot.
-        </div>
-      </>
+      <div style={{ color: 'yellow' }}>
+        Thank you! An email containing a link to complete your login process has been sent
+        to your email address. It should appear within the next minute or so, and will
+        have the subject line &quotYour Login Link - The Acharya Roop Verma Digital
+        Library&quot.
+      </div>
     );
   }
 }

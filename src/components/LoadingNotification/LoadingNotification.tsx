@@ -18,12 +18,10 @@ export function LoadingNotification(props: AlertProps) {
     return null;
   }
   return (
-    <>
-      <div role="alert" className="modal--backdrop">
-        <div className="modal--card-container">
-          <div className="modal--content-body">{children}</div>
-        </div>
+    <div role="alert" className="modal--backdrop">
+      <div className="modal--card-container">
+        <div className="modal--content-body">{children}</div>
       </div>
-    </>
+    </div>
   );
 }

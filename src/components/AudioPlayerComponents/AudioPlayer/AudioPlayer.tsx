@@ -25,8 +25,6 @@ export function AudioPlayer() {
     duration,
     playPauseValidation,
   } = useAudioContext();
-  // TODO: what is this?
-  // const track = '';
 
   const { userData } = useAuthContext();
   const [trackProgress, setTrackProgress] = useState(0);
@@ -85,7 +83,6 @@ export function AudioPlayer() {
     if (!isPlaying) {
       setIsPlaying(true);
     }
-    // setSecondsPlayed(0);
     startTimer();
   };
 
@@ -149,8 +146,6 @@ export function AudioPlayer() {
     setTrackProgress(audioRef.current.currentTime);
 
     if (!isReady) {
-      // if (!isReady.current) {
-      // isReady.current = true;
       setIsReady(true);
     }
   }, [trackSrc]);
@@ -164,8 +159,6 @@ export function AudioPlayer() {
   }, []);
 
   return (
-    // <div className="audio-player--container">
-    // <div className="audio-player--track-info">
     <div className="flex items-center justify-between w-full mt-8 p-0">
       <h2 className="audio-player--title">
         {/* Perhaps unnecessary?*/}
@@ -180,7 +173,6 @@ export function AudioPlayer() {
         isPlaying={isPlaying}
         onPrevClick={toPrevTrackIndex}
         onNextClick={toNextTrackIndex}
-        // onPlayPauseClick={setIsPlaying}
         onPlayPauseClick={playPauseValidation}
       />
       <span className="w-full ml-10 self-center pb-4">
@@ -209,6 +201,5 @@ export function AudioPlayer() {
         style={{ background: trackStyling, marginLeft: '50px' }}
       />
     </div>
-    // </div>
   );
 }
