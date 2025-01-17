@@ -8,6 +8,7 @@ const key = import.meta.env.VITE_API_KEY;
 interface HandleCheckoutResponseType {
   status: 'success' | 'error';
   message: string;
+  errorCode: number | undefined;
 }
 
 interface HandleCheckoutProps {
@@ -37,13 +38,13 @@ export async function handleCheckout(
     // If `redirectToCheckout` fails due to a browser or network
     // error, display the localized error message to your customer
     // using `error.message`.
-    const errorMessage = getErrorMessage(error.message);
+    const { errorMessage, errorCode } = getErrorMessage(error.message);
     if (errorMessage) {
-      return { status: 'error', message: errorMessage };
+      return { status: 'error', message: errorMessage, errorCode: errorCode };
     }
-    return { status: 'success', message: 'success' };
+    return { status: 'success', message: 'success', errorCode: undefined };
   } catch (error) {
-    const errorMessage = getErrorMessage(error);
-    return { status: 'error', message: errorMessage };
+    const { errorMessage, errorCode } = getErrorMessage(error);
+    return { status: 'error', message: errorMessage, errorCode: errorCode };
   }
 }

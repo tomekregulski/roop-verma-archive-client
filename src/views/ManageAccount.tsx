@@ -1,20 +1,19 @@
 import { useStripe } from '@stripe/react-stripe-js';
 import axios from 'axios';
-import { /* useEffect,*/ useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-import { Alert } from '../components/Alert/Alert';
 import { useAuthContext } from '../context/AuthContext';
+import { useNotificationContext } from '../context/NotificationContext';
 import { getErrorMessage } from '../util/getErrorMessage';
 
 const key = import.meta.env.VITE_API_KEY;
 const accountUpdateKey = import.meta.env.VITE_ACCOUNT_UPDATE_KEY;
 
 export function ManageAccount() {
-  const [message, setMessage] = useState('');
-
   const stripe = useStripe();
 
   const { userData, hasAllowedStatus /* updateUserData*/ } = useAuthContext();
+  const { updateAlertMessage } = useNotificationContext();
 
   useEffect(() => {
     const effect = async () => {
@@ -111,13 +110,14 @@ export function ManageAccount() {
         // using `error.message`.
         console.warn(error.message);
       } catch (error) {
-        console.log('Stripe checkout failed');
+        console.log('Stripe checkout for resubscribe failed');
         console.log(error);
-        const errorMessage = getErrorMessage(error);
-        setMessage(`Failed to create checkout session - : ${errorMessage}`);
+        const errorObj = getErrorMessage(error);
+        updateAlertMessage([
+          'There was an error accessing the subscription page:',
+          errorObj.errorMessage,
+        ]);
       }
-    } else {
-      console.log('stripe not found');
     }
   };
 
@@ -133,10 +133,13 @@ export function ManageAccount() {
       const portalAddress = portalRes.data.session.url;
       window.location.href = portalAddress;
     } catch (error) {
-      console.log('Access user account failed');
+      console.log('Accessing Stripe portal for account management failed');
       console.log(error);
-      const errorMessage = getErrorMessage(error);
-      setMessage(`Failed to create checkout session - : ${errorMessage}`);
+      const errorObj = getErrorMessage(error);
+      updateAlertMessage([
+        'There was an error accessing your account information:',
+        errorObj.errorMessage,
+      ]);
     }
   };
   return (
@@ -158,16 +161,6 @@ export function ManageAccount() {
           resubscribe
         </button>
       )}
-      {message !== '' && (
-        <Alert closeAlert={() => setMessage('')} show={message !== '' ? true : false}>
-          {message}
-        </Alert>
-      )}
-      {/* {userData?.subscriptionActive === false && (
-        <button type="button" onClick={() => handleResubscribe()}>
-          Resubscribe
-        </button>
-      )} */}
     </div>
   );
 }

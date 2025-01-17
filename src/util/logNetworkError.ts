@@ -4,9 +4,8 @@ import { emailErrorNotify } from './emailErrorNotify';
 import { getErrorMessage } from './getErrorMessage';
 
 export interface CreateNetworkErrorProps {
-  errorCode: number;
+  errorCode?: number;
   errorMessage: string;
-  // userFriendlyErrorMessage: string;
   isRegisteredUser: boolean;
   userId?: number;
   userEmailAddress?: string;
@@ -18,7 +17,6 @@ const key = import.meta.env.VITE_API_KEY;
 export async function logNetworkError({
   errorCode,
   errorMessage,
-  // userFriendlyErrorMessage,
   isRegisteredUser,
   userId,
   userEmailAddress,
@@ -46,19 +44,18 @@ export async function logNetworkError({
   } catch (error) {
     console.log('Failed to log network error.');
     console.log(error);
-    const errorMessage = getErrorMessage(error);
+    const errorObj = getErrorMessage(error);
     emailErrorNotify({
       fn: 'logNetworkError',
-      args: `${errorCode},
-        ${errorMessage},
+      args: `${errorObj.errorCode},
+        ${errorObj.errorMessage},
         ${isRegisteredUser},
         ${userId},
         ${userEmailAddress},
       }`,
-      errorMessage: errorMessage,
+      errorMessage: errorObj.errorMessage,
       userName: userName ?? 'N/A',
       userEmail: userEmailAddress || 'N/A',
     });
   }
-  // setAlertMessage errorNotification(userFriendlyErrorMessage)
 }
