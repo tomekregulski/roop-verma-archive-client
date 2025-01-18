@@ -1,12 +1,13 @@
 import './helpStyles.css';
 
 import { init, sendForm } from 'emailjs-com';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 import { useAuthContext } from '../../context/AuthContext';
 import { useNotificationContext } from '../../context/NotificationContext';
 import { getErrorMessage } from '../../util/getErrorMessage';
 import { Button } from '../Button/Button';
+import { Form } from '../Form/Form';
 import { Input } from '../Input/Input';
 
 init('user_sWNT4oROPiAoUGksmqFlD');
@@ -19,6 +20,14 @@ export function SupportForm() {
     email: userData ? userData.email : '',
     message: '',
   });
+
+  function isFormComplete() {
+    if (helpInfo.name !== '' && helpInfo.email !== '' && helpInfo.message !== '') {
+      return true;
+    }
+    return false;
+  }
+  const isSubmitDisabled = !isFormComplete();
 
   const { updateLoadingState, updateAlertMessage } = useNotificationContext();
 
@@ -47,17 +56,15 @@ export function SupportForm() {
   };
 
   useEffect(() => {
-    console.log('email');
     validateEmail();
   }, [helpInfo.email]);
 
-  const handleFormSubmit = (e: FormEvent) => {
-    e.preventDefault();
+  async function handleFormSubmit() {
     if (helpInfo.name !== '' && helpInfo.email !== '' && helpInfo.message !== '') {
       updateLoadingState(true);
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const form = document.querySelector('#contact-form')! as HTMLFormElement;
-      sendForm('rvdl_forms', 'template_xu5gbwo', '#contact-form').then(
+      await sendForm('rvdl_forms', 'template_xu5gbwo', '#contact-form').then(
         (response) => {
           updateLoadingState(false);
           updateAlertMessage(['Message successfully sent']);
@@ -75,51 +82,55 @@ export function SupportForm() {
     } else {
       updateAlertMessage(['Please fill out the form before submitting.']);
     }
-  };
+  }
 
   return (
-    <>
-      <section>
-        <form id="contact-form" onSubmit={(event) => handleFormSubmit(event)}>
-          <Input
-            id="support-message--name-input"
-            label="Name"
-            name="name"
-            value={helpInfo.name}
-            type="text"
-            callback={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
-            labelColor="white"
-            margin="10px 0 0 0"
-          />
-          <Input
-            id="support-message--email-input"
-            label="Email"
-            name="email"
-            value={helpInfo.email}
-            type="text"
-            callback={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
-            labelColor="white"
-            margin="20px 0 0 0"
-          />
-          <Input
-            id="support-message--message-input"
-            label="Message"
-            name="message"
-            value={helpInfo.message}
-            type="text"
-            callback={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
-            labelColor="white"
-            margin="20px 0 0 0"
-          />
-          {emailMessage !== '' && <span className="form--alert">{emailMessage}</span>}
-        </form>
+    <section>
+      <Form
+        id="contact-form"
+        handleSubmit={handleFormSubmit}
+        isSubmitDisabled={isSubmitDisabled}
+      >
+        <Input
+          id="support-message--name-input"
+          label="Name"
+          name="name"
+          value={helpInfo.name}
+          type="text"
+          callback={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
+          labelColor="white"
+          margin="10px 0 0 0"
+        />
+        <Input
+          id="support-message--email-input"
+          label="Email"
+          name="email"
+          value={helpInfo.email}
+          type="text"
+          callback={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
+          labelColor="white"
+          margin="20px 0 0 0"
+        />
+        <Input
+          id="support-message--message-input"
+          label="Message"
+          name="message"
+          value={helpInfo.message}
+          type="text"
+          callback={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
+          labelColor="white"
+          margin="20px 0 0 0"
+        />
+        {emailMessage !== '' && <span className="form--alert">{emailMessage}</span>}
         <Button
-          callback={(e: FormEvent) => handleFormSubmit(e)}
+          type="submit"
           margin="30px 0 0 0"
           width="100%"
-          name="Send Message"
+          name="Send  Message"
+          form="contact-form"
+          isDisabledMessage={isSubmitDisabled ? 'Please complete the form' : undefined}
         />
-      </section>
-    </>
+      </Form>
+    </section>
   );
 }

@@ -5,6 +5,7 @@ import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
 
 import { Button } from '../components/Button/Button';
+import { Form } from '../components/Form/Form';
 import { Input } from '../components/Input/Input';
 import { useNotificationContext } from '../context/NotificationContext';
 import { useRegistrationContext } from '../context/RegistrationContext';
@@ -27,7 +28,7 @@ export function Signup() {
 
   const isFormInvalid = invalidEmail || invalidFirstName || invalidLastName;
   const isStripeNotFound = !stripe;
-  // const isSubmitDisabled = isFormInvalid || isStripeNotFound;
+  const isSubmitDisabled = !!isFormInvalid || isStripeNotFound;
 
   function getTooltipMessage() {
     if (isStripeNotFound) {
@@ -114,15 +115,18 @@ export function Signup() {
     }
   };
 
-  // function handleSubmit() {
-  //   if (!isSubmitDisabled) {
-  //     handleSignUp();
-  //   }
-  // }
+  function handleSubmit() {
+    if (isSubmitDisabled) {
+      return;
+    }
+    handleSignUp();
+  }
 
   return (
-    <form
+    <Form
       id="signup-form"
+      isSubmitDisabled={isSubmitDisabled}
+      handleSubmit={handleSubmit}
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -131,7 +135,6 @@ export function Signup() {
         width: '400px',
         margin: '32px auto 0',
       }}
-      // onSubmit={handleSubmit}
     >
       <Input
         id="first-name-login-input"
@@ -168,14 +171,13 @@ export function Signup() {
       {invalidEmail !== '' && <span className="form--alert">{invalidEmail}</span>}
 
       <Button
-        // form="signup-form"
-        // type="submit"
-        callback={handleSignUp}
+        form="signup-form"
+        type="submit"
         margin="30px 0 0 0"
         width="200px"
         name="Sign up"
         isDisabledMessage={tooltipMessage}
       />
-    </form>
+    </Form>
   );
 }

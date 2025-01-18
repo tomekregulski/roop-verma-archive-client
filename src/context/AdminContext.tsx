@@ -17,16 +17,21 @@ export const OUTSIDE_ADMIN_PROVIDER_ERROR =
 
 export const AdminContext = createContext<AdminState | null>(null);
 
+const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
+
 export function AdminProvider(props: AdminContextProps) {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   function checkPassword(password: string) {
-    return password === 'rageshree';
+    return password === adminPassword;
   }
 
   function checkIsAdmin(password: string) {
     const isAdmin = checkPassword(password);
-    console.log(isAdmin);
+    console.log('isAdmin: ', isAdmin);
+    if (!isAdmin) {
+      alert('Incorrect password');
+    }
     setIsAdmin(isAdmin);
   }
 

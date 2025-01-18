@@ -6,6 +6,7 @@ import { ChangeEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Button } from '../components/Button/Button';
+import { Form } from '../components/Form/Form';
 import { Input } from '../components/Input/Input';
 import { UserData } from '../context/AuthContext';
 import { useNotificationContext } from '../context/NotificationContext';
@@ -67,7 +68,7 @@ export function Login() {
     );
   };
 
-  const handleLogIn = async () => {
+  async function handleLogIn() {
     if (!email) {
       updateAlertMessage(['Please enter your email address.']);
       return;
@@ -94,7 +95,7 @@ export function Login() {
         updateAlertMessage([`Login error: ${errorObj.errorMessage}`]);
       }
     }
-  };
+  }
 
   if (!emailSent) {
     return (
@@ -108,19 +109,28 @@ export function Login() {
           marginTop: '50px',
         }}
       >
-        <Input
-          label="Enter email to log in"
-          value={email ?? ''}
-          type="email"
-          callback={handleChange}
-          name="email"
-          labelColor="white"
-          margin="10px 0 0 0"
-          id="email-login-input"
-          placeholder="Email"
-          width="250px"
-        />
-        <Button callback={handleLogIn} margin="30px 0 0 0" width="100%" name="Log in" />
+        <Form id="login-form" handleSubmit={handleLogIn} isSubmitDisabled={!email}>
+          <Input
+            label="Enter email to log in"
+            value={email ?? ''}
+            type="email"
+            callback={handleChange}
+            name="email"
+            labelColor="white"
+            margin="10px 0 0 0"
+            id="email-login-input"
+            placeholder="Email"
+            width="250px"
+          />
+          <Button
+            form="login-form"
+            type="submit"
+            margin="30px 0 0 0"
+            width="100%"
+            name="Log in"
+            isDisabledMessage={!email ? 'Please enter an email address' : undefined}
+          />
+        </Form>
         <div style={{ marginTop: '20px' }}>
           Dont&apos;t have an account? <Link to="/signup">Sign up!</Link>
         </div>
