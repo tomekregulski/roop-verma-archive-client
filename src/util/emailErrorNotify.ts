@@ -36,15 +36,3 @@ export async function emailErrorNotify(props: EmailErrorNotifyProps) {
     },
   );
 }
-
-/**
- * Example Implementation:
- * const response = await emailErrorNotify({
-      fn: 'handleSignUp',
-      args: JSON.stringify({ firstName, lastName, email }),
-      errorMessage: 'error message',
-      errorStack: 'error stack',
-      userName: `${firstName} ${lastName}`,
-      userEmail: email,
-    });
- */

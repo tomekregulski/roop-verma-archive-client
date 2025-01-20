@@ -37,7 +37,6 @@ export function CompleteRegistration() {
         updateLoadingState(false);
       },
       async (error) => {
-        // TODO: EmailJS error type?
         console.log('Login email failed to send');
         updateLoadingState(false);
         const { errorMessage, errorCode } = getErrorMessage(error.text);
@@ -116,15 +115,6 @@ export function CompleteRegistration() {
             },
           );
           const { name, email } = session.data.customer_details;
-          // await axios.post(
-          //   `${
-          //     import.meta.env.VITE_API_ORIGIN
-          //   }/api/v1/user/update-subscription-status/${key}`,
-          //   {
-          //     email,
-          //     isSubscriptionActive: true,
-          //   },
-          // );
 
           getEmailKey(name, email);
         } catch (error) {

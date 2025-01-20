@@ -1,7 +1,7 @@
 import './helpStyles.css';
 
 import { init, sendForm } from 'emailjs-com';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 
 import { useAuthContext } from '../../context/AuthContext';
 import { useNotificationContext } from '../../context/NotificationContext';
@@ -14,7 +14,6 @@ init('user_sWNT4oROPiAoUGksmqFlD');
 
 export function SupportForm() {
   const { userData } = useAuthContext();
-  const [emailMessage, setEmailMessage] = useState('');
   const [helpInfo, setHelpInfo] = useState({
     name: userData ? `${userData.firstName} ${userData.lastName}` : '',
     email: userData ? userData.email : '',
@@ -39,25 +38,6 @@ export function SupportForm() {
       [name]: value,
     }));
   };
-
-  const validateEmail = () => {
-    const validRegex =
-      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-
-    if (helpInfo.email !== '') {
-      if (helpInfo.email.match(validRegex)) {
-        setEmailMessage('');
-      } else {
-        setEmailMessage('Please enter a valid email address');
-      }
-    } else {
-      setEmailMessage('');
-    }
-  };
-
-  useEffect(() => {
-    validateEmail();
-  }, [helpInfo.email]);
 
   async function handleFormSubmit() {
     if (helpInfo.name !== '' && helpInfo.email !== '' && helpInfo.message !== '') {
@@ -106,7 +86,7 @@ export function SupportForm() {
           label="Email"
           name="email"
           value={helpInfo.email}
-          type="text"
+          type="email"
           callback={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
           labelColor="white"
           margin="20px 0 0 0"
@@ -121,7 +101,6 @@ export function SupportForm() {
           labelColor="white"
           margin="20px 0 0 0"
         />
-        {emailMessage !== '' && <span className="form--alert">{emailMessage}</span>}
         <Button
           type="submit"
           margin="30px 0 0 0"

@@ -57,7 +57,7 @@ export function Login() {
           `If this issue persists, please reach out to ${supportEmailAddress}`,
         ]);
         await logNetworkError({
-          errorCode: error.status, // TODO: check this
+          errorCode: error.status,
           errorMessage: error.text,
           isRegisteredUser: true,
           userId: user.id,
