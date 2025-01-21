@@ -3,17 +3,21 @@ import './styles/welcomeStyles.css';
 import { Link } from 'react-router-dom';
 
 import { Button } from '../components/Button/Button';
+import { Section } from '../components/Section/Section';
+import { ViewTitle } from '../components/Titles/ViewTitle';
 import { useAuthContext } from '../context/AuthContext';
 import { Login } from './Login';
 
 export function Welcome() {
   const { userData, isAuth } = useAuthContext();
 
+  const name = isAuth ? ` ${userData && userData.firstName}` : '';
+
   return (
     <div className="welcome__container">
-      <h2>Welcome{isAuth === true && userData && ` ${userData.firstName}`}!</h2>
+      <ViewTitle title={`Welcome${name}!`} />
       {!isAuth ? (
-        <>
+        <Section>
           <p>
             If you are a subscriber, please login through the form below. If you would
             like to register as a new user, please click &quot;Sign Up&quot; below, and
@@ -33,7 +37,7 @@ export function Welcome() {
             />
           </Link>
           <Login />
-        </>
+        </Section>
       ) : (
         <>
           <p>Please use the navigation above to move throught the app</p>

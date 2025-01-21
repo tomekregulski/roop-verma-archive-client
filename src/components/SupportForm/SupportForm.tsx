@@ -1,8 +1,7 @@
-import './helpStyles.css';
-
 import { init, sendForm } from 'emailjs-com';
 import { ChangeEvent, useState } from 'react';
 
+import { Section } from '../../components/Section/Section';
 import { useAuthContext } from '../../context/AuthContext';
 import { useNotificationContext } from '../../context/NotificationContext';
 import { getErrorMessage } from '../../util/getErrorMessage';
@@ -65,7 +64,7 @@ export function SupportForm() {
   }
 
   return (
-    <section>
+    <Section>
       <Form
         id="contact-form"
         handleSubmit={handleFormSubmit}
@@ -110,6 +109,6 @@ export function SupportForm() {
           isDisabledMessage={isSubmitDisabled ? 'Please complete the form' : undefined}
         />
       </Form>
-    </section>
+    </Section>
   );
 }
