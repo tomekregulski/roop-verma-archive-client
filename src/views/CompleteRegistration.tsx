@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { init, send } from 'emailjs-com';
-import { useEffect, useState } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 
 import { Button } from '../components/Button/Button';
 import { useNotificationContext } from '../context/NotificationContext';
@@ -12,6 +12,25 @@ const emailJsUser = import.meta.env.VITE_EMAILJS_USER;
 const supportEmailAddress = import.meta.env.VITE_RVDL_EMAIL_ADDRESS;
 
 init(emailJsUser);
+
+interface ViewWrapperProps extends PropsWithChildren {}
+
+function ViewWrapper(props: ViewWrapperProps) {
+  const { children } = props;
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: '0 auto',
+      }}
+    >
+      {children}
+    </div>
+  );
+}
 
 export function CompleteRegistration() {
   const [isSuccess, setIsSuccess] = useState(false);
@@ -141,10 +160,10 @@ export function CompleteRegistration() {
 
   function RenderCancel() {
     return (
-      <div className="flex items-center justify-center pt-8">
+      <ViewWrapper>
         Subscription process cancelled. To resume the process, please return to the home
         page and begin again.
-      </div>
+      </ViewWrapper>
     );
   }
 
@@ -152,37 +171,21 @@ export function CompleteRegistration() {
     return (
       <>
         {!emailSent ? (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              margin: '46px auto 0',
-            }}
-          >
+          <ViewWrapper>
             <div>
               Your Registration is Almost Complete. Please press the button below to
               complete the process.
             </div>
             <Button callback={sendLoginEmail} name="Complete Registration" />
-          </div>
+          </ViewWrapper>
         ) : (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              margin: '0 auto',
-            }}
-          >
+          <ViewWrapper>
             <p>
               We have sent you an email to confirm your subscription. Please check it and
               follow the link provided to log in.
             </p>
             <p>You may close this window now.</p>
-          </div>
+          </ViewWrapper>
         )}
       </>
     );

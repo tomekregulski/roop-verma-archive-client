@@ -2,6 +2,7 @@ import { useStripe } from '@stripe/react-stripe-js';
 import axios from 'axios';
 import { useEffect } from 'react';
 
+import { Section } from '../components/Section/Section';
 import { useAuthContext } from '../context/AuthContext';
 import { useNotificationContext } from '../context/NotificationContext';
 import { getErrorMessage } from '../util/getErrorMessage';
@@ -143,24 +144,16 @@ export function ManageAccount() {
     }
   };
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: '32px',
-      }}
-    >
+    <Section>
       <button id="portal-session-button" type="button" onClick={() => handlePortal()}>
         Manage Account
       </button>
-      {/* This causes the database to crash  */}
+      {/* TODO: This causes the database to crash  */}
       {!hasAllowedStatus && (
         <button type="button" onClick={() => handleCheckout()}>
           resubscribe
         </button>
       )}
-    </div>
+    </Section>
   );
 }

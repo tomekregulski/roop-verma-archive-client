@@ -98,7 +98,7 @@ export function AudioTopBar() {
   };
   return (
     <div
-      className="flex flex-col items-center sticky top-[126px] pt-[56px] pb-[48px]"
+      className="flex flex-col items-center sticky top-[126px] pt-[56px] pb-[48px] text-center"
       style={{ backgroundColor: 'rgba(0, 180, 249)', zIndex: 100 }}
     >
       {isAuth === false ? <LoggedOutView /> : null}
