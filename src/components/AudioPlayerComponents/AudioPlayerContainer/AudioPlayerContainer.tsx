@@ -19,7 +19,16 @@ const AudioPlayerContainer = () => {
         backgroundColor: 'rgba(0, 180, 249)',
       }}
     >
-      <div className="flex items-center justify-between w-full border-t mt-[32px]">
+      <div
+        className="
+          flex 
+          items-center 
+          justify-between 
+          w-full 
+          border-t 
+          mt-[32px]
+        "
+      >
         {selectedTrack ? <AudioPlayer /> : <EmptyFooter className="h-[88.24px]" />}
       </div>
     </div>

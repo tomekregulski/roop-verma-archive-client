@@ -26,21 +26,21 @@ export function AppLayout() {
   }, [location.pathname]);
 
   return (
-    <div className="grid h-screen grid-rows-[auto_minmax(0,1fr)_auto] isolate">
-      <div className="z-10" style={{ zIndex: 100 }}>
-        <Navbar />
-      </div>
+    <div>
+      <Navbar />
       <div
+        className="
+          overflow-scroll 
+          mt-[32px] 
+          mx-auto
+        "
         style={{
-          position: 'relative',
-          zIndex: 1,
+          height: 'calc(100vh - 90px - 64px - 125px)',
         }}
       >
         <Outlet />
       </div>
-      <div style={{ zIndex: 100 }}>
-        <AudioPlayerContainer />
-      </div>
+      <AudioPlayerContainer />
     </div>
   );
 }

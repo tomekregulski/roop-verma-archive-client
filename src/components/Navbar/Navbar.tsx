@@ -17,7 +17,18 @@ export function Navbar() {
 
   return (
     <nav
-      className="flex flex-col items-center justify-center pb-[16px] border-b-2 sticky top-0 left-0 h-[125px]"
+      className="
+        flex 
+        flex-col 
+        items-center 
+        justify-center 
+        pb-[16px] 
+        border-b-2 
+        sticky 
+        top-0 
+        left-0 
+        h-[125px]
+      "
       style={{ backgroundColor: 'rgba(0, 180, 249)' }}
     >
       <div className="block mt-[15px] mb-[0] mx-auto">

@@ -1,10 +1,13 @@
+import { Section } from '../components/Section/Section';
 import { SupportForm } from '../components/SupportForm/SupportForm';
+import { SectionTitle } from '../components/Titles/SectionTitle';
+import { ViewTitle } from '../components/Titles/ViewTitle';
 
 const AboutLibrary = () => {
   return (
-    <div className="help__container">
-      <section className="help__section" style={{ marginTop: '32px' }}>
-        <h2>Help / How to Use the Library</h2>
+    <>
+      <ViewTitle title="Help / How to Use the Library" />
+      <Section>
         <p>
           As the library expands, this page will grow as a resource for using its various
           features.
@@ -13,9 +16,9 @@ const AboutLibrary = () => {
           For any technical issues, please use the form below (coming soon) to submit a
           ticket.
         </p>
-      </section>
-      <section className="help__section">
-        <h2>Media Player</h2>
+      </Section>
+      <Section>
+        <SectionTitle title="Media Player" />
         <p>
           This feature will provide access to a wide range of Roopji&apos;s audio
           recordings, taken over decades of concerts, workshops, and interviews. This
@@ -39,10 +42,9 @@ const AboutLibrary = () => {
           Over time, we expect to expand the search field into a more detailed filter that
           will allow for a higher level of specificity.
         </p>
-      </section>
-      {/** TODO: make into its own page */}
+      </Section>
       <SupportForm />
-    </div>
+    </>
   );
 };
 

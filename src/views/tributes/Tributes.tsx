@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-
+import { Section } from '../../components/Section/Section';
+import { ViewTitle } from '../../components/Titles/ViewTitle';
 import { TributeCard } from './TributeCard';
 
 type TributeType = 'text' | 'video';
@@ -74,25 +74,36 @@ const tributes: Tribute[] = [
   },
 ];
 
-const TributesWrapper = styled.div();
-const TributesList = styled.div();
-
 export function Tributes() {
   return (
-    <TributesWrapper className="mt-[32px] text-center mx-auto">
-      <h1>Tributes</h1>
-      <p className="mt-[16px] max-w-[90%] mx-auto">
-        Acharya Roop Verma touched the lives of countless individuals over the ocurse of
-        his life. This page is a modest attempt to collect the testimonimals from some of
-        those people. If you would like to contribute to this collection, please reach out
-        to SOMEMAIL@EMAIL.EMAIL
-      </p>
-      {/** breakpoint to justify-center at smaller screensizes */}
-      <TributesList className="max-w-[90%] mx-auto flex flex-wrap justify-start mt-[64px] gap-2 overflow-auto mb-[130px] absolute top-[140px] bottom-0 right-0">
+    <>
+      <ViewTitle title="Tributes" />
+      <Section>
+        <p className="text-center">
+          Acharya Roop Verma touched the lives of countless individuals over the ocurse of
+          his life. This page is a modest attempt to collect the testimonimals from some
+          of those people. If you would like to contribute to this collection, please
+          reach out to SOMEMAIL@EMAIL.EMAIL
+        </p>
+      </Section>
+      {/** TODO: breakpoint to jeustify-center at smaller screensizes */}
+      <div
+        className="
+          max-w-[90%]
+          mt-[64px]
+          mx-auto
+          mb-[130px]
+          flex
+          flex-wrap
+          justify-start
+          gap-2
+          overflow-scroll
+      "
+      >
         {tributes.map((tribute) => (
           <TributeCard key={tribute.id} tribute={tribute} />
         ))}
-      </TributesList>
-    </TributesWrapper>
+      </div>
+    </>
   );
 }

@@ -1,27 +1,21 @@
+import { ViewTitle } from '../components/Titles/ViewTitle';
+
 export function AboutRoopji() {
   return (
-    <div
-      style={{
-        margin: '32px auto 0',
-        // TODO: scroll is not working
-        overflow: 'scroll',
-        height: 'full',
-      }}
-    >
-      <h1 className="text-center lg:text-[48px] md:text-[36px] sm:text-[20px]">
-        About the Acharya Roop Verma Library
-      </h1>
+    <>
+      <ViewTitle title="About the Acharya Roop Verma Library" />
       <section
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'start',
-          justifyContent: 'start',
-          margin: '32px auto 0',
-          maxWidth: '1000px',
-          gap: '16px',
-          overflow: 'scroll',
-        }}
+        className="
+          max-w-[1000px]
+          mt-[32px]
+          mx-auto
+          mb-0
+          flex
+          flex-col
+          items-center
+          justify-start
+          gap-4
+        "
       >
         <p>
           When Roop Verma arrived in the West from his native land of India, he was well
@@ -84,6 +78,6 @@ export function AboutRoopji() {
           <div>Tracy Verma</div>
         </div>
       </section>
-    </div>
+    </>
   );
 }
