@@ -82,7 +82,7 @@ const TrackContainer = () => {
     setTrackRows(rows);
   }, [filteredTracks, setFilteredTracks]);
 
-  const clickHandle = (id: number) => {
+  const handleClick = (id: number) => {
     if (filteredTracks) {
       const newTrack = filteredTracks.filter((track) => track.id === id);
       const index = filteredTracks.findIndex((track) => track.id === id);
@@ -92,14 +92,11 @@ const TrackContainer = () => {
   };
 
   return (
-    <TrackContainerWrapper
-      className="md:mt-[92px] md:mb-[120px] sm:mt-[206px] sm:mb-[130px]"
-      style={{ backgroundColor: 'rgba(0, 180, 249)' }}
-    >
+    <TrackContainerWrapper>
       <TrackList className="overflow-scroll">
         {trackRows ? (
           trackRows.map((track) => {
-            return <TrackCard key={track.id} callback={clickHandle} trackInfo={track} />;
+            return <TrackCard key={track.id} callback={handleClick} trackInfo={track} />;
           })
         ) : (
           <p>{tracksMessage}</p>

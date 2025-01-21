@@ -1,31 +1,35 @@
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
 import { AudioTopBar } from '../components/AudioPlayerComponents/AudioTopBar/AudioTopBar';
 import TrackContainer from '../components/TrackContainer/TrackContainer';
 import { useAuthContext } from '../context/AuthContext';
+import { useNotificationContext } from '../context/NotificationContext';
 import { fetchTracks } from '../queries/audioQueries';
 
 const AudioView = () => {
   const { isAuth } = useAuthContext();
+  const { updateLoadingState, updateAlertMessage } = useNotificationContext();
   const { isLoading, error, isError } = useQuery(['tracks'], () => fetchTracks(isAuth), {
     staleTime: Infinity,
     cacheTime: Infinity,
   });
 
-  if (isLoading) {
-    return <div>Loading</div>;
-  }
-  if (isError && error) {
-    return <div>{error.toString()}</div>;
-  }
+  useEffect(() => {
+    updateLoadingState(isLoading);
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (isError && error) {
+      updateAlertMessage([error.toString()]);
+    }
+  }, [isError, error]);
 
   return (
-    <div className="mt-[-4px]">
+    <>
       <AudioTopBar />
-      <div className="absolute top-[140px] bottom-0 left-0 right-0 overflow-auto">
-        <TrackContainer />
-      </div>
-    </div>
+      <TrackContainer />
+    </>
   );
 };
 

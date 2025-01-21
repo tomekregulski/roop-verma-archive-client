@@ -2,7 +2,6 @@ import { Tooltip } from 'antd';
 import { MouseEventHandler } from 'react';
 
 interface ButtonProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   callback?: MouseEventHandler<HTMLButtonElement>;
   isDisabledMessage?: string;
   form?: string | undefined;
@@ -12,6 +11,10 @@ interface ButtonProps {
 
 export function Button(props: ButtonProps) {
   const { callback, isDisabledMessage, form, name, type } = props;
+
+  const disabledStyles = isDisabledMessage
+    ? 'cursor-default bg-slate-500 text-white'
+    : 'cursor-pointer bg-white text-black';
 
   return (
     <div>
@@ -24,12 +27,10 @@ export function Button(props: ButtonProps) {
             block
             text-center
             w-max
-            py-[10px]
+            py-[5px]
             px-[25px]
             rounded-[5px]
-            ${isDisabledMessage ? 'cursor-default' : 'cursor-pointer'}
-            ${isDisabledMessage ? 'bg-slate-600' : 'bg-white'}
-            text-black
+            ${disabledStyles}
             font-bold
           `}
           style={{

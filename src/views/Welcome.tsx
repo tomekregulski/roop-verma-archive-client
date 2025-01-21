@@ -52,8 +52,10 @@ export function Welcome() {
         </Section>
       ) : (
         <>
-          <Section>Please use the navigation above to move throught the app</Section>
-          <LibraryLink />
+          <Section>
+            <p>Please use the navigation above to move throught the app</p>
+            <LibraryLink />
+          </Section>
         </>
       )}
     </div>
