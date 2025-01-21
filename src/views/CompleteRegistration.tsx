@@ -165,12 +165,7 @@ export function CompleteRegistration() {
               Your Registration is Almost Complete. Please press the button below to
               complete the process.
             </div>
-            <Button
-              callback={sendLoginEmail}
-              margin="10px 0 0 0"
-              width="300px"
-              name="Complete Registration"
-            />
+            <Button callback={sendLoginEmail} name="Complete Registration" />
           </div>
         ) : (
           <div

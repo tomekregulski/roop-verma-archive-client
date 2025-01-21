@@ -116,8 +116,6 @@ export function Login() {
             type="email"
             callback={handleChange}
             name="email"
-            labelColor="white"
-            margin="10px 0 0 0"
             id="email-login-input"
             placeholder="Email"
             width="250px"
@@ -125,8 +123,6 @@ export function Login() {
           <Button
             form="login-form"
             type="submit"
-            margin="30px 0 0 0"
-            width="100%"
             name="Log in"
             isDisabledMessage={!email ? 'Please enter an email address' : undefined}
           />

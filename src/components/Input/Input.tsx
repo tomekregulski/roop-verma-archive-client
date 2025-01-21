@@ -4,9 +4,7 @@ import { ChangeEvent } from 'react';
 
 interface InputProps {
   id: string;
-  margin?: string;
   padding?: string;
-  labelColor: string;
   name: string;
   type: string;
   label: string;
@@ -20,9 +18,7 @@ interface InputProps {
 export function Input(props: InputProps) {
   const {
     id,
-    margin,
     padding,
-    labelColor,
     name,
     type,
     label,
@@ -39,11 +35,10 @@ export function Input(props: InputProps) {
         display: 'flex',
         flexDirection: 'column',
         width: width ? width : '100%',
-        margin: margin,
         color: 'black',
       }}
     >
-      <label className="flex items-center" style={{ color: labelColor }} htmlFor={name}>
+      <label className="flex items-center" style={{ color: 'white' }} htmlFor={name}>
         {label}
         {tooltipContent && (
           <span style={{ marginLeft: '8px' }}>
@@ -61,7 +56,6 @@ export function Input(props: InputProps) {
         placeholder={placeholder}
         onChange={(event: ChangeEvent<HTMLInputElement>) => callback(event, id)}
         style={{
-          margin: margin || '0 15px 0 0',
           padding: padding || '5px',
           border: 'solid 1px white',
           borderRadius: '5px',

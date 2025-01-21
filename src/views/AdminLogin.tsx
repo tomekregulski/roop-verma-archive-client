@@ -32,14 +32,10 @@ export function AdminLogin() {
           value={password}
           type="password"
           callback={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-          labelColor="white"
-          margin="10px 0 0 0"
         />
         <Button
           form="admin-login-form"
           type="submit"
-          margin="30px 0 0 0"
-          width="200px"
           name="Submit"
           isDisabledMessage={!password ? 'Please enter password' : undefined}
         />

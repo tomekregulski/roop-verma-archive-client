@@ -1,7 +1,7 @@
 import { Stripe } from '@stripe/stripe-js';
 import axios from 'axios';
 
-import { getErrorMessage } from '../../util/getErrorMessage';
+import { getErrorMessage } from './getErrorMessage';
 
 const key = import.meta.env.VITE_API_KEY;
 

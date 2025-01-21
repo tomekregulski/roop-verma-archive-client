@@ -5,33 +5,13 @@ interface ButtonProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   callback?: MouseEventHandler<HTMLButtonElement>;
   isDisabledMessage?: string;
-  width?: string;
-  padding?: string;
-  margin?: string;
-  color?: string;
-  borderRadius?: string;
-  border?: string;
   form?: string | undefined;
-  fontWeight?: string;
   name: string;
   type?: 'button' | 'submit' | 'reset' | undefined;
 }
 
 export function Button(props: ButtonProps) {
-  const {
-    callback,
-    width,
-    isDisabledMessage,
-    padding,
-    margin,
-    color,
-    borderRadius,
-    border,
-    fontWeight,
-    form,
-    name,
-    type,
-  } = props;
+  const { callback, isDisabledMessage, form, name, type } = props;
 
   return (
     <div>
@@ -40,18 +20,21 @@ export function Button(props: ButtonProps) {
           onClick={!isDisabledMessage ? callback : undefined}
           type={type || 'button'}
           form={form}
+          className={`
+            block
+            text-center
+            w-max
+            py-[10px]
+            px-[25px]
+            rounded-[5px]
+            ${isDisabledMessage ? 'cursor-default' : 'cursor-pointer'}
+            ${isDisabledMessage ? 'bg-slate-600' : 'bg-white'}
+            text-black
+            font-bold
+          `}
           style={{
-            display: 'block',
-            textAlign: 'center',
-            width: width || 'auto',
-            padding: padding || '10px 25px',
-            backgroundColor: isDisabledMessage ? 'grey' : 'white',
-            cursor: isDisabledMessage ? 'default' : 'pointer',
-            margin: margin,
-            color: color || 'black',
-            borderRadius: borderRadius || '5px',
-            border: border || 'solid 1px rgba(0, 180, 249, 0.872)',
-            fontWeight: fontWeight || '400',
+            border: 'solid 1px rgba(0, 180, 249, 0.872)',
+            fontWeight: 400,
           }}
         >
           {name}

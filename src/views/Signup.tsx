@@ -1,5 +1,3 @@
-import './styles/formStyles.css';
-
 import { useStripe } from '@stripe/react-stripe-js';
 import axios from 'axios';
 import { ChangeEvent } from 'react';
@@ -9,8 +7,8 @@ import { Form } from '../components/Form/Form';
 import { Input } from '../components/Input/Input';
 import { useNotificationContext } from '../context/NotificationContext';
 import { useRegistrationContext } from '../context/RegistrationContext';
+import { handleCheckout } from '../util/handleCheckout';
 import { logNetworkError } from '../util/logNetworkError';
-import { handleCheckout } from './Signup/handleCheckout';
 
 const key = import.meta.env.VITE_API_KEY;
 const supportEmail = import.meta.env.VITE_RVDL_EMAIL_ADDRESS;
@@ -95,57 +93,50 @@ export function Signup() {
   };
 
   return (
-    <Form
-      id="signup-form"
-      isSubmitDisabled={isSubmitDisabled}
-      handleSubmit={handleSignUp}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '400px',
-        margin: '32px auto 0',
-      }}
+    <div
+      className="
+        w-[400px]
+        mt-[32px]
+        mx-auto
+        mb-0
+      "
     >
-      <Input
-        id="first-name-login-input"
-        label="First Name"
-        name="firstName"
-        value={registrationInfo.firstName}
-        type="text"
-        callback={handleRegistrationInfo}
-        labelColor="white"
-        margin="10px 0 0 0"
-      />
-      <Input
-        id="last-name-login-input"
-        label="Last Name"
-        name="lastName"
-        value={registrationInfo.lastName}
-        type="text"
-        callback={handleRegistrationInfo}
-        labelColor="white"
-        margin="20px 0 0 0"
-      />
-      <Input
-        label="Email"
-        value={registrationInfo.email}
-        type="email"
-        callback={handleRegistrationInfo}
-        name="email"
-        labelColor="white"
-        margin="10px 0 0 0"
-        id="email-login-input"
-      />
-      <Button
-        form="signup-form"
-        type="submit"
-        margin="30px 0 0 0"
-        width="200px"
-        name="Sign up"
-        isDisabledMessage={tooltipMessage}
-      />
-    </Form>
+      <Form
+        id="signup-form"
+        isSubmitDisabled={isSubmitDisabled}
+        handleSubmit={handleSignUp}
+      >
+        <Input
+          id="first-name-login-input"
+          label="First Name"
+          name="firstName"
+          value={registrationInfo.firstName}
+          type="text"
+          callback={handleRegistrationInfo}
+        />
+        <Input
+          id="last-name-login-input"
+          label="Last Name"
+          name="lastName"
+          value={registrationInfo.lastName}
+          type="text"
+          callback={handleRegistrationInfo}
+        />
+        <Input
+          label="Email"
+          value={registrationInfo.email}
+          type="email"
+          callback={handleRegistrationInfo}
+          name="email"
+          id="email-login-input"
+        />
+        <Button
+          form="signup-form"
+          type="submit"
+          name="Sign up"
+          isDisabledMessage={tooltipMessage}
+        />
+      </Form>
+    </div>
   );
 }
