@@ -29,12 +29,6 @@ a {
   color: white;
   text-decoration: none;
 }
-a:hover {
-  color: black;
-}
-a:visited {
-  color: white;
-}
 
 input,
 select,

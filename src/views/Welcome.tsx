@@ -1,10 +1,31 @@
 import { Link } from 'react-router-dom';
 
-import { Button } from '../components/Button/Button';
 import { Section } from '../components/Section/Section';
 import { ViewTitle } from '../components/Titles/ViewTitle';
 import { useAuthContext } from '../context/AuthContext';
 import { Login } from './Login';
+
+function LibraryLink() {
+  return (
+    <Link
+      to="audio"
+      className="
+        block
+        text-center
+        w-max
+        py-[10px]
+        px-[25px]
+        rounded-[5px]
+        cursor-pointer
+        bg-white
+        text-black
+        font-bold
+      "
+    >
+      Explore the Audio Library
+    </Link>
+  );
+}
 
 export function Welcome() {
   const { userData, isAuth } = useAuthContext();
@@ -12,7 +33,7 @@ export function Welcome() {
   const name = isAuth ? ` ${userData && userData.firstName}` : '';
 
   return (
-    <>
+    <div className="text-center">
       <ViewTitle title={`Welcome${name}!`} />
       {!isAuth ? (
         <Section>
@@ -26,29 +47,15 @@ export function Welcome() {
             public. Additionally, you can explore the other pages to learn more about
             Roopji and this project
           </p>
-          <Link to="audio">
-            <Button
-              name="Explore the Audio Library"
-              callback={() => {
-                return null;
-              }}
-            />
-          </Link>
+          <LibraryLink />
           <Login />
         </Section>
       ) : (
         <>
           <Section>Please use the navigation above to move throught the app</Section>
-          <Link to="audio">
-            <Button
-              name="Explore the Audio Library"
-              callback={() => {
-                return null;
-              }}
-            />
-          </Link>
+          <LibraryLink />
         </>
       )}
-    </>
+    </div>
   );
 }

@@ -18,7 +18,7 @@ export function AdminLogin() {
   }
 
   return (
-    <div style={{ width: '500px' }}>
+    <div className="w-[500px]">
       <p>This site is under development and is only available to admin users.</p>
       <Form
         id="admin-login-form"

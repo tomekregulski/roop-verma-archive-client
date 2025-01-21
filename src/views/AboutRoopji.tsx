@@ -1,22 +1,11 @@
+import { Section } from '../components/Section/Section';
 import { ViewTitle } from '../components/Titles/ViewTitle';
 
 export function AboutRoopji() {
   return (
     <>
       <ViewTitle title="About the Acharya Roop Verma Library" />
-      <section
-        className="
-          max-w-[1000px]
-          mt-[32px]
-          mx-auto
-          mb-0
-          flex
-          flex-col
-          items-center
-          justify-start
-          gap-4
-        "
-      >
+      <Section>
         <p>
           When Roop Verma arrived in the West from his native land of India, he was well
           received for the deeply meditative quality of his music. Contained in this
@@ -67,17 +56,17 @@ export function AboutRoopji() {
           educational organization, 501(c)(3).
         </p>
         <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'start',
-            justifyContent: 'center',
-          }}
+          className="
+            flex
+            flex-col
+            items-start
+            justify-center
+          "
         >
           <div>With love and light,</div>
           <div>Tracy Verma</div>
         </div>
-      </section>
+      </Section>
     </>
   );
 }

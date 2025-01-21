@@ -100,14 +100,14 @@ export function Login() {
   if (!emailSent) {
     return (
       <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: '300px',
-          marginTop: '50px',
-        }}
+        className="
+          flex
+          flex-col
+          items-center
+          justify-center
+          w-[300px]
+          mt-[50px]
+        "
       >
         <Form id="login-form" handleSubmit={handleLogIn} isSubmitDisabled={!email}>
           <Input
@@ -118,7 +118,6 @@ export function Login() {
             name="email"
             id="email-login-input"
             placeholder="Email"
-            width="250px"
           />
           <Button
             form="login-form"
