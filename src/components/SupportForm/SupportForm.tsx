@@ -77,8 +77,6 @@ export function SupportForm() {
           value={helpInfo.name}
           type="text"
           callback={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
-          labelColor="white"
-          margin="10px 0 0 0"
         />
         <Input
           id="support-message--email-input"
@@ -87,8 +85,6 @@ export function SupportForm() {
           value={helpInfo.email}
           type="email"
           callback={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
-          labelColor="white"
-          margin="20px 0 0 0"
         />
         <Input
           id="support-message--message-input"
@@ -97,14 +93,10 @@ export function SupportForm() {
           value={helpInfo.message}
           type="text"
           callback={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
-          labelColor="white"
-          margin="20px 0 0 0"
         />
         <Button
           type="submit"
-          margin="30px 0 0 0"
-          width="100%"
-          name="Send  Message"
+          name="Send Message"
           form="contact-form"
           isDisabledMessage={isSubmitDisabled ? 'Please complete the form' : undefined}
         />

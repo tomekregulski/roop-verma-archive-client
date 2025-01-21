@@ -102,34 +102,19 @@ export function AudioTopBar() {
       style={{ backgroundColor: 'rgba(0, 180, 249)', zIndex: 100 }}
     >
       {isAuth === false ? <LoggedOutView /> : null}
-      <div className="flex md:flex-row md:items-end sm:flex-col sm:gap-4 mt-[20px]">
+      <div className="flex grow-0 md:flex-row md:items-end sm:flex-col sm:gap-4 mt-[20px]">
         <Input
           placeholder="Search Tracks"
-          margin="0 0 0 0"
-          padding="7px 15px"
           callback={(e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
           label="Search Tracks"
           type="text"
           name="search-tracks"
           id="search-tracks-input"
-          labelColor="white"
           value={search}
           tooltipContent="Search the library by raga, time of day, mood, data, or location"
         />
-        <Button
-          margin="0 0 0 15px"
-          name="Show All"
-          width="180px"
-          callback={showAll}
-          padding="8px 35px"
-        />
-        <Button
-          margin="0 0 0 15px"
-          name="Surprise Me"
-          width="180px"
-          callback={supriseMe}
-          padding="8px 35px"
-        />
+        <Button name="Show All" callback={showAll} />
+        <Button name="Surprise Me" callback={supriseMe} />
       </div>
     </div>
   );

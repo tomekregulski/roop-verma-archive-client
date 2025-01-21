@@ -1,5 +1,3 @@
-import './styles/welcomeStyles.css';
-
 import { Link } from 'react-router-dom';
 
 import { Button } from '../components/Button/Button';
@@ -14,7 +12,7 @@ export function Welcome() {
   const name = isAuth ? ` ${userData && userData.firstName}` : '';
 
   return (
-    <div className="welcome__container">
+    <>
       <ViewTitle title={`Welcome${name}!`} />
       {!isAuth ? (
         <Section>
@@ -40,7 +38,7 @@ export function Welcome() {
         </Section>
       ) : (
         <>
-          <p>Please use the navigation above to move throught the app</p>
+          <Section>Please use the navigation above to move throught the app</Section>
           <Link to="audio">
             <Button
               name="Explore the Audio Library"
@@ -51,6 +49,6 @@ export function Welcome() {
           </Link>
         </>
       )}
-    </div>
+    </>
   );
 }

@@ -25,7 +25,7 @@ export function Alert(props: AlertProps) {
       <div className="modal--card-container">
         <div className="modal--content-body">{children}</div>
         <div className="modal--buttons-div">
-          <Button name="Ok" callback={closeAlert} margin="0 0 0 20px" />
+          <Button name="Ok" callback={closeAlert} />
         </div>
       </div>
     </div>
