@@ -51,7 +51,7 @@ interface AudioContextState {
   trackSrc: string;
   setTrackSrc: Dispatch<SetStateAction<string>>;
   audioRef: MutableRefObject<HTMLAudioElement>;
-  intervalRef: MutableRefObject<undefined>;
+  intervalRef: MutableRefObject<number | undefined>;
   duration: number;
   playPauseValidation: () => void;
 }

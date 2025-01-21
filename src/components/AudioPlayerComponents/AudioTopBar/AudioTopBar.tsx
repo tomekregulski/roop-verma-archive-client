@@ -96,6 +96,7 @@ export function AudioTopBar() {
     setFilteredTracks(trackList);
     setSearch('');
   };
+
   return (
     <div
       className="
@@ -107,10 +108,20 @@ export function AudioTopBar() {
         pb-[48px] 
         text-center
       "
-      style={{ backgroundColor: 'rgba(0, 180, 249)', zIndex: 100 }}
+      style={{ backgroundColor: 'rgba(0, 180, 249)' }}
     >
       {isAuth === false ? <LoggedOutView /> : null}
-      <div className="flex grow-0 md:flex-row md:items-end sm:flex-col sm:gap-4 mt-[20px]">
+      <div
+        className="
+          flex
+          grow-0 
+          md:flex-row 
+          md:items-end 
+          sm:flex-col 
+          sm:gap-4 
+          mt-[20px]
+        "
+      >
         <Input
           placeholder="Search Tracks"
           callback={(e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}

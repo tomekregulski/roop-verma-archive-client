@@ -1,14 +1,10 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-import './trackCard.css';
-
 import styled from '@emotion/styled';
 
 import { ReactComponent as Pause } from '../../assets/pause.svg';
 import { ReactComponent as Play } from '../../assets/play.svg';
-import { /*  Track, */ useAudioContext } from '../../context/AudioContext';
+import { useAudioContext } from '../../context/AudioContext';
 import { getTrackTitle } from '../../util/getTrackTitle';
-import { TrackInfo } from '../TrackContainer/TrackContainer';
+import type { TrackInfo } from '../TrackContainer/types';
 
 interface TrackCardProps {
   trackInfo: TrackInfo;
@@ -24,6 +20,7 @@ const TrackCard = (props: TrackCardProps) => {
   const isSelected = selectedTrack && selectedTrack.id === id;
   const titleContent = getTrackTitle(trackInfo);
 
+  // TODO: twin macro
   const CardContainer = styled.div();
   const CardBody = styled.div();
   const CardInfo = styled.div();
@@ -61,11 +58,26 @@ const TrackCard = (props: TrackCardProps) => {
     );
   };
 
+  const cardContainerStyles = `
+    m-auto 
+    w-[95%]
+    max-w-[500px]
+    h-[100px]
+    text-black
+    cursor-pointer
+  `;
+
+  const cardBackgroundColor = isSelected ? 'rgba(81, 152, 157, 0.194)' : 'white';
+
   return (
     <CardContainer
       id={`${id}`}
-      className={`max-w-[500px]
-        ${isSelected ? 'card--container card--container-playing' : 'card--container'}`}
+      className={cardContainerStyles}
+      style={{
+        backgroundColor: cardBackgroundColor,
+        borderBottom: 'solid 1px rgba(0, 178, 249, 0.16)',
+        boxShadow: '5px 5px 15px rgba(gray)',
+      }}
     >
       <CardBody className="p-[10px]" onClick={() => callback(id)}>
         <CardInfo>
@@ -74,7 +86,14 @@ const TrackCard = (props: TrackCardProps) => {
             {renderSubtitle()}
             <CardColumnRight>
               {isSelected && (
-                <button className="play audio-controls--button pr-[20px]">
+                <button
+                  className="
+                    bg-none
+                    border-none
+                    bursor-pointer
+                    pr-[20px]
+                  "
+                >
                   {isPlaying ? (
                     <Pause onClick={playPauseValidation} />
                   ) : (

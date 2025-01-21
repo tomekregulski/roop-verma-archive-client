@@ -30,6 +30,10 @@ a {
   text-decoration: none;
 }
 
+path {
+  fill: white;
+}
+
 input,
 select,
 option,

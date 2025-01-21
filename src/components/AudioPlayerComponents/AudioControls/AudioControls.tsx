@@ -1,4 +1,4 @@
-import './audioControls.css';
+import { HTMLAttributes, PropsWithChildren } from 'react';
 
 import { ReactComponent as Next } from '../../../assets/next.svg';
 import { ReactComponent as Pause } from '../../../assets/pause.svg';
@@ -12,45 +12,55 @@ interface AudioControlsProps {
   onNextClick: () => void;
 }
 
+interface AudioControlsButtonProps
+  extends PropsWithChildren,
+    Pick<HTMLAttributes<HTMLButtonElement>, 'aria-label'> {
+  onClick: () => void;
+}
+
+function AudioControlsButton(props: AudioControlsButtonProps) {
+  const { 'aria-label': ariaLabel, children, onClick } = props;
+
+  return (
+    <button
+      aria-label={ariaLabel}
+      className="bg-none border-none cursor-pointer"
+      onClick={onClick}
+      type="button"
+    >
+      {children}
+    </button>
+  );
+}
+
 const AudioControls = (props: AudioControlsProps) => {
   const { isPlaying, onPlayPauseClick, onPrevClick, onNextClick } = props;
   return (
-    <div className="audio-controls--container">
-      <button
-        type="button"
-        className="prev audio-controls--button"
-        aria-label="Previous"
-        onClick={onPrevClick}
-      >
-        <Prev />
-      </button>
+    <div
+      className="
+        flex
+        justify-between
+        w-[75%]
+        mt-0
+        mx-auto
+        mb-[15px]
+      "
+    >
+      <AudioControlsButton aria-label="Previous" onClick={onPrevClick}>
+        <Prev className="w-[35px] h-[35px]" />
+      </AudioControlsButton>
       {isPlaying ? (
-        <button
-          type="button"
-          className="pause audio-controls--button"
-          onClick={() => onPlayPauseClick(false)}
-          aria-label="Pause"
-        >
-          <Pause />
-        </button>
+        <AudioControlsButton onClick={() => onPlayPauseClick(false)} aria-label="Pause">
+          <Pause className="w-[40px] h-[40px]" />
+        </AudioControlsButton>
       ) : (
-        <button
-          type="button"
-          className="play audio-controls--button"
-          onClick={() => onPlayPauseClick(true)}
-          aria-label="Play"
-        >
-          <Play />
-        </button>
+        <AudioControlsButton onClick={() => onPlayPauseClick(true)} aria-label="Play">
+          <Play className="w-[40px] h-[40px]" />
+        </AudioControlsButton>
       )}
-      <button
-        type="button"
-        className="next audio-controls--button"
-        aria-label="Next"
-        onClick={onNextClick}
-      >
-        <Next />
-      </button>
+      <AudioControlsButton aria-label="Next" onClick={onNextClick}>
+        <Next className="w-[35px] h-[35px]" />
+      </AudioControlsButton>
     </div>
   );
 };

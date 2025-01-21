@@ -1,49 +1,8 @@
-import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 
 import { useAudioContext } from '../../context/AudioContext';
 import TrackCard from '../TrackCard/TrackCard';
-
-interface Location {
-  id: number;
-  name: string;
-}
-interface Category {
-  id: number;
-  name: string;
-}
-
-interface Event {
-  id: number;
-  eventName: string;
-  date: string;
-  location: Location;
-  locationId: number;
-  category: Category;
-  categoryId: number;
-  notes: string;
-  tapes: Tape[];
-}
-interface Tape {
-  id: number;
-  eventId: number;
-  tapeId: number;
-  event: Event;
-}
-
-export interface TrackInfo {
-  id: number;
-  name: string;
-  timeOfDay: string;
-  accompanied: boolean;
-  plays: number;
-  eventName: string;
-  location: string;
-  date: string;
-  rasa: string;
-}
-const TrackContainerWrapper = styled.div();
-const TrackList = styled.div();
+import type { TrackInfo } from './types';
 
 const TrackContainer = () => {
   const [trackRows, setTrackRows] = useState<TrackInfo[] | null>();
@@ -56,29 +15,25 @@ const TrackContainer = () => {
     setCurrentTrackIndex,
   } = useAudioContext();
 
-  // console.log(filteredTracks);
-
   useEffect(() => {
-    // @ts-expect-error need rows interface
-    const rows = [];
+    const rows: TrackInfo[] = [];
     if (filteredTracks && filteredTracks.length > 0) {
-      // console.log(filteredTracks);
-      filteredTracks.map((item) => {
-        return rows.push({
-          id: item.id,
-          event_name: item.tape.event.eventName,
-          name: item.raga.name,
-          date: item.tape.event.date,
-          category: item.tape.event.category.name,
-          location: item.tape.event.location.name,
-          timeOfDay: item.raga.time,
-          accompanied: item.accompanied,
-          plays: item.plays,
-          rasa: item.raga.rasa,
-        });
+      filteredTracks.map((track) => {
+        const trackRowItem = {
+          id: track.id,
+          eventName: track.tape.event.eventName,
+          name: track.raga.name,
+          date: track.tape.event.date,
+          category: track.tape.event.category.name,
+          location: track.tape.event.location.name,
+          timeOfDay: track.raga.time,
+          accompanied: track.accompanied,
+          plays: track.plays,
+          rasa: track.raga.rasa,
+        };
+        return rows.push(trackRowItem);
       });
     }
-    // @ts-expect-error need interface for track here
     setTrackRows(rows);
   }, [filteredTracks, setFilteredTracks]);
 
@@ -92,8 +47,8 @@ const TrackContainer = () => {
   };
 
   return (
-    <TrackContainerWrapper>
-      <TrackList className="overflow-scroll">
+    <div>
+      <div className="overflow-scroll">
         {trackRows ? (
           trackRows.map((track) => {
             return <TrackCard key={track.id} callback={handleClick} trackInfo={track} />;
@@ -101,8 +56,8 @@ const TrackContainer = () => {
         ) : (
           <p>{tracksMessage}</p>
         )}
-      </TrackList>
-    </TrackContainerWrapper>
+      </div>
+    </div>
   );
 };
 
