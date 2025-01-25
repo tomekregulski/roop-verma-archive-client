@@ -1,21 +1,12 @@
 import axios from 'axios';
-import {
-  createContext,
-  Dispatch,
-  MutableRefObject,
-  ReactNode,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import type { Dispatch, MutableRefObject, ReactNode, SetStateAction } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 
 // import { getErrorMessage } from '../util/getErrorMessage';
 import { isValidJwt } from '../util/isValidJwt';
 // import { searchTracks } from '../util/searchTracks';
 import { useAuthContext } from './AuthContext';
-import { Track } from './trackTypes';
+import type { Track } from './trackTypes';
 
 export interface SearchFilter {
   ids: number[];

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import './alertStyles.css';
 
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { Button } from '../Button/Button';
 

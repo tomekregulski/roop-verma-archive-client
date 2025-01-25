@@ -1,4 +1,4 @@
-import { HTMLAttributes, PropsWithChildren } from 'react';
+import type { HTMLAttributes, PropsWithChildren } from 'react';
 
 import { ReactComponent as Next } from '../../../assets/next.svg';
 import { ReactComponent as Pause } from '../../../assets/pause.svg';

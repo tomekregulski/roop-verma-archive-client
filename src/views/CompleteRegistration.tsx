@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { init, send } from 'emailjs-com';
-import { PropsWithChildren, useEffect, useState } from 'react';
+import type { PropsWithChildren } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '../components/Button/Button';
 import { useNotificationContext } from '../context/NotificationContext';

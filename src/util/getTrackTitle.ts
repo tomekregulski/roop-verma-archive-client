@@ -1,4 +1,4 @@
-import { TrackInfo } from '../components/TrackContainer/TrackContainer';
+import type { TrackInfo } from '../components/TrackContainer/types';
 
 function getYear(date: string) {
   const year = date.split('/')[2];

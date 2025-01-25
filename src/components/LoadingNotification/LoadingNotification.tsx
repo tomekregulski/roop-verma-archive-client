@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import './loadingStyles.css';
 
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface AlertProps {
   children: ReactNode;
