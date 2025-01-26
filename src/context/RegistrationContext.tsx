@@ -1,4 +1,5 @@
-import { createContext, ReactNode, useContext, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
+import { createContext, useContext, useMemo, useState } from 'react';
 
 interface RegistrationInfo {
   firstName: string;

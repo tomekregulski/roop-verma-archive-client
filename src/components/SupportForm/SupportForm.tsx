@@ -1,5 +1,6 @@
 import { init, sendForm } from 'emailjs-com';
-import { ChangeEvent, useState } from 'react';
+import type { ChangeEvent } from 'react';
+import { useState } from 'react';
 
 import { Section } from '../../components/Section/Section';
 import { useAuthContext } from '../../context/AuthContext';

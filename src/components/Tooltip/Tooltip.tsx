@@ -1,7 +1,7 @@
 import './style.css';
 
 import * as RadixTooltip from '@radix-ui/react-tooltip';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface TooltipProps {
   children: ReactNode;

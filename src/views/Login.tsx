@@ -2,13 +2,14 @@
 import axios from 'axios';
 import { init, send } from 'emailjs-com';
 import jwt_decode from 'jwt-decode';
-import { ChangeEvent, useState } from 'react';
+import type { ChangeEvent } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Button } from '../components/Button/Button';
 import { Form } from '../components/Form/Form';
 import { Input } from '../components/Input/Input';
-import { UserData } from '../context/AuthContext';
+import type { UserData } from '../context/AuthContext';
 import { useNotificationContext } from '../context/NotificationContext';
 import { getErrorMessage } from '../util/getErrorMessage';
 import { logNetworkError } from '../util/logNetworkError';

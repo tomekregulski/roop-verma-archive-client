@@ -1,5 +1,3 @@
-import './audioPlayer.css';
-
 import { useEffect, useState } from 'react';
 
 import { useAudioContext } from '../../../context/AudioContext';
@@ -56,15 +54,13 @@ export function AudioPlayer() {
     // Clear any timers already running
     clearInterval(intervalRef.current);
 
-    // @ts-expect-error figure out type issue here
     intervalRef.current = setInterval(() => {
       if (audioRef.current.ended) {
         toNextTrackIndex();
       } else {
         setTrackProgress(audioRef.current.currentTime);
       }
-      // @ts-expect-error figure out type issue here
-    }, [1000]);
+    }, 1000);
   };
 
   useEffect(() => {
@@ -160,11 +156,14 @@ export function AudioPlayer() {
 
   return (
     <div className="flex items-center justify-between w-full mt-8 p-0">
-      <h2 className="audio-player--title">
-        {/* Perhaps unnecessary?*/}
-        {/* {selectedTrack ? selectedTrack.raga.name : ''} */}
-      </h2>
-      <span className="audio-player--track-marquee">
+      {/* Perhaps unnecessary?*/}
+      {/* <h2 className="mt-[20px] mb-[15px]" style={{ fontWeight: 700 }}>
+        {selectedTrack ? selectedTrack.raga.name : ''}
+      </h2> */}
+      <span
+        className="inline-block w-[90%] mt-0 mx-auto mb-[25px] overflow-hidden"
+        style={{ fontWeight: 300 }}
+      >
         {selectedTrack
           ? `${selectedTrack.raga.name} - ${selectedTrack.tape.event.date}`
           : 'Select a track to begin'}
@@ -194,11 +193,20 @@ export function AudioPlayer() {
         step="1"
         min="0"
         max={duration ? duration : `${duration}`}
-        className="progress"
+        // className="progress"
         onChange={(e) => onScrub(parseInt(e.target.value))}
         onMouseUp={onScrubEnd}
         onKeyUp={onScrubEnd}
-        style={{ background: trackStyling, marginLeft: '50px' }}
+        style={{ background: trackStyling, transition: 'background 0.2s ease' }}
+        className="
+          w-full
+          h-[5px]
+          appearance-none
+          mb-[10px]
+          ml-[50px]
+          rounded-[8px]
+          cursor-pointer
+        "
       />
     </div>
   );

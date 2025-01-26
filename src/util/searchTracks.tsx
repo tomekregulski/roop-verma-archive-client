@@ -1,5 +1,5 @@
-import { SearchFilter } from '../context/AudioContext';
-import { Track } from '../context/trackTypes';
+import type { SearchFilter } from '../context/AudioContext';
+import type { Track } from '../context/trackTypes';
 
 export function searchTracks(searchFilter: SearchFilter, tracks: Track[]) {
   switch (searchFilter.type) {

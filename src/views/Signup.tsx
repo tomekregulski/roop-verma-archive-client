@@ -1,6 +1,6 @@
 import { useStripe } from '@stripe/react-stripe-js';
 import axios from 'axios';
-import { ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
 
 import { Button } from '../components/Button/Button';
 import { Form } from '../components/Form/Form';

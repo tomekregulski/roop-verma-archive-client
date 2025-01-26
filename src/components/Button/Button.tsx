@@ -1,5 +1,5 @@
 import { Tooltip } from 'antd';
-import { MouseEventHandler } from 'react';
+import type { MouseEventHandler } from 'react';
 
 interface ButtonProps {
   callback?: MouseEventHandler<HTMLButtonElement>;

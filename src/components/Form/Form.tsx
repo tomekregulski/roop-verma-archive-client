@@ -1,4 +1,4 @@
-import { FormEvent, HTMLAttributes, PropsWithChildren } from 'react';
+import type { FormEvent, HTMLAttributes, PropsWithChildren } from 'react';
 
 interface FormProps
   extends Pick<HTMLAttributes<HTMLFormElement>, 'onSubmit' | 'id'>,

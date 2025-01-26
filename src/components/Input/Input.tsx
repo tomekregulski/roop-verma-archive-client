@@ -1,6 +1,6 @@
 import { QuestionMarkCircledIcon } from '@radix-ui/react-icons';
 import { Tooltip } from 'antd';
-import { ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
 
 interface InputProps {
   id: string;

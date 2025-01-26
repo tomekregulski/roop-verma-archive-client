@@ -1,4 +1,4 @@
-import { Stripe } from '@stripe/stripe-js';
+import type { Stripe } from '@stripe/stripe-js';
 import axios from 'axios';
 
 import { getErrorMessage } from './getErrorMessage';

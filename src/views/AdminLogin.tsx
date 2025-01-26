@@ -1,4 +1,5 @@
-import { ChangeEvent, useState } from 'react';
+import type { ChangeEvent } from 'react';
+import { useState } from 'react';
 
 import { Button } from '../components/Button/Button';
 import { Form } from '../components/Form/Form';

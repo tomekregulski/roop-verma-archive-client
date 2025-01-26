@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
 
-import { Tribute } from './Tributes';
+import type { Tribute } from './Tributes';
 
 const TextTributeContainer = styled.div();
 const TextTributeContent = styled.div();
