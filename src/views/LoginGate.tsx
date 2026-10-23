@@ -1,59 +1,48 @@
-import axios from 'axios';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
-import { useNotificationContext } from '../context/NotificationContext';
-import { getErrorMessage } from '../util/getErrorMessage';
-import { logNetworkError } from '../util/logNetworkError';
-
-const key = import.meta.env.VITE_API_KEY;
+import { LOGIN_PROOF_EVENT, takeLoginProof } from '../util/loginProof';
 
 export function LoginGate() {
-  const { updateAuthStatus, updateUserData } = useAuthContext();
-  const { updateLoadingState, updateAlertMessage } = useNotificationContext();
-
+  const { verifyProof } = useAuthContext();
   const navigate = useNavigate();
-
+  const exchange = useRef<Promise<void> | null>(null);
+  const [failed, setFailed] = useState(false);
   useEffect(() => {
-    // currently firing twice
-    const effect = async () => {
-      const url = window.location.href;
-      const params = url.split('?')[1].split('&');
-      const emailKey = params[0].split('=')[1];
-      const email = params[1].split('=')[1];
-
-      updateLoadingState(true);
-
-      try {
-        await axios
-          .get(
-            `${
-              import.meta.env.VITE_API_ORIGIN
-            }/api/v1/auth/session-token/${key}/${email}/${emailKey}`,
-          )
-          .then((response) => {
-            const token = response.data.authToken;
-            document.cookie = `roop-verma-library=${token}`;
-            updateAuthStatus(true);
-            updateUserData(response.data.userData);
-            updateLoadingState(false);
-            navigate('/');
-          });
-      } catch (error) {
-        console.error('Failed to log in');
-        const errorObj = getErrorMessage(error);
-        await logNetworkError({
-          errorCode: errorObj.errorCode,
-          errorMessage: errorObj.errorMessage,
-          isRegisteredUser: true,
-        });
-        updateLoadingState(false);
-        updateAlertMessage([`Failed to log in: `, errorObj.errorMessage]);
-      }
+    let active = true;
+    const run = () => {
+      const token = takeLoginProof();
+      if (token) exchange.current = verifyProof(token);
+      if (!exchange.current)
+        exchange.current = Promise.reject(new Error('Missing proof'));
+      const current = exchange.current;
+      setFailed(false);
+      void current.then(
+        () => {
+          if (active && exchange.current === current)
+            navigate('/manage-account', { replace: true });
+        },
+        () => {
+          if (active && exchange.current === current) setFailed(true);
+        },
+      );
     };
-    effect();
-  }, []);
-
-  return <div>Please wait a moment while we log you in...</div>;
+    run();
+    window.addEventListener(LOGIN_PROOF_EVENT, run);
+    return () => {
+      active = false;
+      window.removeEventListener(LOGIN_PROOF_EVENT, run);
+    };
+  }, [navigate, verifyProof]);
+  
+  return failed ? (
+    <div role="alert">
+      This login link is invalid, expired, already used, or could not establish a browser
+      session. <Link to="/">Request a new link</Link>. Check your connection and allow
+      cookies for this site. <Link to="/library">Get help</Link> if it continues.
+    </div>
+  ) : (
+    <p role="status">Verifying your login link…</p>
+  );
 }

@@ -28,7 +28,9 @@ function LibraryLink() {
 }
 
 export function Welcome() {
-  const { userData, isAuth } = useAuthContext();
+  const { userData, isAuth, status } = useAuthContext();
+
+  if (status === 'loading') return <p role="status">Loading your session…</p>;
 
   const name = isAuth ? ` ${userData && userData.firstName}` : '';
 

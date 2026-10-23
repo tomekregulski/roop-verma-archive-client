@@ -1,0 +1,47 @@
+<!doctype html><meta charset="utf-8"><title>Browser identity contract checks</title>
+<h1>Browser identity contract checks</h1><p>Log in as a@example.invalid before running. Uses actual browser fetch/cookies/preflights, real Express and fake providers.</p>
+<button id="run">Run checks</button><pre id="results"></pre>
+<script type="module">
+const api = 'http://127.0.0.1:8090/api/v1';
+const key = 'synthetic-public-key';
+const output = document.querySelector('#results');
+document.querySelector('#run').onclick = async () => {
+  output.textContent = '';
+  const check = (pass, label) => { output.textContent += `${pass ? 'PASS' : 'FAIL'} ${label}\n`; if (!pass) throw new Error(label); };
+  const request = (path, options = {}) => fetch(api + path, { credentials: 'include', ...options });
+  const json = (body, csrf = true) => ({ method: 'POST', headers: { 'Content-Type': 'application/json', ...(csrf ? {'X-RVDL-CSRF': '1'} : {}) }, body: JSON.stringify(body) });
+  try {
+    if (location.hostname !== '127.0.0.1') {
+      let blocked = false;
+      try { await request('/auth/logout', json({})); } catch { blocked = true; }
+      check(blocked, 'wrong-origin preflight is blocked by browser CORS');
+      return;
+    }
+    check((await request('/auth/session')).status === 200, 'cross-origin credentialed session restoration');
+    check(!document.cookie.includes('rv-session-local='), 'session cookie is HttpOnly');
+    check((await fetch(api + '/auth/session', {credentials: 'omit'})).status === 401, 'omitting credentials cannot authenticate');
+    check((await request('/auth/logout', {method:'POST'})).status === 403, 'missing CSRF header cannot logout');
+    check((await request('/auth/session')).status === 200, 'rejected logout preserves session');
+    check((await request('/user/find-by-stripe-id/' + key)).status === 200, 'self account access');
+    check((await request('/user/find-by-stripe-id/' + key + '?stripeId=cus_test_b')).status === 403, 'foreign account denied');
+    const before = await (await fetch('http://127.0.0.1:8091/state')).json();
+    check((await request('/user/create-portal-session/' + key, json({customerId:'cus_test_b'}))).status === 403, 'foreign portal denied');
+    check((await request('/payment/checkout-session/' + key + '/cus_test_b', {headers:{'X-RVDL-CSRF':'1'}})).status === 403, 'foreign Checkout denied');
+    check((await request('/payment/checkout-session/' + key + '/cus_test_a')).status === 403, 'unsafe Checkout GET requires CSRF');
+    check((await request('/payment/checkout-session-object/' + key, json({sessionId:'cs_unrecorded'}))).status === 403, 'unrecorded Checkout denied');
+    check((await request('/payment/update-payment/' + key, {...json({subscription_id:'sub_test_b',payment_method:'pm_test_a'}),method:'PUT'})).status === 403, 'foreign subscription denied');
+    const denied = await (await fetch('http://127.0.0.1:8091/state')).json();
+    check(denied.calls.length === before.calls.length, 'all denied operations made zero Stripe calls');
+    const portal = await request('/user/create-portal-session/' + key, json({}));
+    check(portal.status === 200 && (await portal.json()).session.customer === 'cus_test_a', 'portal uses server identity');
+    const checkout = await request('/payment/checkout-session/' + key + '/cus_test_a', {headers:{'X-RVDL-CSRF':'1'}});
+    check(checkout.status === 200, 'authenticated Checkout with CSRF succeeds');
+    const session = await checkout.json();
+    check((await request('/payment/checkout-session-object/' + key, json({sessionId:session.id}))).status === 200, 'owned Checkout lookup succeeds');
+    check((await request('/payment/update-payment/' + key, {...json({subscription_id:'sub_test_a',payment_method:'pm_test_a'}),method:'PUT'})).status === 200, 'owned payment update succeeds with CSRF');
+    const state = await (await fetch('http://127.0.0.1:8091/state')).json();
+    check(state.requests.some(r => r.method === 'OPTIONS' && r.origin === location.origin && r.status === 204), 'actual CORS preflight observed');
+    output.textContent += 'Complete: browser checks passed. Providers are synthetic.\n';
+  } catch { output.textContent += 'Stopped after failed check or network failure.\n'; }
+};
+</script>

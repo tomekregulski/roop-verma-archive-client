@@ -1,145 +1,159 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-import axios from 'axios';
-import { init, send } from 'emailjs-com';
-import jwt_decode from 'jwt-decode';
-import type { ChangeEvent } from 'react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { api, requestError } from '../api/client';
 import { Button } from '../components/Button/Button';
 import { Form } from '../components/Form/Form';
 import { Input } from '../components/Input/Input';
-import type { UserData } from '../context/AuthContext';
-import { useNotificationContext } from '../context/NotificationContext';
-import { getErrorMessage } from '../util/getErrorMessage';
-import { logNetworkError } from '../util/logNetworkError';
 
-const key = import.meta.env.VITE_API_KEY;
-const supportEmailAddress = import.meta.env.VITE_RVDL_EMAIL_ADDRESS;
-const emailJsUser = import.meta.env.VITE_EMAILJS_USER;
+const supportEmail = import.meta.env.VITE_RVDL_EMAIL_ADDRESS;
+export function Login({ registrationEmail }: { registrationEmail?: string }) {
+  const [email, setEmail] = useState(registrationEmail ?? '');
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const [waiting, setWaiting] = useState(Boolean(registrationEmail));
+  const [retryAt, setRetryAt] = useState(0);
+  const [, tick] = useState(0);
+  const started = useRef(false);
+  const requestPending = useRef(false);
 
-init(emailJsUser);
-
-export function Login() {
-  const [email, setEmail] = useState<string | null>(null);
-  const [emailSent, setEmailSent] = useState(false);
-
-  const { updateLoadingState, updateAlertMessage } = useNotificationContext();
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target?.value;
-    setEmail(value);
-  };
-
-  const sendLoginEmail = (user: UserData, emailKey: string) => {
-    console.log({
-      email,
-      name: user.firstName,
-      key: emailKey,
-      baseUrl: import.meta.env.VITE_CLIENT_URL,
-    });
-    send('rvdl_forms', 'template_rgadtp9', {
-      email,
-      name: user.firstName,
-      key: emailKey,
-      baseUrl: import.meta.env.VITE_CLIENT_URL,
-    }).then(
-      (response) => {
-        console.log('SUCCESS!', response.status, response.text);
-        setEmailSent(true);
-        updateLoadingState(false);
-      },
-      async (error) => {
-        updateLoadingState(false);
-        console.error('Login email failed to send');
-        console.error(error.text);
-        updateAlertMessage([
-          `Login process failed with error message: ${error.text}.`,
-          `If this issue persists, please reach out to ${supportEmailAddress}`,
-        ]);
-        await logNetworkError({
-          errorCode: error.status,
-          errorMessage: error.text,
-          isRegisteredUser: true,
-          userId: user.id,
-          userEmailAddress: user.email,
-          userName: `${user.firstName} ${user.lastName}`,
-        });
-      },
-    );
-  };
-
-  async function handleLogIn() {
-    if (!email) {
-      updateAlertMessage(['Please enter your email address.']);
-      return;
-    } else {
-      try {
-        updateLoadingState(true);
-        const emailKeyResponse = await axios.get(
-          `${import.meta.env.VITE_API_ORIGIN}/api/v1/auth/email-token/${key}/${email}`,
-        );
-        const token = emailKeyResponse.data.token;
-        const decodedToken: UserData = jwt_decode(token);
-        sendLoginEmail(decodedToken, token);
-      } catch (error) {
-        updateLoadingState(false);
-        console.log('Login failed');
-        const errorObj = getErrorMessage(error);
-        logNetworkError({
-          errorCode: errorObj.errorCode,
-          errorMessage: errorObj.errorMessage,
-          isRegisteredUser: false,
-          userEmailAddress: 'N/A',
-          userName: 'N/A',
-        });
-        updateAlertMessage([`Login error: ${errorObj.errorMessage}`]);
-      }
+  async function requestLogin(address: string) {
+    if (requestPending.current) return false;
+    requestPending.current = true;
+    setBusy(true);
+    setError('');
+    try {
+      await api.post('/auth/login', { email: address.trim() });
+      setMessage(
+        'If an eligible account exists, a login link may arrive. Check your inbox and spam folder. Links expire after 15 minutes and work once.',
+      );
+      setRetryAt(Date.now() + 60000);
+      return true;
+    } catch (failure) {
+      setError(
+        requestError(
+          failure,
+          'Unable to request a login link. Check your connection and try again.',
+        ),
+      );
+      setRetryAt(Date.now() + 60000);
+      return false;
+    } finally {
+      requestPending.current = false;
+      setBusy(false);
     }
   }
 
-  if (!emailSent) {
-    return (
-      <div
-        className="
-          flex
-          flex-col
-          items-center
-          justify-center
-          w-[300px]
-          mt-[50px]
-        "
+  // No public readiness endpoint exists. Three generic requests accommodate a
+  // delayed customer.created webhook without probing account existence.
+  useEffect(() => {
+    if (!registrationEmail || started.current) return;
+    started.current = true;
+    void requestLogin(registrationEmail).then((ok) => {
+      if (!ok) setWaiting(false);
+    });
+  }, [registrationEmail]);
+  useEffect(() => {
+    if (!registrationEmail || !waiting) return;
+    const second = window.setTimeout(() => {
+      void requestLogin(registrationEmail).then((ok) => {
+        if (!ok) setWaiting(false);
+      });
+    }, 20000);
+    const third = window.setTimeout(() => {
+      void requestLogin(registrationEmail).finally(() => setWaiting(false));
+    }, 40000);
+    return () => {
+      window.clearTimeout(second);
+      window.clearTimeout(third);
+    };
+  }, [registrationEmail, waiting]);
+  useEffect(() => {
+    if (!retryAt) return;
+    const timer = window.setInterval(() => tick((value) => value + 1), 1000);
+    return () => window.clearInterval(timer);
+  }, [retryAt]);
+  const cooldown = Math.max(0, Math.ceil((retryAt - Date.now()) / 1000));
+  const isSubmitDisabled = busy || waiting || cooldown > 0;
+  const buttonName = busy
+    ? 'Requesting login link…'
+    : waiting
+    ? 'Waiting for account setup…'
+    : cooldown > 0
+    ? `Retry in ${cooldown}s`
+    : 'Request login link';
+  const disabledMessage = busy
+    ? 'A login request is in progress. Please wait.'
+    : waiting
+    ? 'Waiting for account setup. Automatic retries are in progress.'
+    : cooldown > 0
+    ? `Wait ${cooldown} seconds before requesting another link.`
+    : undefined;
+  return (
+    <div className="max-w-lg mx-auto mt-8">
+      {registrationEmail && (
+        <p>
+          Account setup depends on payment-provider processing. We will request a login
+          link up to three times over 40 seconds. This does not confirm account creation
+          or email delivery. Verify your mailbox before continuing to Checkout.
+        </p>
+      )}
+      <Form
+        isSubmitDisabled={isSubmitDisabled}
+        aria-busy={busy || waiting}
+        handleSubmit={() => {
+          void requestLogin(email);
+        }}
       >
-        <Form id="login-form" handleSubmit={handleLogIn} isSubmitDisabled={!email}>
-          <Input
-            label="Enter email to log in"
-            value={email ?? ''}
-            type="email"
-            callback={handleChange}
-            name="email"
-            id="email-login-input"
-            placeholder="Email"
-          />
-          <Button
-            form="login-form"
-            type="submit"
-            name="Log in"
-            isDisabledMessage={!email ? 'Please enter an email address' : undefined}
-          />
-        </Form>
-        <div style={{ marginTop: '20px' }}>
-          Dont&apos;t have an account? <Link to="/signup">Sign up!</Link>
-        </div>
-      </div>
-    );
-  } else {
-    return (
-      <div style={{ color: 'yellow' }}>
-        Thank you! An email containing a link to complete your login process has been sent
-        to your email address. It should appear within the next minute or so, and will
-        have the subject line &quotYour Login Link - The Acharya Roop Verma Digital
-        Library&quot.
-      </div>
-    );
-  }
+        <Input
+          id="email-login-input"
+          name="email"
+          label="Email address"
+          type="email"
+          required
+          maxLength={254}
+          value={email}
+          isDisabledMessage={
+            busy
+              ? 'A login request is in progress. Please wait.'
+              : waiting
+              ? 'Waiting for account setup. Automatic retries are in progress.'
+              : undefined
+          }
+          callback={(event) => setEmail(event.target.value)}
+        />
+        <Button
+          type="submit"
+          name={buttonName}
+          isDisabledMessage={disabledMessage}
+          aria-busy={busy || waiting}
+        />
+      </Form>
+      {message && <p role="status">{message}</p>}
+      {error && (
+        <p role="alert">
+          {error} <Link to="/library">Get help</Link>
+        </p>
+      )}
+      {!waiting && message && (
+        <p>
+          No link? Check the address and spam folder, wait a minute, then retry. Account
+          setup or email service may be delayed.{' '}
+          {supportEmail ? (
+            <a href={`mailto:${supportEmail}`}>Contact support</a>
+          ) : (
+            <Link to="/library">Visit Help</Link>
+          )}{' '}
+          if it continues. Repeating registration may create another customer; use login
+          retry first.
+        </p>
+      )}
+      {!registrationEmail && (
+        <p>
+          New here? <Link to="/signup">Sign up</Link>
+        </p>
+      )}
+    </div>
+  );
 }

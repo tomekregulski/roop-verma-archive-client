@@ -1,22 +1,50 @@
 import { QuestionMarkCircledIcon } from '@radix-ui/react-icons';
 import { Tooltip } from 'antd';
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, InputHTMLAttributes } from 'react';
+import { useId } from 'react';
 
-interface InputProps {
+interface InputProps
+  extends Pick<
+    InputHTMLAttributes<HTMLInputElement>,
+    | 'required'
+    | 'maxLength'
+    | 'minLength'
+    | 'pattern'
+    | 'placeholder'
+    | 'autoComplete'
+    | 'inputMode'
+    | 'aria-describedby'
+    | 'aria-busy'
+    | 'aria-invalid'
+  > {
   id: string;
-  padding?: string;
   name: string;
   type: string;
   label: string;
   value: string | number;
-  placeholder?: string;
   callback: (e: ChangeEvent<HTMLInputElement>, id: string) => void;
   tooltipContent?: string;
+  isDisabledMessage?: string;
 }
 
+/** Unavailable text fields stay focusable, with an explanation and blocked edits. */
 export function Input(props: InputProps) {
-  const { id, padding, name, type, label, value, placeholder, callback, tooltipContent } =
-    props;
+  const {
+    id,
+    name,
+    type,
+    label,
+    value,
+    callback,
+    tooltipContent,
+    isDisabledMessage,
+    'aria-describedby': describedBy,
+    ...inputProps
+  } = props;
+  const disabled = Boolean(isDisabledMessage);
+  const reasonId = useId();
+  const description =
+    [describedBy, disabled ? reasonId : undefined].filter(Boolean).join(' ') || undefined;
 
   return (
     <div
@@ -27,7 +55,7 @@ export function Input(props: InputProps) {
         color: 'black',
       }}
     >
-      <label className="flex items-center" style={{ color: 'white' }} htmlFor={name}>
+      <label className="flex items-center" style={{ color: 'white' }} htmlFor={id}>
         {label}
         {tooltipContent && (
           <span style={{ marginLeft: '8px' }}>
@@ -37,19 +65,33 @@ export function Input(props: InputProps) {
           </span>
         )}
       </label>
-      <input
-        value={value}
-        type={type}
-        id={id}
-        name={name}
-        placeholder={placeholder}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => callback(event, id)}
-        style={{
-          padding: padding || '5px',
-          border: 'solid 1px white',
-          borderRadius: '5px',
-        }}
-      />
+      <Tooltip title={isDisabledMessage} trigger={['hover', 'focus']}>
+        <input
+          {...inputProps}
+          value={value}
+          type={type}
+          id={id}
+          name={name}
+          // readOnly prevents native edits without removing the field from the tab order.
+          readOnly={disabled}
+          aria-disabled={disabled || undefined}
+          aria-describedby={description}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => {
+            if (disabled) return;
+            callback(event, id);
+          }}
+          style={{
+            padding: '5px',
+            border: 'solid 1px white',
+            borderRadius: '5px',
+          }}
+        />
+      </Tooltip>
+      {disabled && (
+        <span id={reasonId} className="sr-only">
+          {isDisabledMessage}
+        </span>
+      )}
     </div>
   );
 }

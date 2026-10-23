@@ -1,33 +1,27 @@
-import type { FormEvent, HTMLAttributes, PropsWithChildren } from 'react';
+import type { FormEvent, FormHTMLAttributes } from 'react';
 
 interface FormProps
-  extends Pick<HTMLAttributes<HTMLFormElement>, 'onSubmit' | 'id'>,
-    PropsWithChildren {
-  isSubmitDisabled: boolean;
-  handleSubmit: () => void;
+  extends Pick<
+    FormHTMLAttributes<HTMLFormElement>,
+    'id' | 'children' | 'aria-busy' | 'aria-describedby' | 'aria-label'
+  > {
+  isSubmitDisabled?: boolean;
+  handleSubmit: (event: FormEvent<HTMLFormElement>) => void | Promise<void>;
 }
 
+/** Guards submission independently of the submit button, including implicit submits. */
 export function Form(props: FormProps) {
-  const { children, handleSubmit, isSubmitDisabled, ...restProps } = props;
-  function internalHandleSubmit(e: FormEvent) {
-    e.preventDefault();
-    if (isSubmitDisabled) {
-      return;
-    } else {
-      handleSubmit();
-    }
+  const { children, handleSubmit, isSubmitDisabled = false, ...formProps } = props;
+  function internalHandleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (isSubmitDisabled) return;
+    void handleSubmit(event);
   }
   return (
     <form
-      className="
-        flex
-        flex-col
-        justify-center
-        items-center
-        gap-8
-      "
+      {...formProps}
+      className="flex flex-col justify-center items-center gap-8"
       onSubmit={internalHandleSubmit}
-      {...restProps}
     >
       {children}
     </form>

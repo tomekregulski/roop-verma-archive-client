@@ -1,3 +1,4 @@
+import './startup';
 import './index.css';
 
 import { Elements } from '@stripe/react-stripe-js';
@@ -8,32 +9,30 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 import { AppContainer } from './AppContainer';
-import { AdminProvider } from './context/AdminContext';
 import { AudioProvider } from './context/AudioContext';
 import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
 import { RegistrationProvider } from './context/RegistrationContext';
 
 const queryClient = new QueryClient();
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+const stripePromise = stripeKey ? loadStripe(stripeKey) : null;
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <AdminProvider>
-      <Elements stripe={stripePromise}>
-        <QueryClientProvider client={queryClient}>
-          <NotificationProvider>
-            <RegistrationProvider>
-              <AuthProvider>
-                <AudioProvider>
-                  <AppContainer />
-                </AudioProvider>
-              </AuthProvider>
-            </RegistrationProvider>
-          </NotificationProvider>
-          <ReactQueryDevtools />
-        </QueryClientProvider>
-      </Elements>
-    </AdminProvider>
+    <Elements stripe={stripePromise}>
+      <QueryClientProvider client={queryClient}>
+        <NotificationProvider>
+          <RegistrationProvider>
+            <AuthProvider>
+              <AudioProvider>
+                <AppContainer />
+              </AudioProvider>
+            </AuthProvider>
+          </RegistrationProvider>
+        </NotificationProvider>
+        <ReactQueryDevtools />
+      </QueryClientProvider>
+    </Elements>
   </React.StrictMode>,
 );

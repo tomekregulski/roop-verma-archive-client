@@ -1,18 +1,28 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../../context/AuthContext';
+import { Button } from '../Button/Button';
 
 export function Navbar() {
-  const { isAuth, updateAuthStatus, updateUserData } = useAuthContext();
+  const { isAuth, logout } = useAuthContext();
 
   const navigate = useNavigate();
 
-  // This should be handled in auth context
-  const handleLogOut = () => {
-    updateUserData(null);
-    updateAuthStatus(false);
-    document.cookie = 'roop-verma-library= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
-    navigate('/');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const handleLogOut = async () => {
+    if (busy) return;
+    setBusy(true);
+    setError('');
+    try {
+      await logout();
+      navigate('/');
+    } catch {
+      setError('Logout could not be confirmed. Check your connection and retry.');
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -57,12 +67,16 @@ export function Navbar() {
               <Link to="manage-account" className="nav--links-link">
                 Account Info
               </Link>
-              {
-                // eslint-disable-next-line jsx-a11y/anchor-is-valid
-                <Link to="" onClick={() => handleLogOut()}>
-                  Log Out
-                </Link>
-              }
+              <Button
+                name={busy ? 'Logging out…' : 'Log Out'}
+                isDisabledMessage={
+                  busy ? 'Logout is in progress. Please wait.' : undefined
+                }
+                aria-busy={busy}
+                callback={() => {
+                  void handleLogOut();
+                }}
+              />
             </>
           ) : (
             <Link to="signup" className="nav--links-link">
@@ -71,6 +85,7 @@ export function Navbar() {
           )}
         </div>
       </div>
+      {error && <p role="alert">{error}</p>}
     </nav>
   );
 }

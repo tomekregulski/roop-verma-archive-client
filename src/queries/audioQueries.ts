@@ -1,26 +1,19 @@
-import axios from 'axios';
+import { api } from '../api/client';
 
-import { isValidJwt } from '../util/isValidJwt';
 const apiKey = import.meta.env.VITE_API_KEY;
 
 export async function fetchTracks(isAuth: boolean) {
-  const currentJwt = isValidJwt();
-  if (isAuth /* && jwt */) {
+  if (isAuth) {
     console.log('fetching private tracks');
-    const response = await axios.get(
-      `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${apiKey}`,
-      {
-        headers: { jwt: currentJwt?.jwt },
-      },
-    );
+    const response = await api.get(`/track/${apiKey}`);
     console.log(response.data);
     return response.data;
   } else {
     console.log('fetching public tracks');
-    const response = await axios.get(
+    const response = await api.get(
       // TEMPORARY CHANGE - TURN BACK BEFORE MERGE
-      // `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/public/${key}`,
-      `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${apiKey}`,
+      // `/track/public/${key}`,
+      `/track/${apiKey}`,
     );
     return response.data;
   }
