@@ -1,9 +1,8 @@
-import axios from 'axios';
 import type { Dispatch, MutableRefObject, ReactNode, SetStateAction } from 'react';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 
+import { api } from '../api/client';
 // import { getErrorMessage } from '../util/getErrorMessage';
-import { isValidJwt } from '../util/isValidJwt';
 // import { searchTracks } from '../util/searchTracks';
 import { useAuthContext } from './AuthContext';
 import type { Track } from './trackTypes';
@@ -78,24 +77,18 @@ export const AudioProvider = (props: AudioContextProps) => {
   useEffect(() => {
     const fetchTracks = async () => {
       setTracksMessage('Loading Tracks...');
-      const currentJwt = isValidJwt();
       try {
-        if (isAuth && hasAllowedStatus /* && jwt */) {
+        if (isAuth && hasAllowedStatus) {
           // console.log('fetching private tracks');
-          const response = await axios.get(
-            `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${key}`,
-            {
-              headers: { jwt: currentJwt?.jwt },
-            },
-          );
+          const response = await api.get(`/track/${key}`);
           // console.log('setting private tracks');
           setTrackList(response.data);
         } else {
           // console.log('fetching public tracks');
-          const response = await axios.get(
+          const response = await api.get(
             // TEMPORARY CHANGE - TURN BACK BEFORE MERGE
-            // `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/${key}`,
-            `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/public/${key}`,
+            // `/track/${key}`,
+            `/track/public/${key}`,
           );
           // console.log('fetching public tracks');
           setTrackList(response.data);
@@ -154,14 +147,11 @@ export const AudioProvider = (props: AudioContextProps) => {
     const { userId, trackId, secondsListened } = props;
     console.log(`increment plays for userId ${userId} and trackId ${trackId}`);
     try {
-      /* const response = */ await axios.post(
-        `${import.meta.env.VITE_API_ORIGIN}/api/v1/track/track-play/${key}`,
-        {
-          userId,
-          trackId,
-          secondsListened,
-        },
-      );
+      /* const response = */ await api.post(`/track/track-play/${key}`, {
+        userId,
+        trackId,
+        secondsListened,
+      });
     } catch (error) {
       console.log('Failed to update track plays');
       console.log(error);

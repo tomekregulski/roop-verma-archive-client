@@ -7,3 +7,6 @@ node_modules/*
 .pnp.*
 declarations
 .env
+
+# Disposable local test captures; durable results belong in IDENTITY_HANDOFF.md.
+/test/evidence/

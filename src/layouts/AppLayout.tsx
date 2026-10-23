@@ -1,33 +1,30 @@
-// import styled from '@emotion/styled';
-import { useEffect } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
 import AudioPlayerContainer from '../components/AudioPlayerComponents/AudioPlayerContainer/AudioPlayerContainer';
+import { Button } from '../components/Button/Button';
 import { Navbar } from '../components/Navbar/Navbar';
 import { useAuthContext } from '../context/AuthContext';
-import { isValidJwt } from '../util/isValidJwt';
 
 export function AppLayout() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { updateAuthStatus, updateUserData } = useAuthContext();
-
-  useEffect(() => {
-    const pathName = location.pathname;
-    const currentJwt = isValidJwt();
-    if (!currentJwt?.foundJwt) {
-      updateUserData(null);
-      updateAuthStatus(false);
-      document.cookie = 'roop-verma-library= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
-      if (pathName === '/authmanage-account') {
-        navigate('/');
-      }
-    }
-  }, [location.pathname]);
+  const { status, sessionError, refreshSession } = useAuthContext();
 
   return (
     <div>
       <Navbar />
+      {status === 'loading' && <p role="status">Checking your session…</p>}
+      {sessionError && (
+        <div role={status === 'error' ? 'alert' : 'status'}>
+          <p>{sessionError}</p>
+          {status === 'error' && (
+            <Button
+              name="Retry session check"
+              callback={() => {
+                void refreshSession();
+              }}
+            />
+          )}
+        </div>
+      )}
       <div
         className="
           overflow-scroll 

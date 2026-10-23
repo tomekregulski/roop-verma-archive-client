@@ -1,196 +1,62 @@
-import axios from 'axios';
-import { init, send } from 'emailjs-com';
-import type { PropsWithChildren } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 
-import { Button } from '../components/Button/Button';
-import { useNotificationContext } from '../context/NotificationContext';
-import { getErrorMessage } from '../util/getErrorMessage';
-import { logNetworkError } from '../util/logNetworkError';
-
-const key = import.meta.env.VITE_API_KEY;
-const emailJsUser = import.meta.env.VITE_EMAILJS_USER;
-const supportEmailAddress = import.meta.env.VITE_RVDL_EMAIL_ADDRESS;
-
-init(emailJsUser);
-
-interface ViewWrapperProps extends PropsWithChildren {}
-
-function ViewWrapper(props: ViewWrapperProps) {
-  const { children } = props;
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        margin: '0 auto',
-      }}
-    >
-      {children}
-    </div>
-  );
-}
+import { api, legacyKey, requestError } from '../api/client';
+import { Section } from '../components/Section/Section';
+import { ViewTitle } from '../components/Titles/ViewTitle';
+import { useAuthContext } from '../context/AuthContext';
 
 export function CompleteRegistration() {
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
-  const [emailInfo, setEmailInfo] = useState({
-    name: '',
-    email: '',
-    emailKey: '',
-  });
-
-  const { updateLoadingState, updateAlertMessage } = useNotificationContext();
-
-  const sendEmail = async () => {
-    send('rvdl_forms', 'template_rgadtp9', {
-      email: emailInfo.email,
-      name: emailInfo.name,
-      key: emailInfo.emailKey,
-      baseUrl: import.meta.env.VITE_CLIENT_URL,
-    }).then(
-      (response) => {
-        console.log('SUCCESS!', response.status, response.text);
-        setEmailSent(true);
-        updateLoadingState(false);
-      },
-      async (error) => {
-        console.log('Login email failed to send');
-        updateLoadingState(false);
-        const { errorMessage, errorCode } = getErrorMessage(error.text);
-        await logNetworkError({
-          errorCode: errorCode,
-          errorMessage: errorMessage,
-          isRegisteredUser: false,
-        });
-        updateAlertMessage(['Login email failed to send:', errorMessage]);
-      },
-    );
-  };
-
-  const sendLoginEmail = () => {
-    updateLoadingState(true);
-    sendEmail();
-  };
-
-  async function getEmailKey(name: string, email: string) {
-    try {
-      const emailKeyResponse = await axios.get(
-        `${import.meta.env.VITE_API_ORIGIN}/api/v1/auth/email-token/${key}/${email}`,
-      );
-
-      const token = emailKeyResponse.data.token;
-
-      console.log({
-        name,
-        email,
-        emailKey: token,
-      });
-
-      setEmailInfo({
-        name,
-        email,
-        emailKey: token,
-      });
-    } catch (error) {
-      console.log('Failed to retrieve login token');
-      const { errorMessage, errorCode } = getErrorMessage(error);
-      await logNetworkError({
-        errorCode: errorCode,
-        errorMessage: errorMessage,
-        isRegisteredUser: true,
-        userEmailAddress: email,
-        userName: name,
-      });
-      updateAlertMessage(['Failed to retrieve login token:', errorMessage]);
-    }
-  }
-
+  const { isAuth, status, refreshSession } = useAuthContext();
+  const [message, setMessage] = useState('');
+  const lookup = useRef<Promise<void> | null>(null);
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get('session_id');
+  const success = params.get('success') === 'true';
+  const canceled = params.get('canceled') === 'true';
   useEffect(() => {
-    if (Object.values(emailInfo).every((v) => v === '')) {
-      const url = window.location.href;
-      const successOrCancel = url.split('?')[1].split('=')[0];
-      const success = successOrCancel === 'success';
-      setIsSuccess(success);
+    if (!isAuth || !success || !sessionId) return;
+    if (!lookup.current) {
+      lookup.current = api
+        .post(`/payment/checkout-session-object/${legacyKey}`, { sessionId })
+        .then(
+          async () => {
+            await refreshSession();
+            setMessage(
+              'Checkout returned. Your current account status is available below; payment and subscription updates may still be pending.',
+            );
+          },
+          (failure) => {
+            setMessage(
+              requestError(
+                failure,
+                'Unable to check this Checkout session. Use your account or contact Help.',
+              ),
+            );
+          },
+        );
     }
-  }, []);
-
-  useEffect(() => {
-    const effect = async () => {
-      if (isSuccess) {
-        const url = window.location.href;
-        const params = url.split('?')[1].split('&');
-        const sessionParam = params[1].split('&');
-        const sessionId = sessionParam[0].split('=')[1];
-
-        try {
-          const session = await axios.post(
-            `${
-              import.meta.env.VITE_API_ORIGIN
-            }/api/v1/payment/checkout-session-object/${key}`,
-            {
-              sessionId,
-            },
-          );
-          const { name, email } = session.data.customer_details;
-
-          getEmailKey(name, email);
-        } catch (error) {
-          console.log('Failed to complete the registration process');
-          console.log(error);
-          const { errorMessage, errorCode } = getErrorMessage(error);
-          logNetworkError({
-            errorCode,
-            errorMessage: `Failed to complete the registration process: ${errorMessage}`,
-            isRegisteredUser: false,
-            userEmailAddress: 'N/A',
-            userName: 'N/A',
-          });
-          updateAlertMessage([
-            'Failed to complete the registration process:',
-            errorMessage,
-            `Please reach out to ${supportEmailAddress} with a reference to this message`,
-          ]);
-        }
-      }
-    };
-    effect();
-  }, [isSuccess]);
-
-  function RenderCancel() {
-    return (
-      <ViewWrapper>
-        Subscription process cancelled. To resume the process, please return to the home
-        page and begin again.
-      </ViewWrapper>
-    );
-  }
-
-  function RenderSuccess() {
-    return (
-      <>
-        {!emailSent ? (
-          <ViewWrapper>
-            <div>
-              Your Registration is Almost Complete. Please press the button below to
-              complete the process.
-            </div>
-            <Button callback={sendLoginEmail} name="Complete Registration" />
-          </ViewWrapper>
-        ) : (
-          <ViewWrapper>
-            <p>
-              We have sent you an email to confirm your subscription. Please check it and
-              follow the link provided to log in.
-            </p>
-            <p>You may close this window now.</p>
-          </ViewWrapper>
-        )}
-      </>
-    );
-  }
-
-  return isSuccess ? <RenderSuccess /> : <RenderCancel />;
+  }, [isAuth, success, sessionId, refreshSession]);
+  if (status === 'loading') return <p role="status">Checking your session…</p>;
+  return (
+    <Section>
+      <ViewTitle title="Checkout return" />
+      {canceled ? (
+        <p>Checkout was canceled. You can return to your account when ready.</p>
+      ) : success && sessionId ? (
+        <p role="status">{message || 'Checking your Checkout session…'}</p>
+      ) : (
+        <p>No valid Checkout return was provided.</p>
+      )}
+      {!isAuth && (
+        <p>
+          Please <Link to="/">log in</Link> to check your account. A return URL does not
+          confirm payment.
+        </p>
+      )}
+      <p>
+        <Link to="/manage-account">View account</Link> · <Link to="/library">Help</Link>
+      </p>
+    </Section>
+  );
 }
