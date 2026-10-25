@@ -35,7 +35,7 @@ export function LoginGate() {
       window.removeEventListener(LOGIN_PROOF_EVENT, run);
     };
   }, [navigate, verifyProof]);
-  
+
   return failed ? (
     <div role="alert">
       This login link is invalid, expired, already used, or could not establish a browser

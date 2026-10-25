@@ -2,6 +2,8 @@
 
 The React identity flow works against the isolated local Express backend. This is a local identity integration result, not verified email delivery, billing correctness, media protection, deployed security or beta readiness.
 
+Session closeout: changes are now merged separately as client cdc00cc (implementation e79cda6) and server 98ba708 (implementation 3923d55). Working-tree descriptions and source fingerprints below record verification-time states; no new post-merge full acceptance run is claimed. See [DEVELOPMENT_NOTES.md](DEVELOPMENT_NOTES.md) for completed work, UI/accessibility/React preferences and the deferred consideration of store-based global state.
+
 ## Review follow-up — 2026-10-23
 
 Session-failure handling now belongs to an AuthProvider effect. The effect registers the Axios interceptor and ejects it on cleanup; an active flag also ignores already-in-flight failures after cleanup. The client-level listener registry and onSessionExpired export were removed. Expected 401 exclusions, rejection propagation, credentials and CSRF behavior are unchanged. The client file-level comment now reflects this ownership.
@@ -102,54 +104,54 @@ These SHA-256 values preserve the recorded verification snapshots without requir
 
 Base HEAD: `baefaf4ddf8d2f0797cbf8073fb18e861b9b79a7`; uncommitted source/test snapshot.
 
-| File | SHA-256 |
-| --- | --- |
-| `src/api/client.ts` | `9e2168347d7b29d8157e24ffbccadd98bd85904083d71ecf344fddab3fbf2b23` |
-| `src/components/Navbar/Navbar.tsx` | `d5a2464916c484115fb0875d770b73ef9bc8a9974a8100a7c910b66da0b5b197` |
-| `src/context/AudioContext.tsx` | `8f366c8211c788a47da6ebe2bc1a6c63540b59262f289ca6eb4d7e4f7399712f` |
-| `src/context/AuthContext.tsx` | `a18e6cdce6cbd44f8a95997d8ed8b063db0b9dfff9003e669c6aee18a8891513` |
-| `src/layouts/AppLayout.tsx` | `6780fd364de4cb051c8e28d7511bf5a558861e817297b8ad33b6f3a70423f540` |
-| `src/main.tsx` | `75ff6e601246ccf5734526100e1333dc511d68de49c97ff61c43db7f3da45609` |
-| `src/queries/audioQueries.ts` | `37a9647916e740a08c36b59761ba148922ff3aaa8a066e09bca675f64fce2b5a` |
-| `src/util/handleCheckout.tsx` | `a959f9aa233c1525444aa0655b3f1bb727c92464000ed21b11612c6d34d50e15` |
-| `src/util/loginProof.ts` | `94af2e8d02f9343776265a44543d35a2b01cc30b964a41ad138b4a59d0c12fb4` |
+| File                                 | SHA-256                                                            |
+| ------------------------------------ | ------------------------------------------------------------------ |
+| `src/api/client.ts`                  | `9e2168347d7b29d8157e24ffbccadd98bd85904083d71ecf344fddab3fbf2b23` |
+| `src/components/Navbar/Navbar.tsx`   | `d5a2464916c484115fb0875d770b73ef9bc8a9974a8100a7c910b66da0b5b197` |
+| `src/context/AudioContext.tsx`       | `8f366c8211c788a47da6ebe2bc1a6c63540b59262f289ca6eb4d7e4f7399712f` |
+| `src/context/AuthContext.tsx`        | `a18e6cdce6cbd44f8a95997d8ed8b063db0b9dfff9003e669c6aee18a8891513` |
+| `src/layouts/AppLayout.tsx`          | `6780fd364de4cb051c8e28d7511bf5a558861e817297b8ad33b6f3a70423f540` |
+| `src/main.tsx`                       | `75ff6e601246ccf5734526100e1333dc511d68de49c97ff61c43db7f3da45609` |
+| `src/queries/audioQueries.ts`        | `37a9647916e740a08c36b59761ba148922ff3aaa8a066e09bca675f64fce2b5a` |
+| `src/util/handleCheckout.tsx`        | `a959f9aa233c1525444aa0655b3f1bb727c92464000ed21b11612c6d34d50e15` |
+| `src/util/loginProof.ts`             | `94af2e8d02f9343776265a44543d35a2b01cc30b964a41ad138b4a59d0c12fb4` |
 | `src/views/CompleteRegistration.tsx` | `e70b4569817a4f2b7b2e27874f59c13eae34570bafebd5bc0a0644443cfc95de` |
-| `src/views/Login.tsx` | `cd57a632a418e73dd4f7d90b653e4538754a9bed02bf3b448d28da58b6dc988d` |
-| `src/views/LoginGate.tsx` | `aaca63945d720032117fd659e00ee41458494a8d521acc62c9967a32fe5efee0` |
-| `src/views/ManageAccount.tsx` | `6af89bb973429ce074c82ba9a104ff1ec319c463c098318b919ba91b52d247e7` |
-| `src/views/Signup.tsx` | `12e4930546cfcb0c2601e192663d7608f66b4b3ffb1e1f9fd3f3d4a97b2c6d5a` |
-| `src/views/Welcome.tsx` | `589d76e1dc597504c75067199439db28ee9864ef4747f51bacf9da1864139f90` |
-| `test/browser-checks.html` | `37b05675db778b7f602c0961b2ae457d96a900bd4a76cf2fe461e62200f90005` |
-| `test/browser-harness.mjs` | `cd6ccf09e663dc833cdcfb69fc18c4d9105adaf0f2bfe44e021aec2e646af0cc` |
-| `test/login-proof.test.cjs` | `413b54d9b26ec5ce4f549e1b88594369b2e3abb26e17488de025b905942cce65` |
-| `test/stripe-double.tsx` | `5c290327f4841f4c3e7a61d257b0ed27febdd843c40495aedb7048c4c20a77cf` |
+| `src/views/Login.tsx`                | `cd57a632a418e73dd4f7d90b653e4538754a9bed02bf3b448d28da58b6dc988d` |
+| `src/views/LoginGate.tsx`            | `aaca63945d720032117fd659e00ee41458494a8d521acc62c9967a32fe5efee0` |
+| `src/views/ManageAccount.tsx`        | `6af89bb973429ce074c82ba9a104ff1ec319c463c098318b919ba91b52d247e7` |
+| `src/views/Signup.tsx`               | `12e4930546cfcb0c2601e192663d7608f66b4b3ffb1e1f9fd3f3d4a97b2c6d5a` |
+| `src/views/Welcome.tsx`              | `589d76e1dc597504c75067199439db28ee9864ef4747f51bacf9da1864139f90` |
+| `test/browser-checks.html`           | `37b05675db778b7f602c0961b2ae457d96a900bd4a76cf2fe461e62200f90005` |
+| `test/browser-harness.mjs`           | `cd6ccf09e663dc833cdcfb69fc18c4d9105adaf0f2bfe44e021aec2e646af0cc` |
+| `test/login-proof.test.cjs`          | `413b54d9b26ec5ce4f549e1b88594369b2e3abb26e17488de025b905942cce65` |
+| `test/stripe-double.tsx`             | `5c290327f4841f4c3e7a61d257b0ed27febdd843c40495aedb7048c4c20a77cf` |
 
 ### Original integration — 2026-10-22 — roop-verma-archive-server
 
 Base HEAD: `f6a91da98a7b21ac7745bb9441b151afa9b17b01`; uncommitted source/test snapshot.
 
-| File | SHA-256 |
-| --- | --- |
+| File                              | SHA-256                                                            |
+| --------------------------------- | ------------------------------------------------------------------ |
 | `test/support/browser-fixture.js` | `5af7ed36956b959059bed7abdc316f6acabf8ec751b5cae7f4a5de7522a5537b` |
 
 ### Interceptor cleanup — 2026-10-23
 
 Frontend base HEAD: `baefaf4ddf8d2f0797cbf8073fb18e861b9b79a7`; uncommitted review snapshot.
 
-| File | SHA-256 |
-| --- | --- |
-| `src/api/client.ts` | `4781fc15dec3d93be637462d335f552a78eecb15c1c4d8e523a646cc9c6feeaf` |
+| File                          | SHA-256                                                            |
+| ----------------------------- | ------------------------------------------------------------------ |
+| `src/api/client.ts`           | `4781fc15dec3d93be637462d335f552a78eecb15c1c4d8e523a646cc9c6feeaf` |
 | `src/context/AuthContext.tsx` | `e85ff9a9e65e3dc9edb385c0da82fc8dc00d8192f3d21645c5c6a7a980bd6d2b` |
 
 ### Proof startup cleanup — 2026-10-23
 
 Frontend base HEAD: `baefaf4ddf8d2f0797cbf8073fb18e861b9b79a7`; uncommitted review snapshot.
 
-| File | SHA-256 |
-| --- | --- |
-| `src/util/loginProof.ts` | `089d8ac9edeea2b6e35f6480a80fa08f92df07f024f15a8a0c844ce66ddb63d1` |
-| `src/startup.ts` | `c1836c132e9fc9316d0c170e19d83254223132319f58fdbe9b0c1c45a1b2c125` |
-| `src/main.tsx` | `6c6251543e3f2aab74d5d0f1d221deaa8fbf8f38b8ccf4d5c20a40939b8abecd` |
+| File                        | SHA-256                                                            |
+| --------------------------- | ------------------------------------------------------------------ |
+| `src/util/loginProof.ts`    | `089d8ac9edeea2b6e35f6480a80fa08f92df07f024f15a8a0c844ce66ddb63d1` |
+| `src/startup.ts`            | `c1836c132e9fc9316d0c170e19d83254223132319f58fdbe9b0c1c45a1b2c125` |
+| `src/main.tsx`              | `6c6251543e3f2aab74d5d0f1d221deaa8fbf8f38b8ccf4d5c20a40939b8abecd` |
 | `test/login-proof.test.cjs` | `a452bb7bf1d378d1b8c39d04727da5aa1bf05a8dcc8471aca23a771ebed6e19c` |
 
 </details>

@@ -1,0 +1,45 @@
+name: Frontend CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Frontend verification
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      # Public build-only placeholders; no provider or API calls are made.
+      VITE_API_ORIGIN: http://127.0.0.1:8090
+      VITE_API_KEY: synthetic-public-key
+      VITE_RVDL_EMAIL_ADDRESS: help@example.invalid
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install pinned package manager
+        run: npm install --global pnpm@9.1.2 --ignore-scripts --no-audit --no-fund
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Unit tests
+        run: node --test test/*.test.cjs
+      - name: Type-check and production build
+        # build already runs tsc; do not repeat type-check.
+        run: pnpm build
+      - name: Lint without rewriting files
+        # The legacy lint script runs prettier --write and eslint --fix.
+        run: pnpm exec eslint src --ext .jsx,.js,.ts,.tsx --quiet
