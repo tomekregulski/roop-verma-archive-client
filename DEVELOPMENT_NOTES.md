@@ -1,5 +1,62 @@
 # Frontend development notes
 
+## Approved backend schema inspection — 2026-10-25
+
+Owner-approved metadata-only SQL confirms 24 applied historical migrations with
+matching checksums. The identity migration is unapplied and all four identity
+tables are absent. Restoring compute/config alone cannot make v161's identity
+flow work. Known NetworkError.errorCode nullability mismatch is also confirmed.
+No customer records, migrations or service changes. See the updated server
+[readiness plan](../roop-verma-archive-server/BACKEND_READINESS_PLAN.md); keep
+restoration deferred and separate preview API targets before browser testing.
+
+## Read-only Heroku metadata follow-up — 2026-10-25
+
+Authenticated CLI inspection now confirms web scaled to zero (Eco), current
+v161/f25c4158, and H14 router errors. Missing identity/mail/webhook config is
+confirmed. Application DB A and shadow DB B are distinct resources; shadow
+disposability remains unknown. No logical backups or schedules are listed;
+provider physical protection does not establish a verified restore. See the
+updated [readiness plan](../roop-verma-archive-server/BACKEND_READINESS_PLAN.md).
+No remote SQL or service changes occurred. SQL approval is the next checkpoint;
+production-targeting previews still must be separated before browser testing.
+
+## Recovery/readiness preparation — 2026-10-25 (initial)
+
+See the server's [bounded readiness plan](../roop-verma-archive-server/BACKEND_READINESS_PLAN.md).
+Recommend deferring restoration pending local authorization work. Production API
+targets in Netlify previews must be separated before browser testing resumes;
+existing built deploys retain their origins and need explicit verification.
+No preview settings/builds, infrastructure or application code changed. Provider
+metadata access was unavailable; remote schema queries are prepared but unapproved
+and unexecuted. HTTP 503 and CORS are not verified access restrictions.
+
+## Deployment environment assessment — 2026-10-25
+
+Completed bounded read-only assessment; full environment map and evidence limits
+are at the top of the sibling server's [BACKEND_BASELINE.md](../roop-verma-archive-server/BACKEND_BASELINE.md).
+Owner reports both Netlify published sites at main@244d87e. Production rvdl-ui
+(and its preview contexts) targets roop-verma-archive.herokuapp.com; rvdl-ui-sb
+(and its preview contexts) targets a sandbox Heroku app the owner reports absent.
+Both frontend landing pages returned anonymous HTTP 200; individual previews
+and access policies were not checked.
+
+Owner manually deployed backend f25c4158/v161 during assessment, superseding an
+old incompatible release. Source now includes matching identity/webhook code,
+but backend root still returns 503. Owner reports required rate-limit and
+Resend config absent (startup blockers), webhook secret absent (processing
+blocked), DATABASE Essential 1 designated production, BROWN Essential 0 intended
+as migration shadow, and Stripe API key test mode. No key/connection values,
+application data or database contents were inspected. Code inclusion/local
+contract compatibility does not prove hosted behavior or migration readiness.
+
+Prioritize bounded production configuration/runtime readiness before media
+review, accounting for the production-designated database and outstanding
+catalog/admin/media authorization, billing and schema gaps. Only documentation
+changed by the agent; no settings, deployments, migrations or protected API
+requests. Owner deployment is attributed separately. Unknowns and the concrete
+recovery/containment decision are recorded in the server assessment.
+
 ## Identity integration session — 2026-10-22–23
 
 The frontend now uses server-controlled login email delivery, one-time proof exchange with immediate URL scrubbing, and cookie-backed identity restoration. Shared requests include credentials and CSRF handling. Account, portal and Checkout requests follow backend ownership enforcement. Logout, expired/revoked sessions, loading states, errors and recovery guidance are explicit.
