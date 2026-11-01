@@ -1,5 +1,18 @@
 # Frontend automated verification
 
+## Browser fixture type-check coverage — 2026-11-01
+
+The TypeScript include list now covers `test/**/*.tsx` alongside src. Existing
+build/CI `tsc` therefore checks both browser TSX fixtures using the application
+compiler settings. The playback harness's 34 previously hidden assignment
+diagnostics are fixed; there are no type suppressions or compiler/dependency
+upgrades. Removing unused `baseUrl` leaves all 77 bare import resolutions unchanged.
+Checking fixtures does not add them to the normal Vite entry bundle. Local
+TypeScript/build, targeted fixture lint, 14 unit tests and 23 playback browser
+assertions pass. Current whole-src lint still flags pre-existing whitespace at
+AudioContext.tsx:220, left untouched. See [PLAYBACK_HANDOFF.md](PLAYBACK_HANDOFF.md)
+for precise scope and limits; older CI evidence below remains historical.
+
 ## Minimal pipeline
 
 `.github/workflows/ci.yml` runs on pull requests targeting `main` and pushes to

@@ -49,6 +49,7 @@ const TrackContainer = () => {
   return (
     <div>
       <div className="overflow-scroll">
+        {tracksMessage && <p role="status">{tracksMessage}</p>}
         {trackRows ? (
           trackRows.map((track) => {
             return <TrackCard key={track.id} callback={handleClick} trackInfo={track} />;

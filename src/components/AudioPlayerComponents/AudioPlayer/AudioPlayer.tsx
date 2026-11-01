@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useAudioContext } from '../../../context/AudioContext';
 import { useAuthContext } from '../../../context/AuthContext';
+import { Button } from '../../Button/Button';
 import AudioControls from '../AudioControls/AudioControls';
 
 export function AudioPlayer() {
@@ -13,11 +14,10 @@ export function AudioPlayer() {
     setSelectedTrack,
     incrementPlays,
     isPlaying,
-    setIsPlaying,
     isReady,
-    setIsReady,
     trackSrc,
-    setTrackSrc,
+    playbackMessage,
+    retryPlayback,
     audioRef,
     intervalRef,
     duration,
@@ -27,14 +27,6 @@ export function AudioPlayer() {
   const { userData } = useAuthContext();
   const [trackProgress, setTrackProgress] = useState(0);
   const [secondsPlayed, setSecondsPlayed] = useState(0);
-
-  useEffect(() => {
-    if (selectedTrack) {
-      const trackUrl = selectedTrack.url;
-      setTrackSrc(trackUrl);
-      setCurrentTrackIndex(selectedTrack.id - 1);
-    }
-  }, [selectedTrack]);
 
   const changeTrackIndex = (index: number) => {
     if (filteredTracks) {
@@ -70,21 +62,20 @@ export function AudioPlayer() {
   const onScrub = (value: number) => {
     // Clear any timers already running
     clearInterval(intervalRef.current);
+    if (!isReady) return;
     audioRef.current.currentTime = value;
     setTrackProgress(audioRef.current.currentTime);
   };
 
   const onScrubEnd = () => {
     // If not already playing, start
-    if (!isPlaying) {
-      setIsPlaying(true);
-    }
-    startTimer();
+    if (!isPlaying && isReady) playPauseValidation();
+    if (isReady) startTimer();
   };
 
   const toPrevTrackIndex = () => {
     let index;
-    if (currentTrackIndex && filteredTracks) {
+    if (currentTrackIndex !== null && filteredTracks?.length) {
       if (currentTrackIndex - 1 < 0) {
         index = filteredTracks.length - 1;
         changeTrackIndex(index);
@@ -97,7 +88,7 @@ export function AudioPlayer() {
 
   const toNextTrackIndex = () => {
     let index;
-    if (currentTrackIndex && filteredTracks) {
+    if (currentTrackIndex !== null && filteredTracks?.length) {
       if (currentTrackIndex < filteredTracks.length - 1) {
         index = currentTrackIndex + 1;
         changeTrackIndex(index);
@@ -115,7 +106,6 @@ export function AudioPlayer() {
 
   useEffect(() => {
     if (isPlaying) {
-      audioRef.current.play();
       startTimer();
     } else if (isPlaying === false) {
       audioRef.current.pause();
@@ -133,18 +123,10 @@ export function AudioPlayer() {
     setSecondsPlayed(0);
   }, [selectedTrack]);
 
-  // Handles cleanup and setup when changing tracks
   useEffect(() => {
-    audioRef.current.pause();
-    setIsPlaying(false);
-    audioRef.current = new Audio(trackSrc);
-    audioRef.current.load();
-    setTrackProgress(audioRef.current.currentTime);
-
-    if (!isReady) {
-      setIsReady(true);
-    }
-  }, [trackSrc]);
+    setTrackProgress(0);
+    setSecondsPlayed(0);
+  }, [selectedTrack?.id, trackSrc]);
 
   useEffect(() => {
     // Pause and clean up on unmount
@@ -168,8 +150,25 @@ export function AudioPlayer() {
           ? `${selectedTrack.raga.name} - ${selectedTrack.tape.event.date}`
           : 'Select a track to begin'}
       </span>
+      {playbackMessage && (
+        <div aria-live="polite">
+          <p>{playbackMessage}</p>
+          <Button
+            name="Retry playback"
+            callback={retryPlayback}
+            isDisabledMessage={
+              playbackMessage === 'Checking playback access...'
+                ? playbackMessage
+                : undefined
+            }
+          />
+        </div>
+      )}
       <AudioControls
         isPlaying={isPlaying}
+        unavailableMessage={
+          !isReady ? playbackMessage || 'Select a track to begin' : undefined
+        }
         onPrevClick={toPrevTrackIndex}
         onNextClick={toNextTrackIndex}
         onPlayPauseClick={playPauseValidation}
@@ -192,7 +191,9 @@ export function AudioPlayer() {
         value={trackProgress}
         step="1"
         min="0"
-        max={duration ? duration : `${duration}`}
+        max={duration || 0}
+        aria-label="Playback position"
+        aria-disabled={!isReady || undefined}
         // className="progress"
         onChange={(e) => onScrub(parseInt(e.target.value))}
         onMouseUp={onScrubEnd}
