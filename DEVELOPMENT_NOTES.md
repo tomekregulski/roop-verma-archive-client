@@ -1,5 +1,17 @@
 # Frontend development notes
 
+## Local playback access — 2026-10-28
+
+Playback now obtains temporary access from the backend for each selected Track.id;
+catalog records contain no permanent media URL. The client handles denial,
+requests/media failures, track/account races and manual expiry renewal. The
+backend's paid-entitlement and real delivery adapters remain incomplete; this is
+local boundary implementation, not live media protection or service restoration.
+See [PLAYBACK_HANDOFF.md](PLAYBACK_HANDOFF.md) for compatibility, 166 backend
+checks/23 React browser assertions/14 frontend unit checks, verification limits
+and remaining long-recording/provider integration. Older dated entries below
+retain their original scope and evidence.
+
 ## Approved backend schema inspection — 2026-10-25
 
 Owner-approved metadata-only SQL confirms 24 applied historical migrations with

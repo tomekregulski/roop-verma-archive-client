@@ -1,7 +1,16 @@
 import type { Dispatch, MutableRefObject, ReactNode, SetStateAction } from 'react';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { api } from '../api/client';
+import { fetchTracks } from '../queries/audioQueries';
+import { playbackError, requestPlaybackAccess } from '../util/playbackAccess';
 // import { getErrorMessage } from '../util/getErrorMessage';
 // import { searchTracks } from '../util/searchTracks';
 import { useAuthContext } from './AuthContext';
@@ -44,6 +53,8 @@ interface AudioContextState {
   intervalRef: MutableRefObject<number | undefined>;
   duration: number;
   playPauseValidation: () => void;
+  playbackMessage: string;
+  retryPlayback: () => void;
 }
 
 interface AudioContextProps {
@@ -72,40 +83,25 @@ export const AudioProvider = (props: AudioContextProps) => {
 
   const key = import.meta.env.VITE_API_KEY;
 
-  const { isAuth, hasAllowedStatus } = useAuthContext();
+  const { isAuth, userData, status } = useAuthContext();
 
   useEffect(() => {
-    const fetchTracks = async () => {
-      setTracksMessage('Loading Tracks...');
-      try {
-        if (isAuth && hasAllowedStatus) {
-          // console.log('fetching private tracks');
-          const response = await api.get(`/track/${key}`);
-          // console.log('setting private tracks');
-          setTrackList(response.data);
-        } else {
-          // console.log('fetching public tracks');
-          const response = await api.get(
-            // TEMPORARY CHANGE - TURN BACK BEFORE MERGE
-            // `/track/${key}`,
-            `/track/public/${key}`,
-          );
-          // console.log('fetching public tracks');
-          setTrackList(response.data);
-        }
-      } catch (error) {
-        // console.log('Failed to retrieve audio library');
-        console.log(error);
-        // const errorMessage = getErrorMessage(error);
-        // setMessage(`Failed to retrieve audio library: ${errorMessage}`);
-      }
-      setTracksMessage('');
+    let active = true;
+    setTrackList(null);
+    setFilteredTracks(null);
+    setTracksMessage('Loading Tracks...');
+    void fetchTracks(isAuth)
+      .then((tracks) => {
+        if (!active) return;
+        setTrackList(tracks);
+        setTracksMessage('');
+      })
+      .catch(() => {
+        if (active) setTracksMessage('Unable to load tracks. Refresh the page to retry.');
+      });
+    return () => {
+      active = false;
     };
-    // this will probably break if registered user !isAuth and then logs in => may need a flag to track this?
-    // if (!trackList) {
-    fetchTracks();
-    // }
-    // eslint rule for exhaustive deps was not found
   }, [isAuth]);
 
   // Change to exported function
@@ -160,41 +156,98 @@ export const AudioProvider = (props: AudioContextProps) => {
     }
   };
 
-  useEffect(() => {
-    if (selectedTrack) {
-      // setTrackSrc(selectedTrack.url);
-      console.log(selectedTrack);
-    }
-  }, [selectedTrack]);
+  const [initialAudio] = useState(() => new Audio());
+  const audioRef = useRef(initialAudio);
+  const intervalRef = useRef<number>();
+  const [duration, setDuration] = useState(0);
+  const [playbackMessage, setPlaybackMessage] = useState('');
+  const [attempt, setAttempt] = useState(0);
+  const retryPlayback = () => setAttempt((value) => value + 1);
 
-  // TODO: this feels bad
-  const audioRef = useRef(new Audio(trackSrc));
-  const intervalRef = useRef();
-  // const isReady = useRef(false);
-  const { duration } = audioRef.current;
+  // Invalidate old audio before paint on track/account changes. Cancellation is
+  // paired with an active guard because a response may already be in flight.
+  useLayoutEffect(() => {
+    let active = true;
+    let expiryTimer: number | undefined;
+    const controller = new AbortController();
+    const stop = () => {
+      audioRef.current.pause();
+      audioRef.current.removeAttribute('src');
+      audioRef.current.load();
+      clearInterval(intervalRef.current);
+      setIsPlaying(false);
+      setIsReady(false);
+      setTrackSrc('');
+      setDuration(0);
+    };
+    stop();
+
+    if (!selectedTrack) {
+      setPlaybackMessage('');
+      return;
+    }
+
+    setPlaybackMessage('Checking playback access...');
+    void requestPlaybackAccess(selectedTrack.id, controller.signal)
+      .then((access) => {
+        if (!active) return;
+        const audio = new Audio(access.url);
+        audioRef.current = audio;
+        const fail = () => {
+          if (!active) return;
+          stop();
+          setPlaybackMessage('Unable to play this audio. Retry playback.');
+        };
+        audio.onerror = fail;
+        audio.onloadedmetadata = () => {
+          if (active) setDuration(Number.isFinite(audio.duration) ? audio.duration : 0);
+        };
+        setTrackSrc(access.url);
+        setIsReady(true);
+        setPlaybackMessage('');
+        audio.load();
+        expiryTimer = window.setTimeout(() => {
+          if (!active) return;
+          stop();
+          setPlaybackMessage(
+            'Playback access expired. Retry playback to request a new link.',
+          );
+        }, Date.parse(access.expiresAt) - Date.now());
+      })
+      .catch((error) => {
+        if (active) setPlaybackMessage(playbackError(error));
+      });
+
+    return () => {
+      active = false;
+      controller.abort();
+      window.clearTimeout(expiryTimer);
+      audioRef.current.onerror = null;
+      audioRef.current.onloadedmetadata = null;
+      stop();
+    };
+  }, [selectedTrack?.id, userData?.id, userData?.subscriptionActive, status, attempt]);
 
   const playPauseValidation = () => {
-    if (!selectedTrack) {
-      alert('Please select a track');
-    } else {
-      if (!isPlaying) {
-        // if (isReady.current) {
-        if (isReady) {
-          // console.log('play');
-          // console.log(audioRef.current);
-          audioRef.current.play();
-          setIsPlaying(true);
-        } else {
-          // Set the isReady ref as true for the next pass
-          // isReady.current = true;
-          setIsReady(true);
-        }
-      }
-
-      if (isPlaying === true) {
-        setIsPlaying(false);
-      }
+    if (!selectedTrack || !isReady || !trackSrc) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+      return;
     }
+    const audio = audioRef.current;
+    void audio
+      .play()
+      .then(() => {
+        if (audioRef.current === audio && audio.getAttribute('src')) setIsPlaying(true);
+      })
+      .catch(() => {
+        if (audioRef.current !== audio || !audio.getAttribute('src')) return;
+        setIsPlaying(false);
+        setPlaybackMessage(
+          'Playback could not start. Press Play to try again, or retry playback.',
+        );
+      });
   };
 
   return (
@@ -225,6 +278,8 @@ export const AudioProvider = (props: AudioContextProps) => {
         intervalRef,
         duration,
         playPauseValidation,
+        playbackMessage,
+        retryPlayback,
       }}
     >
       {props.children}

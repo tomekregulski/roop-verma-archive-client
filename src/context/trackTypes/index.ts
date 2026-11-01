@@ -50,10 +50,8 @@ export interface Track {
   accompanied: boolean;
   notes: string;
   audioQuality: string;
-  master: boolean;
   mediaTypeId: number;
   public: boolean;
-  url: string;
   tape: Tape;
   raga: Raga;
 }

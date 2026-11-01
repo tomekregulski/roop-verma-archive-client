@@ -1,3 +1,11 @@
+# Playback follow-up — 2026-10-28
+
+The local media access contract and player integration now have their own
+[handoff](PLAYBACK_HANDOFF.md). This supersedes earlier statements that all media
+integration remains untouched, without changing identity/billing policy or closing
+live delivery/entitlement prerequisites. Service restoration remains deferred.
+Earlier identity evidence follows.
+
 # Browser identity integration — 2026-10-22
 
 The React identity flow works against the isolated local Express backend. This is a local identity integration result, not verified email delivery, billing correctness, media protection, deployed security or beta readiness.

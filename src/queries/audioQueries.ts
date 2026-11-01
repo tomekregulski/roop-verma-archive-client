@@ -1,20 +1,10 @@
-import { api } from '../api/client';
+import { api, legacyKey } from '../api/client';
+import type { Track } from '../context/trackTypes';
 
-const apiKey = import.meta.env.VITE_API_KEY;
-
-export async function fetchTracks(isAuth: boolean) {
-  if (isAuth) {
-    console.log('fetching private tracks');
-    const response = await api.get(`/track/${apiKey}`);
-    console.log(response.data);
-    return response.data;
-  } else {
-    console.log('fetching public tracks');
-    const response = await api.get(
-      // TEMPORARY CHANGE - TURN BACK BEFORE MERGE
-      // `/track/public/${key}`,
-      `/track/${apiKey}`,
-    );
-    return response.data;
-  }
+/** Catalog visibility is a browsing choice; playback always requires issuance. */
+export async function fetchTracks(isAuth: boolean): Promise<Track[]> {
+  const { data } = await api.get<Track[]>(
+    `/track/${isAuth ? '' : 'public/'}${legacyKey}`,
+  );
+  return data;
 }
