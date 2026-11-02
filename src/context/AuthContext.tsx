@@ -26,7 +26,7 @@ export interface UserData {
   firstName: string;
   lastName: string;
   email: string;
-  stripeId: string;
+  stripeId: string | null;
   subscriptionActive: string | null;
   isAdmin: boolean;
 }
@@ -44,6 +44,7 @@ interface AuthState {
   refreshSession: () => Promise<void>;
   verifyProof: (token: string) => Promise<void>;
   logout: () => Promise<void>;
+  captureSession: () => () => boolean;
 }
 const AuthContext = createContext<AuthState | null>(null);
 
@@ -55,6 +56,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Coordinate async work without rendering: invalidate old results, pause
   // background lookups during session changes, and share an in-flight lookup.
   const generation = useRef(0);
+  const sessionUser = useRef<number | null>(null);
+  // Child requests must be invalidated synchronously, before React commits logout.
+  const captureSession = useCallback(() => {
+    const revision = generation.current;
+    const userId = sessionUser.current;
+    return () =>
+      userId !== null &&
+      sessionUser.current === userId &&
+      revision === generation.current &&
+      !changingSession.current;
+  }, []);
   const changingSession = useRef(false);
   const pending = useRef<Promise<void> | null>(null);
 
@@ -62,6 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const clearSession = useCallback(() => {
     generation.current += 1;
     pending.current = null;
+    sessionUser.current = null;
     setIdentity(null);
     setStatus('anonymous');
     setSessionError('Your session has ended. Please log in again.');
@@ -77,11 +90,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { data } = await api.get<Identity>('/auth/session');
         // A later login, logout or session failure takes precedence over this result.
         if (revision !== generation.current) return;
+        sessionUser.current = data.user.id;
         setIdentity(data);
         setStatus('authenticated');
         setSessionError('');
       } catch (error) {
         if (revision !== generation.current) return;
+        sessionUser.current = null;
         setIdentity(null);
         // An anonymous visitor is expected; a failed lookup needs retry guidance.
         if (axios.isAxiosError(error) && error.response?.status === 401) {
@@ -114,11 +129,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Confirm the browser accepted the cookie before presenting a logged-in UI.
       const { data } = await api.get<Identity>('/auth/session');
       if (revision !== generation.current) throw new Error('Session changed');
+      sessionUser.current = data.user.id;
       setIdentity(data);
       setStatus('authenticated');
       setSessionError('');
     } catch (error) {
       if (revision === generation.current) {
+        sessionUser.current = null;
         setIdentity(null);
         setStatus('anonymous');
       }
@@ -200,6 +217,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         refreshSession,
         verifyProof,
         logout,
+        captureSession,
         isAuth: status === 'authenticated',
         userData: identity?.user ?? null,
         hasAllowedStatus: isAllowedSubscriptionStatus(

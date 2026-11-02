@@ -12,6 +12,7 @@ export async function handleCheckout({
   stripe: Stripe;
   resubscribe?: boolean;
 }) {
+  if (!user.stripeId) throw new Error('Checkout requires an associated customer');
   const route = resubscribe ? 'checkout-session-resubscribe' : 'checkout-session';
   const { data } = await api.get(
     `/payment/${route}/${legacyKey}/${encodeURIComponent(user.stripeId)}`,

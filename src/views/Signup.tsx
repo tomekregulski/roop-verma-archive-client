@@ -8,7 +8,7 @@ import { Input } from '../components/Input/Input';
 import { useAuthContext } from '../context/AuthContext';
 import { Login } from './Login';
 
-export function Signup() {
+export function Signup({ accountReady = false }: { accountReady?: boolean } = {}) {
   const { isAuth } = useAuthContext();
   const [fields, setFields] = useState({ firstName: '', lastName: '', email: '' });
   const [submittedEmail, setSubmittedEmail] = useState('');
@@ -42,7 +42,8 @@ export function Signup() {
         <Link to="/manage-account">Continue to your account and subscription</Link>.
       </p>
     );
-  if (submittedEmail) return <Login registrationEmail={submittedEmail} />;
+  if (submittedEmail)
+    return <Login registrationEmail={submittedEmail} accountReady={accountReady} />;
   return (
     <div className="max-w-lg mx-auto mt-8">
       <p>Create an account, verify your email, then continue to hosted Checkout.</p>

@@ -7,12 +7,18 @@ import { Form } from '../components/Form/Form';
 import { Input } from '../components/Input/Input';
 
 const supportEmail = import.meta.env.VITE_RVDL_EMAIL_ADDRESS;
-export function Login({ registrationEmail }: { registrationEmail?: string }) {
+export function Login({
+  registrationEmail,
+  accountReady = false,
+}: {
+  registrationEmail?: string;
+  accountReady?: boolean;
+}) {
   const [email, setEmail] = useState(registrationEmail ?? '');
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const [waiting, setWaiting] = useState(Boolean(registrationEmail));
+  const [waiting, setWaiting] = useState(Boolean(registrationEmail) && !accountReady);
   const [retryAt, setRetryAt] = useState(0);
   const [, tick] = useState(0);
   const started = useRef(false);
@@ -51,9 +57,9 @@ export function Login({ registrationEmail }: { registrationEmail?: string }) {
     if (!registrationEmail || started.current) return;
     started.current = true;
     void requestLogin(registrationEmail).then((ok) => {
-      if (!ok) setWaiting(false);
+      if (accountReady || !ok) setWaiting(false);
     });
-  }, [registrationEmail]);
+  }, [registrationEmail, accountReady]);
   useEffect(() => {
     if (!registrationEmail || !waiting) return;
     const second = window.setTimeout(() => {
@@ -92,7 +98,13 @@ export function Login({ registrationEmail }: { registrationEmail?: string }) {
     : undefined;
   return (
     <div className="max-w-lg mx-auto mt-8">
-      {registrationEmail && (
+      {registrationEmail && accountReady && (
+        <p>
+          Your account request is ready. Verify your email using the login link before
+          continuing to Checkout.
+        </p>
+      )}
+      {registrationEmail && !accountReady && (
         <p>
           Account setup depends on payment-provider processing. We will request a login
           link up to three times over 40 seconds. This does not confirm account creation
@@ -145,8 +157,10 @@ export function Login({ registrationEmail }: { registrationEmail?: string }) {
           ) : (
             <Link to="/library">Visit Help</Link>
           )}{' '}
-          if it continues. Repeating registration may create another customer; use login
-          retry first.
+          if it continues.{' '}
+          {accountReady
+            ? 'Use login retry; you do not need to repeat signup.'
+            : 'Repeating registration may create another customer; use login retry first.'}
         </p>
       )}
       {!registrationEmail && (
