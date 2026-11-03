@@ -335,7 +335,7 @@ try {
   allow(logged, 20);
   await until(() => getAudio().isReady);
   check(
-    getAuth().userData?.subscriptionActive === 'incomplete' && getAudio().isReady,
+    getAuth().userData?.id === 1 && getAudio().isReady,
     'frontend display status is not a playback-authority gate',
   );
   const media = getAudio().audioRef.current as unknown as FakeAudio;

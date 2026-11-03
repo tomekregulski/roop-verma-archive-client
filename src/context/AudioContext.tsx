@@ -226,7 +226,7 @@ export const AudioProvider = (props: AudioContextProps) => {
       audioRef.current.onloadedmetadata = null;
       stop();
     };
-  }, [selectedTrack?.id, userData?.id, userData?.subscriptionActive, status, attempt]);
+  }, [selectedTrack?.id, userData?.id, status, attempt]);
 
   const playPauseValidation = () => {
     if (!selectedTrack || !isReady || !trackSrc) return;

@@ -1,8 +1,6 @@
 import './startup';
 import './index.css';
 
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import React from 'react';
@@ -15,24 +13,19 @@ import { NotificationProvider } from './context/NotificationContext';
 import { RegistrationProvider } from './context/RegistrationContext';
 
 const queryClient = new QueryClient();
-const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
-const stripePromise = stripeKey ? loadStripe(stripeKey) : null;
-
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <Elements stripe={stripePromise}>
-      <QueryClientProvider client={queryClient}>
-        <NotificationProvider>
-          <RegistrationProvider>
-            <AuthProvider>
-              <AudioProvider>
-                <AppContainer />
-              </AudioProvider>
-            </AuthProvider>
-          </RegistrationProvider>
-        </NotificationProvider>
-        <ReactQueryDevtools />
-      </QueryClientProvider>
-    </Elements>
+    <QueryClientProvider client={queryClient}>
+      <NotificationProvider>
+        <RegistrationProvider>
+          <AuthProvider>
+            <AudioProvider>
+              <AppContainer />
+            </AudioProvider>
+          </AuthProvider>
+        </RegistrationProvider>
+      </NotificationProvider>
+      <ReactQueryDevtools />
+    </QueryClientProvider>
   </React.StrictMode>,
 );

@@ -1,3 +1,58 @@
+# Current C1 playback boundary — 2026-11-02
+
+Normal backend playback now selects the Stripe-led shared access cache, current
+paid-invoice verification and terminal cancellation veto. The frontend no longer
+carries subscription-status policy or uses it to invalidate playback; identity
+changes/expiry/server authorization remain authoritative. Existing 23 player
+browser assertions and 14 unit tests pass; normal-route purchase/deletion tests
+cover paid authorization, final checks and deletion/tombstone races. Real delivery,
+provider expiry/streaming and public-URL retirement remain unverified/separate.
+Current billing policy is D1–D10 in the sibling backend, with evidence/activation
+limits in `STRIPE_LED_PURCHASE_IMPLEMENTATION.md`. Older billing design and dated
+candidate claims below are historical and superseded by the current composition.
+
+---
+
+# D9 playback boundary — 2026-11-02
+
+Pending account deletion adds no playback restriction; the existing trusted
+selection/paid-period policy still applies. Completion clears the shared cache
+and tombstones/deletes identity transactionally. D9 tests verify suspended cache
+fills and asset-mapping authorization cannot authorize after completion. Existing
+23 player React assertions and 14 frontend unit checks pass; normal playback
+runtime/delivery are unchanged. Current backend evidence and retention/C1 limits
+live in `STRIPE_LED_PURCHASE_IMPLEMENTATION.md` in the server repository.
+
+---
+
+# Approved billing design checkpoint — 2026-11-01
+
+The sibling backend's [billing entitlement design](../roop-verma-archive-server/BILLING_ENTITLEMENT_DESIGN.md)
+now records the billing flow/code evidence, invoice-backed paid-period model,
+event/access table, schema proposal, concurrency/retry/reconciliation protocol,
+test matrix and first implementation task. This is design only; no application,
+dependency, schema or migration changes and no new test/provider verification.
+Locked SDK request version and unknown webhook payload version are distinguished.
+
+Owner approved no trials/zero-cost grants or grace; full refund/open or lost
+dispute revokes the affected period, partial refunds require review; immediate
+cancellation preserves paid coverage. Owner also approved one ongoing subscription,
+duplicate review without stacking time or removing established legitimate access,
+and account deletion only after confirmed billing closure. Partial refunds
+preserve remaining paid access during review unless independently disqualified;
+won/withdrawn disputes restore only original unexpired coverage after fresh
+payment/refund verification. Owner approved the model/first-task plan as the
+design checkpoint only, excluding credits, discounts, trials, plan changes and
+unsupported arrangements. No initial-scope policy questions remain open.
+Implementation/provider actions remain unauthorized. Client display status
+still includes incomplete/trialing and is not payment or playback authority.
+
+The agreed first task connects a signed synthetic paid invoice to durable local
+entitlement and the real reader, using disposable PostgreSQL and fake delivery;
+real Stripe test-mode actions need separate authorization. The implemented
+playback contract and prior evidence below are unchanged. Billing correctness,
+private delivery and deployed behavior remain unverified; restoration is deferred.
+
 # Local playback integration handoff — 2026-10-28
 
 Local access decisions, URL issuance boundaries and necessary player integration

@@ -21,7 +21,7 @@ export function Signup() {
     setError('');
     try {
       await api.post(`/user/${legacyKey}`, fields);
-      // The returned customer ID is neither identity nor proof of provisioning.
+      // Signup creates an unprivileged app account; email proof is still required.
       setSubmittedEmail(fields.email);
     } catch (failure) {
       setError(

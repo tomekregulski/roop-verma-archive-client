@@ -12,7 +12,6 @@ export function Login({ registrationEmail }: { registrationEmail?: string }) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const [waiting, setWaiting] = useState(Boolean(registrationEmail));
   const [retryAt, setRetryAt] = useState(0);
   const [, tick] = useState(0);
   const started = useRef(false);
@@ -45,48 +44,26 @@ export function Login({ registrationEmail }: { registrationEmail?: string }) {
     }
   }
 
-  // No public readiness endpoint exists. Three generic requests accommodate a
-  // delayed customer.created webhook without probing account existence.
+  // Registration is local and synchronous. Request one email proof, including in StrictMode.
   useEffect(() => {
     if (!registrationEmail || started.current) return;
     started.current = true;
-    void requestLogin(registrationEmail).then((ok) => {
-      if (!ok) setWaiting(false);
-    });
+    void requestLogin(registrationEmail);
   }, [registrationEmail]);
-  useEffect(() => {
-    if (!registrationEmail || !waiting) return;
-    const second = window.setTimeout(() => {
-      void requestLogin(registrationEmail).then((ok) => {
-        if (!ok) setWaiting(false);
-      });
-    }, 20000);
-    const third = window.setTimeout(() => {
-      void requestLogin(registrationEmail).finally(() => setWaiting(false));
-    }, 40000);
-    return () => {
-      window.clearTimeout(second);
-      window.clearTimeout(third);
-    };
-  }, [registrationEmail, waiting]);
   useEffect(() => {
     if (!retryAt) return;
     const timer = window.setInterval(() => tick((value) => value + 1), 1000);
     return () => window.clearInterval(timer);
   }, [retryAt]);
   const cooldown = Math.max(0, Math.ceil((retryAt - Date.now()) / 1000));
-  const isSubmitDisabled = busy || waiting || cooldown > 0;
+  const isSubmitDisabled = busy || cooldown > 0;
   const buttonName = busy
     ? 'Requesting login link…'
-    : waiting
-    ? 'Waiting for account setup…'
     : cooldown > 0
     ? `Retry in ${cooldown}s`
     : 'Request login link';
   const disabledMessage = busy
     ? 'A login request is in progress. Please wait.'
-    : waiting
-    ? 'Waiting for account setup. Automatic retries are in progress.'
     : cooldown > 0
     ? `Wait ${cooldown} seconds before requesting another link.`
     : undefined;
@@ -94,14 +71,13 @@ export function Login({ registrationEmail }: { registrationEmail?: string }) {
     <div className="max-w-lg mx-auto mt-8">
       {registrationEmail && (
         <p>
-          Account setup depends on payment-provider processing. We will request a login
-          link up to three times over 40 seconds. This does not confirm account creation
-          or email delivery. Verify your mailbox before continuing to Checkout.
+          Your account request is ready. Verify your email using the login link before
+          continuing to Checkout.
         </p>
       )}
       <Form
         isSubmitDisabled={isSubmitDisabled}
-        aria-busy={busy || waiting}
+        aria-busy={busy}
         handleSubmit={() => {
           void requestLogin(email);
         }}
@@ -115,11 +91,7 @@ export function Login({ registrationEmail }: { registrationEmail?: string }) {
           maxLength={254}
           value={email}
           isDisabledMessage={
-            busy
-              ? 'A login request is in progress. Please wait.'
-              : waiting
-              ? 'Waiting for account setup. Automatic retries are in progress.'
-              : undefined
+            busy ? 'A login request is in progress. Please wait.' : undefined
           }
           callback={(event) => setEmail(event.target.value)}
         />
@@ -127,7 +99,7 @@ export function Login({ registrationEmail }: { registrationEmail?: string }) {
           type="submit"
           name={buttonName}
           isDisabledMessage={disabledMessage}
-          aria-busy={busy || waiting}
+          aria-busy={busy}
         />
       </Form>
       {message && <p role="status">{message}</p>}
@@ -136,7 +108,7 @@ export function Login({ registrationEmail }: { registrationEmail?: string }) {
           {error} <Link to="/library">Get help</Link>
         </p>
       )}
-      {!waiting && message && (
+      {message && (
         <p>
           No link? Check the address and spam folder, wait a minute, then retry. Account
           setup or email service may be delayed.{' '}
@@ -145,8 +117,7 @@ export function Login({ registrationEmail }: { registrationEmail?: string }) {
           ) : (
             <Link to="/library">Visit Help</Link>
           )}{' '}
-          if it continues. Repeating registration may create another customer; use login
-          retry first.
+          if it continues. Use login retry; you do not need to repeat signup.
         </p>
       )}
       {!registrationEmail && (
