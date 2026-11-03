@@ -5,11 +5,12 @@ import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
+import type { PurchaseAction } from '../src/api/billing';
 import { api } from '../src/api/client';
+import type { DeletionReview } from '../src/api/ownerDeletions';
 import { AuthProvider, useAuthContext } from '../src/context/AuthContext';
-import type { PurchaseAction } from '../src/util/purchase';
-import { PurchaseReturn } from '../src/views/CompleteRegistration';
-import { PurchaseAccount } from '../src/views/ManageAccount';
+import { CompleteRegistration } from '../src/views/CompleteRegistration';
+import { ManageAccount } from '../src/views/ManageAccount';
 import { OwnerDeletions } from '../src/views/OwnerDeletions';
 
 let signedIn = true,
@@ -17,9 +18,12 @@ let signedIn = true,
   isAdmin = false;
 let action: PurchaseAction = { action: 'purchase', reason: 'ready' };
 let failLookup = false,
-  failConfirm = false;
+  failConfirm = false,
+  failOwnerList = false;
 const calls: InternalAxiosRequestConfig[] = [];
 const redirects: string[] = [];
+
+/** Records hosted navigation without leaving the regression page. */
 const redirect = (url: string) => {
   redirects.push(url);
 };
@@ -29,6 +33,8 @@ type Pending = {
   reject: (error: unknown) => void;
 };
 const pending: Pending[] = [];
+
+/** Creates a synthetic Axios response for a recorded request. */
 const response = (config: InternalAxiosRequestConfig, data: unknown): AxiosResponse => ({
   config,
   data,
@@ -36,6 +42,8 @@ const response = (config: InternalAxiosRequestConfig, data: unknown): AxiosRespo
   statusText: 'OK',
   headers: {},
 });
+
+/** Creates a synthetic Axios failure without contacting a provider. */
 const failure = (config: InternalAxiosRequestConfig, status: number) =>
   new AxiosError('synthetic request failure', undefined, config, undefined, {
     ...response(config, {}),
@@ -72,11 +80,12 @@ api.defaults.adapter = async (config) => {
   }
   if (config.url?.includes('/user/owner/deletions/') && config.method === 'get') {
     if (config.url?.includes('/1/')) return response(config, ownerReview);
+    if (failOwnerList) throw failure(config, 503);
     return response(config, { requests: [ownerReview.account] });
   }
   return new Promise((resolve, reject) => pending.push({ config, resolve, reject }));
 };
-const ownerReview = {
+const ownerReview: DeletionReview = {
   account: {
     id: 1,
     email: 'buyer@example.invalid',
@@ -94,16 +103,18 @@ const ownerReview = {
   review: 'a'.repeat(64),
 };
 let auth: ReturnType<typeof useAuthContext>, choose: (value: string) => void;
+
+/** Mounts the selected screen against the shared synthetic auth context. */
 function Harness() {
   auth = useAuthContext();
   const [view, setView] = useState('account');
   choose = setView;
   return view === 'account' ? (
-    <PurchaseAccount redirect={redirect} />
+    <ManageAccount redirect={redirect} />
   ) : view === 'owner' ? (
     <OwnerDeletions />
   ) : view === 'return' ? (
-    <PurchaseReturn redirect={redirect} />
+    <CompleteRegistration redirect={redirect} />
   ) : null;
 }
 createRoot(document.getElementById('root')!).render(
@@ -115,7 +126,11 @@ createRoot(document.getElementById('root')!).render(
     </BrowserRouter>
   </StrictMode>,
 );
+
+/** Yields to React while synthetic requests settle. */
 const wait = () => new Promise((resolve) => setTimeout(resolve, 20));
+
+/** Waits for observable UI state and fails if the fixture does not converge. */
 async function until(check: () => boolean) {
   for (let i = 0; i < 150; i++) {
     if (check()) return;
@@ -123,13 +138,19 @@ async function until(check: () => boolean) {
   }
   throw Error('Timed out waiting for purchase UI');
 }
+
+/** Finds a rendered action by its visible label. */
 const button = (name: string) =>
   Array.from(document.querySelectorAll('button')).find((el) => el.textContent === name);
 const lines: string[] = [];
+
+/** Records a passing assertion or stops the regression page. */
 function check(value: unknown, name: string) {
   if (!value) throw Error(name);
   lines.push('PASS ' + name);
 }
+
+/** Requests an account refresh and waits for controls to become available. */
 async function refresh() {
   const before = calls.length;
   button('Refresh account')!.click();
@@ -137,6 +158,8 @@ async function refresh() {
   await wait();
   await until(() => button('Refresh account')?.getAttribute('aria-disabled') !== 'true');
 }
+
+/** Completes the latest held purchase request with a synthetic hosted URL. */
 function resolvePurchase(url = 'https://checkout.stripe.com/c/pay/cs_test_ui') {
   const request = pending.at(-1)!;
   request.resolve(
@@ -150,7 +173,7 @@ try {
     'verified customer-null account can purchase',
   );
   check(
-    auth!.hasAllowedStatus && Boolean(button('Continue to Checkout')),
+    Boolean(button('Continue to Checkout')),
     'server action overrides legacy display-status policy',
   );
   const start = button('Continue to Checkout')!;
@@ -167,6 +190,17 @@ try {
     document.activeElement === start && Boolean(start.getAttribute('aria-describedby')),
     'busy action stays focusable with an accessible explanation',
   );
+  pending.at(-1)!.reject(failure(pending.at(-1)!.config, 503));
+  await until(() => Boolean(document.querySelector('[role="alert"]')));
+  check(
+    document
+      .querySelector('[role="alert"]')
+      ?.textContent?.includes('may already have started') &&
+      !document.body.textContent?.includes('no new purchase has been started'),
+    'uncertain Checkout outcome never promises that no purchase was created',
+  );
+  start.click();
+  await until(() => pending.length === 2);
   resolvePurchase();
   await until(() => redirects.length === 1);
   check(
@@ -174,7 +208,7 @@ try {
     'open purchase is resumed rather than offered as a new purchase',
   );
   button('Continue same purchase')!.click();
-  await until(() => pending.length === 2);
+  await until(() => pending.length === 3);
   resolvePurchase('https://evil.example.invalid/purchase');
   await until(() => Boolean(document.querySelector('[role="alert"]')));
   check(redirects.length === 1, 'untrusted hosted redirect is rejected');
@@ -206,7 +240,7 @@ try {
   action = { action: 'purchase', reason: 'ready' };
   await refresh();
   button('Continue to Checkout')!.click();
-  await until(() => pending.length === 3);
+  await until(() => pending.length === 4);
   await auth!.logout();
   resolvePurchase();
   await wait();
@@ -223,7 +257,7 @@ try {
   await auth!.refreshSession();
   await until(() => Boolean(button('Continue to Checkout')));
   button('Continue to Checkout')!.click();
-  await until(() => pending.length === 4);
+  await until(() => pending.length === 5);
   const unmounted = pending.at(-1)!;
   choose!('hidden');
   await wait();
@@ -317,6 +351,19 @@ try {
     button('Complete app account deletion')?.getAttribute('aria-disabled') === 'true',
     'owner completion requires explicit Dashboard attestation',
   );
+  check(
+    !document.body.textContent?.includes('Record an exact missing Checkout Session'),
+    'exact Session recovery is hidden when no attempt needs it',
+  );
+  (document.querySelector('input[type="checkbox"]') as HTMLInputElement).click();
+  await wait();
+  button('Review buyer@example.invalid')!.click();
+  await wait();
+  await until(() => Boolean(button('Complete app account deletion')));
+  check(
+    !(document.querySelector('input[type="checkbox"]') as HTMLInputElement).checked,
+    'a fresh review resets attestation even when its fingerprint is unchanged',
+  );
   (document.querySelector('input[type="checkbox"]') as HTMLInputElement).click();
   await wait();
   button('Complete app account deletion')!.click();
@@ -330,12 +377,19 @@ try {
   completion.reject(failure(completion.config, 409));
   await until(() => Boolean(document.querySelector('[role="alert"]')));
   check(
+    !button('Complete app account deletion'),
+    'stale or uncertain completion discards the review and its closure confirmation',
+  );
+  button('Review buyer@example.invalid')!.click();
+  await until(() => Boolean(button('Complete app account deletion')));
+  check(
     !(document.querySelector('input[type="checkbox"]') as HTMLInputElement).checked,
-    'stale/failed completion clears closure confirmation',
+    'retry after failed completion requires fresh Dashboard attestation',
   );
   button('Withdraw deletion request through support')!.click();
   await until(() => pending.at(-1)?.config.url?.includes('/withdraw/') === true);
   const withdrawal = pending.at(-1)!;
+  failOwnerList = true;
   withdrawal.resolve(response(withdrawal.config, { withdrawn: true }));
   await until(
     () => document.body.textContent?.includes('Deletion request withdrawn') === true,
@@ -344,6 +398,21 @@ try {
     !button('Complete app account deletion'),
     'successful withdrawal discards old owner review',
   );
+  await until(
+    () =>
+      document
+        .querySelector('[role="alert"]')
+        ?.textContent?.includes('The action succeeded') === true,
+  );
+  check(
+    document.body.textContent?.includes('Deletion request withdrawn') &&
+      !document.body.textContent?.includes('Owner action could not be confirmed') &&
+      !button('Review buyer@example.invalid'),
+    'successful mutation retains confirmation when list refresh fails and removes stale list entries',
+  );
+  failOwnerList = false;
+  button('Refresh pending requests')!.click();
+  await until(() => Boolean(button('Review buyer@example.invalid')));
   button('Review buyer@example.invalid')!.click();
   await until(() => Boolean(button('Complete app account deletion')));
   button('Withdraw deletion request through support')!.click();
@@ -376,6 +445,47 @@ try {
       !document.body.textContent?.includes('Deletion request withdrawn'),
     'owner session change clears prior review and rejects late mutation result',
   );
+  ownerReview.attempts = [
+    {
+      attempt: 'owned-attempt',
+      sessionId: null,
+      status: 'unknown',
+      customerId: null,
+      subscriptionId: null,
+    },
+  ];
+  button('Review buyer@example.invalid')!.click();
+  await until(() => Boolean(button('Record exact Session evidence')));
+  const select = document.querySelector('select')!;
+  select.value = 'owned-attempt';
+  select.dispatchEvent(new Event('change', { bubbles: true }));
+  const exactInput = Array.from(document.querySelectorAll('input')).find(
+    (el) => el.type !== 'checkbox',
+  )!;
+  const setInput = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!
+    .set!;
+  setInput.call(exactInput, 'cs_test_exact');
+  exactInput.dispatchEvent(new Event('input', { bubbles: true }));
+  await wait();
+  button('Record exact Session evidence')!.click();
+  await until(() => pending.at(-1)?.config.url?.includes('/exact-session/') === true);
+  const exact = pending.at(-1)!;
+  check(
+    exact.config.data === '{"attempt":"owned-attempt","sessionId":"cs_test_exact"}' &&
+      exact.config.withCredentials &&
+      exact.config.headers['X-RVDL-CSRF'] === '1',
+    'exceptional Session recovery submits only the chosen attempt and exact Session with session protection',
+  );
+  exact.resolve(response(exact.config, { recorded: true }));
+  await until(
+    () =>
+      document.body.textContent?.includes('Exact Session reference recorded') === true,
+  );
+  check(
+    !button('Complete app account deletion'),
+    'recording exact evidence requires a fresh owner review',
+  );
+  ownerReview.attempts = [];
   isAdmin = false;
   await auth!.refreshSession();
   choose!('owner');
@@ -388,7 +498,7 @@ try {
   failConfirm = true;
   choose!('return');
   await until(() => Boolean(document.querySelector('[role="alert"]')));
-  failConfirm = false;
+  (failConfirm = false), (failOwnerList = false);
   button('Refresh purchase confirmation')!.click();
   await until(() => document.body.textContent?.includes('Billing is available') === true);
   check(

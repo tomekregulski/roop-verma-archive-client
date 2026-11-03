@@ -8,7 +8,7 @@ import { Input } from '../components/Input/Input';
 import { useAuthContext } from '../context/AuthContext';
 import { Login } from './Login';
 
-export function Signup({ accountReady = false }: { accountReady?: boolean } = {}) {
+export function Signup() {
   const { isAuth } = useAuthContext();
   const [fields, setFields] = useState({ firstName: '', lastName: '', email: '' });
   const [submittedEmail, setSubmittedEmail] = useState('');
@@ -21,7 +21,7 @@ export function Signup({ accountReady = false }: { accountReady?: boolean } = {}
     setError('');
     try {
       await api.post(`/user/${legacyKey}`, fields);
-      // The returned customer ID is neither identity nor proof of provisioning.
+      // Signup creates an unprivileged app account; email proof is still required.
       setSubmittedEmail(fields.email);
     } catch (failure) {
       setError(
@@ -42,8 +42,7 @@ export function Signup({ accountReady = false }: { accountReady?: boolean } = {}
         <Link to="/manage-account">Continue to your account and subscription</Link>.
       </p>
     );
-  if (submittedEmail)
-    return <Login registrationEmail={submittedEmail} accountReady={accountReady} />;
+  if (submittedEmail) return <Login registrationEmail={submittedEmail} />;
   return (
     <div className="max-w-lg mx-auto mt-8">
       <p>Create an account, verify your email, then continue to hosted Checkout.</p>

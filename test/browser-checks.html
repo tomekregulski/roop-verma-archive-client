@@ -1,5 +1,5 @@
 <!doctype html><meta charset="utf-8"><title>Browser identity contract checks</title>
-<h1>Browser identity contract checks</h1><p>Log in as a@example.invalid before running. Uses actual browser fetch/cookies/preflights, real Express and fake providers.</p>
+<h1>Browser identity contract checks</h1><p>Log in to a new ordinary synthetic account before running. Uses browser fetch/cookies/preflights, normal Express routes and fake providers.</p>
 <button id="run">Run checks</button><pre id="results"></pre>
 <script type="module">
 const api = 'http://127.0.0.1:8090/api/v1';
@@ -17,31 +17,33 @@ document.querySelector('#run').onclick = async () => {
       check(blocked, 'wrong-origin preflight is blocked by browser CORS');
       return;
     }
-    check((await request('/auth/session')).status === 200, 'cross-origin credentialed session restoration');
+    const identity = await request('/auth/session');
+    check(identity.status === 200 && !(await identity.json()).user.isAdmin, 'credentialed ordinary session restoration');
     check(!document.cookie.includes('rv-session-local='), 'session cookie is HttpOnly');
-    check((await fetch(api + '/auth/session', {credentials: 'omit'})).status === 401, 'omitting credentials cannot authenticate');
-    check((await request('/auth/logout', {method:'POST'})).status === 403, 'missing CSRF header cannot logout');
+    check((await fetch(api + '/auth/session', {credentials:'omit'})).status === 401, 'omitting credentials cannot authenticate');
+    check((await request('/auth/logout', {method:'POST'})).status === 403, 'missing CSRF cannot logout');
     check((await request('/auth/session')).status === 200, 'rejected logout preserves session');
-    check((await request('/user/find-by-stripe-id/' + key)).status === 200, 'self account access');
-    check((await request('/user/find-by-stripe-id/' + key + '?stripeId=cus_test_b')).status === 403, 'foreign account denied');
     const before = await (await fetch('http://127.0.0.1:8091/state')).json();
-    check((await request('/user/create-portal-session/' + key, json({customerId:'cus_test_b'}))).status === 403, 'foreign portal denied');
-    check((await request('/payment/checkout-session/' + key + '/cus_test_b', {headers:{'X-RVDL-CSRF':'1'}})).status === 403, 'foreign Checkout denied');
-    check((await request('/payment/checkout-session/' + key + '/cus_test_a')).status === 403, 'unsafe Checkout GET requires CSRF');
-    check((await request('/payment/checkout-session-object/' + key, json({sessionId:'cs_unrecorded'}))).status === 403, 'unrecorded Checkout denied');
-    check((await request('/payment/update-payment/' + key, {...json({subscription_id:'sub_test_b',payment_method:'pm_test_a'}),method:'PUT'})).status === 403, 'foreign subscription denied');
+    check((await request('/user/create-portal-session/' + key, json({customerId:'cus_foreign'}))).status === 400, 'browser cannot select Portal customer');
+    check((await request('/payment/checkout/' + key, json({customerId:'cus_foreign'}))).status === 400, 'browser cannot select purchase authority');
+    check((await request('/payment/checkout-session-object/' + key, json({sessionId:'cs_unrecorded'}))).status === 403, 'unowned Checkout denied');
+    check((await request('/payment/account/' + key)).status === 403, 'account action summary requires CSRF');
+    check((await request('/payment/checkout/' + key, json({},false))).status === 403, 'Checkout POST requires CSRF');
+    check((await request('/user/owner/deletions/' + key, {headers:{'X-RVDL-CSRF':'1'}})).status === 403, 'owner controls require current administrator role');
+    check((await request('/payment/checkout-session/' + key + '/cus_foreign')).status === 404, 'creation GET removed');
+    check((await request('/payment/update-payment/' + key, {...json({}),method:'PUT'})).status === 404, 'payment-method API removed');
+    check((await request('/payment/webhookLogs')).status === 404, 'receipt-log API removed');
     const denied = await (await fetch('http://127.0.0.1:8091/state')).json();
-    check(denied.calls.length === before.calls.length, 'all denied operations made zero Stripe calls');
-    const portal = await request('/user/create-portal-session/' + key, json({}));
-    check(portal.status === 200 && (await portal.json()).session.customer === 'cus_test_a', 'portal uses server identity');
-    const checkout = await request('/payment/checkout-session/' + key + '/cus_test_a', {headers:{'X-RVDL-CSRF':'1'}});
-    check(checkout.status === 200, 'authenticated Checkout with CSRF succeeds');
-    const session = await checkout.json();
-    check((await request('/payment/checkout-session-object/' + key, json({sessionId:session.id}))).status === 200, 'owned Checkout lookup succeeds');
-    check((await request('/payment/update-payment/' + key, {...json({subscription_id:'sub_test_a',payment_method:'pm_test_a'}),method:'PUT'})).status === 200, 'owned payment update succeeds with CSRF');
+    check(denied.calls.length === before.calls.length, 'denied operations made zero Stripe calls');
+    const checkout = await request('/payment/checkout/' + key, json({}));
+    const result = await checkout.json();
+    check(checkout.status === 200 && result.reason === 'checkout_open' && Boolean(result.attempt), 'normal Checkout reserves one owned attempt');
+    const resumed = await request('/payment/checkout/' + key, json({}));
+    check((await resumed.json()).attempt === result.attempt, 'repeat resumes same immutable attempt');
     const state = await (await fetch('http://127.0.0.1:8091/state')).json();
+    check(state.checkoutCount === before.checkoutCount + 1, 'only one logical Checkout created');
     check(state.requests.some(r => r.method === 'OPTIONS' && r.origin === location.origin && r.status === 204), 'actual CORS preflight observed');
-    output.textContent += 'Complete: browser checks passed. Providers are synthetic.\n';
+    output.textContent += 'Complete: 19 browser checks passed. Providers are synthetic.\n';
   } catch { output.textContent += 'Stopped after failed check or network failure.\n'; }
 };
 </script>

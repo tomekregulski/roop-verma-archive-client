@@ -1,3 +1,53 @@
+# Readability and recovery cleanup — 2026-11-03
+
+Purchase and owner-deletion requests now have named API functions in
+`src/api/billing.ts` and `src/api/ownerDeletions.ts`. `usePurchase` exposes explicit
+refresh/Checkout/Portal/deletion actions with one shared request/session guard;
+`useOwnerDeletions` coordinates owner requests separately from the review form.
+Every fresh review resets attestation, including unchanged server fingerprints.
+Mutations discard the old review before submission; successful actions retain
+confirmation if the subsequent list refresh fails. Missing-Session recovery is
+shown only for attempts that need it. Uncertain Checkout errors acknowledge that
+a purchase may already exist. No dependency, backend policy or schema change.
+
+Verification: 36 focused purchase/owner UI assertions, 23 playback assertions,
+14 unit tests, TypeScript, changed-source ESLint and Vite build pass (existing
+bundle/browser-data warnings). Normal browser HTTP/disposable-PG journey passes
+signup/verification/Checkout/paid authorization/Portal/request/withdraw/re-request/
+closure/completion and late-event rejection. Backend: 276 synthetic / 156 fresh
+PostgreSQL pass. Fake providers/media throughout; activation gates below remain.
+Ignored captures: `test/evidence/cleanup-*`. C1 reduction figures below are the
+measurements taken before this readability follow-up.
+
+---
+
+# Current local handoff — C1 consolidation, 2026-11-02
+
+Normal routing now selects ManageAccount, CompleteRegistration and protected
+`/owner/deletions` using the retained purchase/deletion flow. Signup creates local
+identity before one email-proof request; provisioning waits, display-status billing
+rules, old Checkout helper and Stripe.js/Elements bootstrap/dependencies are gone.
+The server owns purchase/manage/pending/help actions; redirects/association never
+grant playback. CSRF/cookies and synchronous logout/unmount guards remain.
+
+C1 verification: 14 unit tests, 29 focused purchase/deletion and 23 player browser
+assertions, 19 real browser contract assertions + wrong-origin CORS, TypeScript,
+changed-source ESLint and build pass. Normal AppContainer browser journey used
+real HTTP/cookies/disposable PG with fake Stripe/mail/media through request,
+withdrawal/re-request, billing closure/deletion and late-event rejection. Same-email
+re-registration does not inherit old access. Build warnings remain.
+
+Run `node test/browser-harness.mjs` with compatible Node 24.19.0 and the optional
+embedded-postgres tool; the launcher always uses normal routes/disposable PG.
+See the backend current `STRIPE_LED_PURCHASE_IMPLEMENTATION.md`, `test/README.md`
+and `Operations.md` for evidence, guarded migration/retention preflight and exact
+activation dependencies. Owner recipient/current admin, real-provider/settings,
+existing-data review, deployment and private delivery remain separate gates.
+No real service action or commit/push/merge was performed by this work.
+Earlier dated entries below are historical; their candidate/cutover gates are superseded.
+
+---
+
 # Isolated D9 account deletion — 2026-11-02
 
 Candidate PurchaseAccount now distinguishes subscription cancellation from owner-

@@ -16,18 +16,12 @@ import {
 
 import { api } from '../api/client';
 
-export const allowedSubscriptionStatuses = ['trialing', 'active', 'incomplete'];
-/** Applies the existing subscription display policy; does not enforce media access. */
-export const isAllowedSubscriptionStatus = (status: string | null) =>
-  status !== null && allowedSubscriptionStatuses.includes(status);
-
 export interface UserData {
   id: number;
   firstName: string;
   lastName: string;
   email: string;
   stripeId: string | null;
-  subscriptionActive: string | null;
   isAdmin: boolean;
 }
 interface Identity {
@@ -38,7 +32,6 @@ type Status = 'loading' | 'authenticated' | 'anonymous' | 'error';
 interface AuthState {
   isAuth: boolean;
   userData: UserData | null;
-  hasAllowedStatus: boolean;
   status: Status;
   sessionError: string;
   refreshSession: () => Promise<void>;
@@ -220,9 +213,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         captureSession,
         isAuth: status === 'authenticated',
         userData: identity?.user ?? null,
-        hasAllowedStatus: isAllowedSubscriptionStatus(
-          identity?.user.subscriptionActive ?? null,
-        ),
       }}
     >
       {children}

@@ -14,7 +14,6 @@ const backendRoot =
   path.resolve(root, '../roop-verma-archive-server');
 const require = createRequire(import.meta.url);
 const startFixture = require(path.join(backendRoot, 'test/support/browser-fixture.js'));
-const purchaseMode = process.argv.includes('--purchase');
 let backend, pg, database, envDir, vite;
 async function close() {
   try {
@@ -36,30 +35,14 @@ async function close() {
   }
 }
 try {
-  if (purchaseMode) {
-    pg = await require(path.join(backendRoot, 'test/support/disposable-postgres.js'))();
-    database = await require(path.join(backendRoot, 'test/support/purchase-postgres.js'))(
-      pg.url,
-    );
-  }
-  backend = await startFixture(
-    purchaseMode
-      ? {
-          purchaseMode,
-          db: database.db,
-          clearDatabase: database.clear,
-          fixtureFactory: require(path.join(
-            backendRoot,
-            'test/support/purchase-http.js',
-          )),
-        }
-      : {},
+  pg = await require(path.join(backendRoot, 'test/support/disposable-postgres.js'))();
+  database = await require(path.join(backendRoot, 'test/support/purchase-postgres.js'))(
+    pg.url,
   );
+  backend = await startFixture({ db: database.db, clearDatabase: database.clear });
   envDir = await mkdtemp(path.join(tmpdir(), 'rvdl-browser-env-'));
   const checks = await readFile(path.join(root, 'test/browser-checks.html'));
-  const purchase = purchaseMode
-    ? await readFile(path.join(root, 'test/purchase-browser.html'))
-    : null;
+  const purchase = await readFile(path.join(root, 'test/purchase-browser.html'));
   vite = await createServer({
     root,
     envDir,
@@ -67,11 +50,7 @@ try {
     define: {
       'import.meta.env.VITE_API_ORIGIN': JSON.stringify('http://127.0.0.1:8090'),
       'import.meta.env.VITE_API_KEY': JSON.stringify('synthetic-public-key'),
-      'import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY': 'undefined',
       'import.meta.env.VITE_RVDL_EMAIL_ADDRESS': JSON.stringify('help@example.invalid'),
-    },
-    resolve: {
-      alias: { '@stripe/react-stripe-js': path.join(root, 'test/stripe-double.tsx') },
     },
     plugins: [
       {
@@ -82,8 +61,7 @@ try {
             const content =
               pathname === '/__identity-checks'
                 ? checks
-                : purchase &&
-                  [
+                : [
                     '/',
                     '/signup',
                     '/manage-account',
@@ -110,9 +88,7 @@ try {
   });
   await vite.listen();
   console.log(
-    `Synthetic ${
-      purchaseMode ? 'PostgreSQL purchase' : 'identity'
-    } harness: http://127.0.0.1:3000; control UI: http://127.0.0.1:8091`,
+    `Synthetic PostgreSQL normal-route harness: http://127.0.0.1:3000; control UI: http://127.0.0.1:8091`,
   );
   for (const signal of ['SIGINT', 'SIGTERM'])
     process.once(signal, () => {

@@ -1,3 +1,8 @@
+> Current C1 (2026-11-02): normal routing uses the Stripe-led account/purchase/
+> deletion flow. Provisioning waits and Stripe Elements are removed. See
+> [IDENTITY_HANDOFF.md](IDENTITY_HANDOFF.md) for current behavior/evidence;
+> dated earlier billing descriptions below are historical.
+
 # Frontend development notes
 
 ## Local playback access — 2026-10-28
@@ -102,7 +107,9 @@ These are project decisions surfaced during review, not a claim that every other
 - Event-driven session rechecks on mount, focus, visibility and known expiry are acceptable. Deduplicate overlapping requests and discard stale results; this is not continuous polling.
 - Use state for rendered values and refs for async coordination that should not render. Stabilize callbacks where their identity matters, and handle StrictMode setup/cleanup correctly.
 - Prefer straightforward JSX for very small fixed structures. Signup's three distinct fields are explicit. Inline maps are not inherently wrong; use them when repetition warrants the abstraction. Extract named handlers and policy helpers where they clarify intent without broad refactoring.
-- Add succinct file-level explanations and function/JSDoc comments for context methods and lifecycle-sensitive helpers. Use selective internal comments for ownership, races and non-obvious decisions.
+- Add brief JSDoc comments to named functions, hooks, methods and named callbacks in new or changed client code. Explain purpose and non-obvious constraints; avoid repeating TypeScript types or narrating obvious syntax. Short anonymous JSX callbacks do not need ceremonial comments.
+- Separate consecutive function/method declarations, including named arrow functions and hook callbacks, with one blank line. Place the JSDoc directly above its declaration. Apply this convention to touched code without unrelated formatting sweeps.
+- Keep succinct file-level context and selective internal comments for ownership, races and non-obvious decisions.
 - Vite import.meta.env reads build-provided public configuration rather than importing a JavaScript module. Keep server secrets out of frontend configuration.
 
 ## Deferred: store-based state for global contexts

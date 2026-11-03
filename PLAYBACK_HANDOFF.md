@@ -1,3 +1,18 @@
+# Current C1 playback boundary — 2026-11-02
+
+Normal backend playback now selects the Stripe-led shared access cache, current
+paid-invoice verification and terminal cancellation veto. The frontend no longer
+carries subscription-status policy or uses it to invalidate playback; identity
+changes/expiry/server authorization remain authoritative. Existing 23 player
+browser assertions and 14 unit tests pass; normal-route purchase/deletion tests
+cover paid authorization, final checks and deletion/tombstone races. Real delivery,
+provider expiry/streaming and public-URL retirement remain unverified/separate.
+Current billing policy is D1–D10 in the sibling backend, with evidence/activation
+limits in `STRIPE_LED_PURCHASE_IMPLEMENTATION.md`. Older billing design and dated
+candidate claims below are historical and superseded by the current composition.
+
+---
+
 # D9 playback boundary — 2026-11-02
 
 Pending account deletion adds no playback restriction; the existing trusted
