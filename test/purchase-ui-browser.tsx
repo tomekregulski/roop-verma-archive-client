@@ -1,6 +1,7 @@
 // Focused component/race checks, separate from the real HTTP/PostgreSQL journey.
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { AxiosError } from 'axios';
+import { init as initializeMail, sendForm as sendSupportForm } from 'emailjs-com';
 import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
@@ -8,10 +9,20 @@ import { BrowserRouter } from 'react-router-dom';
 import type { PurchaseAction } from '../src/api/billing';
 import { api } from '../src/api/client';
 import type { DeletionReview } from '../src/api/ownerDeletions';
+import { SupportForm } from '../src/components/SupportForm/SupportForm';
 import { AuthProvider, useAuthContext } from '../src/context/AuthContext';
 import { CompleteRegistration } from '../src/views/CompleteRegistration';
 import { ManageAccount } from '../src/views/ManageAccount';
 import { OwnerDeletions } from '../src/views/OwnerDeletions';
+import {
+  init as fakeMailInit,
+  sendForm as fakeSendForm,
+  supportMail,
+} from './support-mail';
+
+// Refuse autorun under ordinary Vite or before an isolated harness restart.
+if (initializeMail !== fakeMailInit || sendSupportForm !== fakeSendForm)
+  throw Error('These checks require the fake-mail browser harness');
 
 let signedIn = true,
   userId = 1,
@@ -90,7 +101,6 @@ const ownerReview: DeletionReview = {
     id: 1,
     email: 'buyer@example.invalid',
     requestedAt: new Date().toISOString(),
-    notification: 'uncertain',
   },
   binding: null,
   attempts: [],
@@ -111,6 +121,8 @@ function Harness() {
   choose = setView;
   return view === 'account' ? (
     <ManageAccount redirect={redirect} />
+  ) : view === 'support' ? (
+    <SupportForm />
   ) : view === 'owner' ? (
     <OwnerDeletions />
   ) : view === 'return' ? (
@@ -166,6 +178,29 @@ function resolvePurchase(url = 'https://checkout.stripe.com/c/pay/cs_test_ui') {
     response(request.config, { action: 'pending', reason: 'checkout_open', url }),
   );
 }
+/** Changes a controlled input through React's native input event path. */
+function fillInput(input: HTMLInputElement, value: string) {
+  Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(
+    input,
+    value,
+  );
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+/** Opens the exact support account without a request queue. */
+async function openReview() {
+  fillInput(document.querySelector('input')!, '1');
+  await wait();
+  button('Open account review')!.click();
+}
+
+/** Selects Dashboard closure separately from the support ownership attestation. */
+function closureCheckbox() {
+  return Array.from(
+    document.querySelectorAll<HTMLInputElement>('input[type="checkbox"]'),
+  ).find((input) => input.parentElement?.textContent?.includes('I rechecked'))!;
+}
+
 try {
   await until(() => Boolean(button('Continue to Checkout')));
   check(
@@ -268,84 +303,45 @@ try {
     'unmount aborts purchase and rejects a late redirect',
   );
   choose!('account');
-  await until(() => Boolean(button('Request account deletion')));
-  check(
-    button('Request account deletion')?.getAttribute('aria-disabled') === 'true',
-    'deletion requires explicit confirmation',
-  );
-  (document.querySelector('input[type="checkbox"]') as HTMLInputElement).click();
-  await wait();
-  button('Request account deletion')!.click();
-  button('Request account deletion')!.click();
-  await until(() => pending.at(-1)?.config.url?.includes('/account-deletion/') === true);
-  const deletionCall = pending.at(-1)!;
-  check(
-    deletionCall.config.data === '{"confirm":true}' &&
-      deletionCall.config.withCredentials &&
-      deletionCall.config.headers['X-RVDL-CSRF'] === '1',
-    'deletion sends only explicit confirmation with session and CSRF',
-  );
-  deletionCall.reject(failure(deletionCall.config, 503));
-  await until(() => Boolean(document.querySelector('[role="alert"]')));
-  check(Boolean(button('Request account deletion')), 'request failure remains retryable');
-  button('Request account deletion')!.click();
-  await until(() => pending.at(-1) !== deletionCall);
-  action = {
-    action: 'manage',
-    reason: 'deletion_pending',
-    requestedAt: new Date().toISOString(),
-    notification: 'uncertain',
-  };
-  pending.at(-1)!.resolve(response(pending.at(-1)!.config, { pending: true }));
-  await until(
-    () => document.body.textContent?.includes('To withdraw this request') === true,
-  );
-  check(
-    Boolean(button('Manage billing in Stripe')) &&
-      !button('Request account deletion') &&
-      !button('Continue to Checkout'),
-    'pending deletion preserves Portal and blocks new purchase/request controls',
-  );
-  check(
-    document.body.textContent?.includes('notification delivery is unconfirmed'),
-    'saved pending request explains uncertain support delivery',
-  );
-  choose!('hidden');
-  await wait();
-  choose!('account');
-  await until(
-    () => document.body.textContent?.includes('To withdraw this request') === true,
-  );
-  check(
-    !button('Request account deletion'),
-    'persistent server pending state survives remount',
-  );
-  action = { action: 'purchase', reason: 'ready' };
-  await refresh();
-  (document.querySelector('input[type="checkbox"]') as HTMLInputElement).click();
-  await wait();
-  button('Request account deletion')!.click();
-  await until(() => pending.at(-1)?.config.url?.includes('/account-deletion/') === true);
-  const lateDeletion = pending.at(-1)!;
-  const beforeLateReads = calls.filter((c) =>
-    c.url?.includes('/payment/account/'),
-  ).length;
-  await auth!.logout();
-  lateDeletion.resolve(response(lateDeletion.config, { pending: true }));
-  await wait();
+  await until(() => Boolean(button('Continue to Checkout')));
   check(
     !button('Request account deletion') &&
-      calls.filter((c) => c.url?.includes('/payment/account/')).length ===
-        beforeLateReads,
-    'logout discards late deletion response before follow-up lookup',
+      document.body.textContent?.includes('contact support through Help'),
+    'customers use the existing support route without deletion request controls',
+  );
+  action = { action: 'manage', reason: 'deletion_pending' };
+  await refresh();
+  check(
+    Boolean(button('Manage billing in Stripe')) && !button('Continue to Checkout'),
+    'support-pending state preserves Portal and blocks purchases',
   );
   signedIn = true;
   userId = 3;
   isAdmin = true;
   await auth!.refreshSession();
   choose!('owner');
-  await until(() => Boolean(button('Review buyer@example.invalid')));
-  button('Review buyer@example.invalid')!.click();
+  await until(() => Boolean(button('Open account review')));
+  check(
+    button('Start account deletion')?.getAttribute('aria-disabled') === 'true',
+    'owner initiation requires exact account and verified support ownership',
+  );
+  fillInput(document.querySelector('input')!, '1');
+  fillInput(document.querySelector('input[type="email"]')!, 'buyer@example.invalid');
+  await wait();
+  (document.querySelector('input[type="checkbox"]') as HTMLInputElement).click();
+  await wait();
+  button('Start account deletion')!.click();
+  button('Start account deletion')!.click();
+  await until(() => pending.at(-1)?.config.url?.includes('/initiate/') === true);
+  const initiation = pending.at(-1)!;
+  check(
+    initiation.config.data ===
+      '{"accountEmail":"buyer@example.invalid","ownershipConfirmed":true}' &&
+      initiation.config.withCredentials &&
+      initiation.config.headers['X-RVDL-CSRF'] === '1',
+    'owner initiation sends identity confirmation with cookie and CSRF',
+  );
+  initiation.resolve(response(initiation.config, { pending: true }));
   await until(() => Boolean(button('Complete app account deletion')));
   check(
     button('Complete app account deletion')?.getAttribute('aria-disabled') === 'true',
@@ -355,16 +351,16 @@ try {
     !document.body.textContent?.includes('Record an exact missing Checkout Session'),
     'exact Session recovery is hidden when no attempt needs it',
   );
-  (document.querySelector('input[type="checkbox"]') as HTMLInputElement).click();
+  closureCheckbox().click();
   await wait();
-  button('Review buyer@example.invalid')!.click();
+  await openReview();
   await wait();
   await until(() => Boolean(button('Complete app account deletion')));
   check(
-    !(document.querySelector('input[type="checkbox"]') as HTMLInputElement).checked,
+    !closureCheckbox().checked,
     'a fresh review resets attestation even when its fingerprint is unchanged',
   );
-  (document.querySelector('input[type="checkbox"]') as HTMLInputElement).click();
+  closureCheckbox().click();
   await wait();
   button('Complete app account deletion')!.click();
   await until(() => pending.at(-1)?.config.url?.includes('/complete/') === true);
@@ -380,42 +376,30 @@ try {
     !button('Complete app account deletion'),
     'stale or uncertain completion discards the review and its closure confirmation',
   );
-  button('Review buyer@example.invalid')!.click();
+  await openReview();
   await until(() => Boolean(button('Complete app account deletion')));
   check(
-    !(document.querySelector('input[type="checkbox"]') as HTMLInputElement).checked,
+    !closureCheckbox().checked,
     'retry after failed completion requires fresh Dashboard attestation',
   );
-  button('Withdraw deletion request through support')!.click();
+  button('Abandon support deletion')!.click();
   await until(() => pending.at(-1)?.config.url?.includes('/withdraw/') === true);
   const withdrawal = pending.at(-1)!;
-  failOwnerList = true;
   withdrawal.resolve(response(withdrawal.config, { withdrawn: true }));
   await until(
-    () => document.body.textContent?.includes('Deletion request withdrawn') === true,
+    () => document.body.textContent?.includes('Support case abandoned') === true,
   );
   check(
     !button('Complete app account deletion'),
-    'successful withdrawal discards old owner review',
-  );
-  await until(
-    () =>
-      document
-        .querySelector('[role="alert"]')
-        ?.textContent?.includes('The action succeeded') === true,
+    'abandonment discards the completed review',
   );
   check(
-    document.body.textContent?.includes('Deletion request withdrawn') &&
-      !document.body.textContent?.includes('Owner action could not be confirmed') &&
-      !button('Review buyer@example.invalid'),
-    'successful mutation retains confirmation when list refresh fails and removes stale list entries',
+    !calls.some((call) => /deletions\/synthetic-public-key$/.test(call.url || '')),
+    'owner actions have no pending queue or background list refresh',
   );
-  failOwnerList = false;
-  button('Refresh pending requests')!.click();
-  await until(() => Boolean(button('Review buyer@example.invalid')));
-  button('Review buyer@example.invalid')!.click();
+  await openReview();
   await until(() => Boolean(button('Complete app account deletion')));
-  button('Withdraw deletion request through support')!.click();
+  button('Abandon support deletion')!.click();
   await until(() => pending.at(-1)?.config.url?.includes('/withdraw/') === true);
   const lateOwner = pending.at(-1)!;
   choose!('hidden');
@@ -424,14 +408,14 @@ try {
   await wait();
   check(
     lateOwner.config.signal?.aborted &&
-      !document.body.textContent?.includes('Deletion request withdrawn'),
+      !document.body.textContent?.includes('Support case abandoned'),
     'owner unmount aborts action and ignores late result',
   );
   choose!('owner');
-  await until(() => Boolean(button('Review buyer@example.invalid')));
-  button('Review buyer@example.invalid')!.click();
+  await until(() => Boolean(button('Open account review')));
+  await openReview();
   await until(() => Boolean(button('Complete app account deletion')));
-  button('Withdraw deletion request through support')!.click();
+  button('Abandon support deletion')!.click();
   await until(() => pending.at(-1)?.config.url?.includes('/withdraw/') === true);
   const previousOwner = pending.at(-1)!;
   userId = 4;
@@ -442,7 +426,7 @@ try {
   check(
     previousOwner.config.signal?.aborted &&
       !button('Complete app account deletion') &&
-      !document.body.textContent?.includes('Deletion request withdrawn'),
+      !document.body.textContent?.includes('Support case abandoned'),
     'owner session change clears prior review and rejects late mutation result',
   );
   ownerReview.attempts = [
@@ -454,13 +438,13 @@ try {
       subscriptionId: null,
     },
   ];
-  button('Review buyer@example.invalid')!.click();
+  await openReview();
   await until(() => Boolean(button('Record exact Session evidence')));
   const select = document.querySelector('select')!;
   select.value = 'owned-attempt';
   select.dispatchEvent(new Event('change', { bubbles: true }));
-  const exactInput = Array.from(document.querySelectorAll('input')).find(
-    (el) => el.type !== 'checkbox',
+  const exactInput = Array.from(document.querySelectorAll('input')).find((el) =>
+    el.parentElement?.textContent?.includes('Exact Session ID'),
   )!;
   const setInput = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!
     .set!;
@@ -491,8 +475,62 @@ try {
   choose!('owner');
   await wait();
   check(
-    !button('Refresh pending requests'),
+    !button('Start account deletion'),
     'development/login UI cannot authorize owner controls',
+  );
+  choose!('support');
+  await until(() => Boolean(button('Send Message')));
+  check(
+    button('Send Message')?.getAttribute('aria-disabled') === 'true',
+    'support explains unavailable submission until the form is complete',
+  );
+  fillInput(document.querySelector('#support-message--name-input')!, 'Synthetic');
+  fillInput(
+    document.querySelector('#support-message--email-input')!,
+    'ui@example.invalid',
+  );
+  fillInput(
+    document.querySelector('#support-message--message-input')!,
+    'Please help with my account',
+  );
+  await wait();
+  button('Send Message')!.click();
+  button('Send Message')!.click();
+  await until(() => supportMail.length === 1);
+  check(
+    button('Send Message')?.getAttribute('aria-disabled') === 'true',
+    'support sends once and exposes an accessible busy explanation',
+  );
+  supportMail[0].reject(Error('synthetic private provider payload'));
+  await until(() => document.body.textContent?.includes('We could not confirm') === true);
+  check(
+    !document.body.textContent?.includes('synthetic private provider payload'),
+    'support failure offers retry without revealing provider details or claiming success',
+  );
+  button('Send Message')!.click();
+  await until(() => supportMail.length === 2);
+  supportMail[1].resolve({ status: 200, text: 'OK' });
+  await until(
+    () => document.body.textContent?.includes('accepted for delivery') === true,
+  );
+  check(
+    !document.querySelector('[role="alert"]'),
+    'support acceptance replaces the prior failure',
+  );
+  fillInput(
+    document.querySelector('#support-message--message-input')!,
+    'Another synthetic request',
+  );
+  await wait();
+  button('Send Message')!.click();
+  await until(() => supportMail.length === 3);
+  choose!('hidden');
+  await wait();
+  supportMail[2].resolve({ status: 200, text: 'OK' });
+  await wait();
+  check(
+    !document.body.textContent?.includes('accepted for delivery'),
+    'unmounted support form ignores a late provider result',
   );
   window.history.replaceState(null, '', '?success=true&session_id=cs_test_ui');
   failConfirm = true;
@@ -500,7 +538,10 @@ try {
   await until(() => Boolean(document.querySelector('[role="alert"]')));
   (failConfirm = false), (failOwnerList = false);
   button('Refresh purchase confirmation')!.click();
-  await until(() => document.body.textContent?.includes('Billing is available') === true);
+  await until(
+    () =>
+      document.body.textContent?.includes('manage your subscription in Stripe') === true,
+  );
   check(
     !document.querySelector('[role="alert"]'),
     'return lookup can retry after failure rather than retain one rejected promise',

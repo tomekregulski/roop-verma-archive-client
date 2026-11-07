@@ -4,7 +4,6 @@ export type PendingDeletion = {
   id: number;
   email: string;
   requestedAt: string;
-  notification: string;
 };
 export type DeletionReview = {
   account: PendingDeletion;
@@ -28,12 +27,17 @@ export type DeletionReview = {
 };
 const base = '/user/owner/deletions/';
 
-/** Lists pending deletion requests for the authenticated owner. */
-export async function listDeletionRequests(
+/** Starts a support case after the owner verifies account ownership outside the app. */
+export async function initiateDeletion(
+  accountId: number,
+  accountEmail: string,
   signal: AbortSignal,
-): Promise<PendingDeletion[]> {
-  const { data } = await api.get(base + legacyKey, { signal });
-  return data.requests;
+) {
+  await api.post(
+    base + accountId + '/initiate/' + legacyKey,
+    { accountEmail, ownershipConfirmed: true },
+    { signal },
+  );
 }
 
 /** Fetches a fresh closure review and fingerprint for one account. */

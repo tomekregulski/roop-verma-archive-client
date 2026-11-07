@@ -9,6 +9,7 @@ export interface PlaybackAccess {
   expiresAt: string;
 }
 
+/** Requests and validates temporary access without granting authority from catalog data. */
 export async function requestPlaybackAccess(trackId: number, signal: AbortSignal) {
   const { data } = await api.post<PlaybackAccess>(
     `/track/${trackId}/playback-access/${legacyKey}`,
@@ -26,16 +27,17 @@ export async function requestPlaybackAccess(trackId: number, signal: AbortSignal
   return data;
 }
 
+/** Offers sign-in, billing or retry guidance without exposing provider details. */
 export function playbackError(error: unknown) {
   if (axios.isAxiosError(error)) {
     if (error.response?.status === 401)
       return 'Please log in to play this subscriber track.';
     if (error.response?.status === 403)
-      return 'Playback requires a current paid subscription. Check your account, then retry.';
+      return 'Your subscription could not be confirmed. Check or manage billing in your account, then retry.';
     if (error.response?.status === 404)
       return 'This track is no longer available. Refresh the library.';
     if (error.response?.status === 503)
-      return 'Playback access is currently unavailable. Please try again later.';
+      return 'Playback access is currently unavailable. Retry shortly or contact support through Help.';
   }
   return 'Unable to request playback. Check your connection and retry.';
 }

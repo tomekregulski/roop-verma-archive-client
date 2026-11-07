@@ -21,12 +21,6 @@ export interface SearchFilter {
   type: string;
 }
 
-interface IncrementPlaysProps {
-  userId: number;
-  trackId: number;
-  secondsListened: number;
-}
-
 interface AudioContextState {
   searchFilter: SearchFilter | null;
   setSearchFilter: Dispatch<SetStateAction<SearchFilter | null>>;
@@ -42,7 +36,6 @@ interface AudioContextState {
   setTracksMessage: Dispatch<SetStateAction<string>>;
   currentTrackIndex: number | null;
   setCurrentTrackIndex: Dispatch<SetStateAction<number | null>>;
-  incrementPlays: (props: IncrementPlaysProps) => void;
   isPlaying: boolean;
   setIsPlaying: Dispatch<SetStateAction<boolean>>;
   isReady: boolean;
@@ -66,6 +59,7 @@ export const OUTSIDE_AUDIO_PROVIDER_ERROR =
 
 export const AudioContext = createContext<AudioContextState | null>(null);
 
+/** Owns audio and discards access responses after track, account or lifecycle changes. */
 export const AudioProvider = (props: AudioContextProps) => {
   const [trackList, setTrackList] = useState<Track[] | null>(null); // but need to fill out interface
   const [selectedTrack, setSelectedTrack] = useState<Track | null>(null); // but need to fill out interface
@@ -80,8 +74,6 @@ export const AudioProvider = (props: AudioContextProps) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [trackSrc, setTrackSrc] = useState<string>('');
-
-  const key = import.meta.env.VITE_API_KEY;
 
   const { isAuth, userData, status } = useAuthContext();
 
@@ -139,30 +131,19 @@ export const AudioProvider = (props: AudioContextProps) => {
     }
   }, [searchFilter, trackList]);
 
-  const incrementPlays = async (props: IncrementPlaysProps) => {
-    const { userId, trackId, secondsListened } = props;
-    console.log(`increment plays for userId ${userId} and trackId ${trackId}`);
-    try {
-      /* const response = */ await api.post(`/track/track-play/${key}`, {
-        userId,
-        trackId,
-        secondsListened,
-      });
-    } catch (error) {
-      console.log('Failed to update track plays');
-      console.log(error);
-      // const errorMessage = getErrorMessage(error);
-      // setMessage(`Failed to retrieve audio library: ${errorMessage}`);
-    }
-  };
-
   const [initialAudio] = useState(() => new Audio());
   const audioRef = useRef(initialAudio);
   const intervalRef = useRef<number>();
   const [duration, setDuration] = useState(0);
   const [playbackMessage, setPlaybackMessage] = useState('');
   const [attempt, setAttempt] = useState(0);
+  /** Requests fresh playback access without counting a second start for the selection. */
   const retryPlayback = () => setAttempt((value) => value + 1);
+
+  const counted = useRef(false);
+  useLayoutEffect(() => {
+    counted.current = false;
+  }, [selectedTrack?.id, userData?.id, status]);
 
   // Invalidate old audio before paint on track/account changes. Cancellation is
   // paired with an active guard because a response may already be in flight.
@@ -170,6 +151,7 @@ export const AudioProvider = (props: AudioContextProps) => {
     let active = true;
     let expiryTimer: number | undefined;
     const controller = new AbortController();
+    /** Clears the current media and timers before replacement or cleanup. */
     const stop = () => {
       audioRef.current.pause();
       audioRef.current.removeAttribute('src');
@@ -193,12 +175,28 @@ export const AudioProvider = (props: AudioContextProps) => {
         if (!active) return;
         const audio = new Audio(access.url);
         audioRef.current = audio;
+        /** Offers an explicit retry without exposing the private media URL. */
         const fail = () => {
           if (!active) return;
           stop();
           setPlaybackMessage('Unable to play this audio. Retry playback.');
         };
         audio.onerror = fail;
+        audio.onplaying = () => {
+          if (!active || counted.current) return;
+          counted.current = true;
+          // Best effort, no retries: ordinary resumes, buffering events and rerenders
+          // count once per selection. Issuance and failed play() never count.
+          void api
+            .post(
+              `/track/${selectedTrack.id}/listen/${import.meta.env.VITE_API_KEY}`,
+              {},
+              { signal: controller.signal },
+            )
+            .catch(() => {
+              // Aggregate telemetry failure must not interrupt authorized playback.
+            });
+        };
         audio.onloadedmetadata = () => {
           if (active) setDuration(Number.isFinite(audio.duration) ? audio.duration : 0);
         };
@@ -222,12 +220,14 @@ export const AudioProvider = (props: AudioContextProps) => {
       active = false;
       controller.abort();
       window.clearTimeout(expiryTimer);
+      audioRef.current.onplaying = null;
       audioRef.current.onerror = null;
       audioRef.current.onloadedmetadata = null;
       stop();
     };
   }, [selectedTrack?.id, userData?.id, status, attempt]);
 
+  /** Starts or pauses the currently authorized audio, handling rejected browser playback. */
   const playPauseValidation = () => {
     if (!selectedTrack || !isReady || !trackSrc) return;
     if (isPlaying) {
@@ -267,7 +267,6 @@ export const AudioProvider = (props: AudioContextProps) => {
         setTracksMessage,
         currentTrackIndex,
         setCurrentTrackIndex,
-        incrementPlays,
         isPlaying,
         setIsPlaying,
         isReady,
@@ -287,6 +286,7 @@ export const AudioProvider = (props: AudioContextProps) => {
   );
 };
 
+/** Reads the audio state only within its lifecycle owner. */
 export const useAudioContext = () => {
   const audioContext = useContext(AudioContext);
 

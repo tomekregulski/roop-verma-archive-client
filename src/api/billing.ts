@@ -6,7 +6,6 @@ export interface PurchaseAction {
   attempt?: string;
   url?: string;
   requestedAt?: string | null;
-  notification?: string | null;
 }
 
 /** Validates account actions and restricts hosted redirects to Stripe destinations. */
@@ -62,9 +61,4 @@ export async function openPortal(signal: AbortSignal) {
     { signal },
   );
   return purchaseAction(data);
-}
-
-/** Saves an explicit deletion request for the signed-in account. */
-export async function requestAccountDeletion(signal: AbortSignal) {
-  await api.post(`/user/account-deletion/${legacyKey}`, { confirm: true }, { signal });
 }

@@ -32,26 +32,40 @@ class FakeAudio {
   ended = false;
   paused = true;
   onerror: (() => void) | null = null;
+  onplaying: (() => void) | null = null;
   onloadedmetadata: (() => void) | null = null;
+
+  /** Creates inert synthetic media; never opens a real URL. */
   constructor(src = '') {
     this.src = src;
   }
+
+  /** Models the browser pause flag without scheduling playback. */
   pause() {
     this.paused = true;
   }
+
+  /** Emits actual-start events only after a successful synthetic play. */
   play() {
     if (rejectPlay) return Promise.reject(Error('synthetic browser rejection'));
     this.paused = false;
+    queueMicrotask(() => this.onplaying?.());
     return Promise.resolve();
   }
+
+  /** Queues metadata only for a media element with a source. */
   load() {
     queueMicrotask(() => {
       if (this.src) this.onloadedmetadata?.();
     });
   }
+
+  /** Models source revocation during track or account cleanup. */
   removeAttribute() {
     this.src = '';
   }
+
+  /** Exposes source presence for stale-media guards. */
   getAttribute() {
     return this.src || null;
   }
@@ -59,6 +73,8 @@ class FakeAudio {
 // This double implements only the media methods/events exercised by the player.
 // Keep the compatibility cast at this one browser-API replacement boundary.
 window.Audio = FakeAudio as unknown as typeof window.Audio;
+
+/** Builds a typed fake Axios response for the real API adapter. */
 const response = <T,>(config: InternalAxiosRequestConfig, data: T): AxiosResponse<T> => ({
   config,
   data,
@@ -66,6 +82,8 @@ const response = <T,>(config: InternalAxiosRequestConfig, data: T): AxiosRespons
   statusText: 'OK',
   headers: {},
 });
+
+/** Builds controlled HTTP denials without provider requests. */
 const failure = (config: InternalAxiosRequestConfig, status: number) =>
   new AxiosError('synthetic denial', undefined, config, undefined, {
     ...response(config, { error: { message: 'synthetic denial' } }),
@@ -108,16 +126,21 @@ function getAudio() {
   if (!contexts.audio) throw Error('AudioProvider has not mounted');
   return contexts.audio;
 }
+
+/** Requires the mounted auth provider before issuing test actions. */
 function getAuth() {
   if (!contexts.auth) throw Error('AuthProvider has not mounted');
   return contexts.auth;
 }
 
+/** Requires a captured playback request before resolving it. */
 function latestRequest() {
   const request = pending.at(-1);
   if (!request) throw Error('No playback request captured');
   return request;
 }
+
+/** Exposes the live providers and renders the actual player. */
 function Harness() {
   contexts.audio = useAudioContext();
   contexts.auth = useAuthContext();
@@ -137,7 +160,11 @@ createRoot(document.getElementById('root')!).render(
     </AuthProvider>
   </StrictMode>,
 );
+
+/** Yields to React effects and simulated media microtasks. */
 const wait = (ms = 20) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** Bounds asynchronous regression waits and fails on missing state. */
 async function until(predicate: () => boolean) {
   for (let i = 0; i < 100; i++) {
     if (predicate()) return;
@@ -146,10 +173,13 @@ async function until(predicate: () => boolean) {
   throw Error('Timed out waiting for browser state');
 }
 const lines: string[] = [];
+
+/** Records only assertions whose conditions were actually observed. */
 function check(value: unknown, name: string) {
   if (!value) throw Error(name);
   lines.push('PASS ' + name);
 }
+
 /** Complete catalog fixture, checked against the same Track type as the player. */
 function track(id: number): Track {
   return {
@@ -196,13 +226,19 @@ function track(id: number): Track {
     },
   };
 }
+
+/** Selects a complete synthetic catalog track. */
 const select = (id: number) => getAudio().setSelectedTrack(track(id));
+
+/** Waits for fresh authorization after changing track. */
 async function selection(id: number) {
   const count = pending.length;
   select(id);
   await until(() => pending.length > count);
   return latestRequest();
 }
+
+/** Resolves exactly one captured issuance with bounded fake access. */
 function allow(
   request: PendingPlaybackRequest,
   id: number,
@@ -218,6 +254,8 @@ function allow(
     }),
   );
 }
+
+/** Waits for a new authorization attempt without changing selection. */
 async function retry() {
   const count = pending.length;
   getAudio().retryPlayback();
@@ -239,6 +277,10 @@ try {
       first.config.withCredentials &&
       first.config.headers.get('X-RVDL-CSRF') === '1',
     'issuance uses empty POST, credentials and CSRF header',
+  );
+  check(
+    !calls.some((call) => call.url?.includes('/listen/')),
+    'issuing a playback URL does not count a listen',
   );
   const oldAudio = getAudio().audioRef.current;
   const slow = await selection(11);
@@ -292,7 +334,7 @@ try {
     'unavailable Play stays focusable, explains denial and guards activation',
   );
   for (const [status, text] of [
-    [403, 'paid subscription'],
+    [403, 'subscription could not be confirmed'],
     [503, 'unavailable'],
     [500, 'connection'],
   ] as const) {
@@ -319,10 +361,39 @@ try {
   getAudio().playPauseValidation();
   await until(() => getAudio().playbackMessage.includes('could not start'));
   check(!getAudio().isPlaying, 'rejected browser play promise gives recovery guidance');
+  check(
+    !calls.some((call) => call.url?.includes('/listen/')),
+    'failed browser playback does not count a listen',
+  );
   rejectPlay = false;
   getAudio().playPauseValidation();
   await until(() => getAudio().isPlaying);
   check(!getAudio().audioRef.current.paused, 'Play uses the issued URL after retry');
+  await until(() => calls.some((call) => call.url?.includes('/listen/')));
+  const playing = getAudio().audioRef.current as unknown as FakeAudio;
+  playing.onplaying?.();
+  playing.onplaying?.();
+  getAudio().playPauseValidation();
+  await wait();
+  getAudio().playPauseValidation();
+  await wait();
+  const listens = calls.filter((call) => call.url?.includes('/listen/'));
+  check(
+    listens.length === 1 &&
+      listens[0].data === '{}' &&
+      listens[0].url?.includes('/track/20/listen/') &&
+      listens[0].headers['X-RVDL-CSRF'] === '1',
+    'repeated events, resumes and rerenders count one aggregate start with no personal data',
+  );
+  const renewed = await retry();
+  allow(renewed, 20);
+  await until(() => getAudio().isReady);
+  getAudio().playPauseValidation();
+  await until(() => getAudio().isPlaying);
+  check(
+    calls.filter((call) => call.url?.includes('/listen/')).length === 1,
+    'renewing a URL does not count a second start for the same selection',
+  );
   const count = pending.length;
   signedIn = true;
   await getAuth().refreshSession();

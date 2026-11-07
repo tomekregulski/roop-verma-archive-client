@@ -18,7 +18,10 @@ export function CompleteRegistration({
   return (
     <Section>
       <ViewTitle title="Checkout return" />
-      <p>A return URL does not confirm payment or playback access.</p>
+      <p>
+        We’ll check your purchase before confirming it. If payment is still pending,
+        refresh this page.
+      </p>
       {state.status === 'loading' ? (
         <p role="status">Checking your session…</p>
       ) : !state.userData ? (

@@ -1,3 +1,9 @@
+> Current bounded simplification (2026-11-07): support-only customer deletion
+> contact, exact protected owner controls, aggregate playback starts, safe ordinary
+> server logging and status-based access/cache replace the former workflows.
+> See [IDENTITY_HANDOFF.md](IDENTITY_HANDOFF.md) and the sibling server's canonical
+> handoff for verification, retention blockers and the revised rehearsal target.
+
 > Current C1 (2026-11-02): normal routing uses the Stripe-led account/purchase/
 > deletion flow. Provisioning waits and Stripe Elements are removed. See
 > [IDENTITY_HANDOFF.md](IDENTITY_HANDOFF.md) for current behavior/evidence;

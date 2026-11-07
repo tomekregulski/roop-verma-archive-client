@@ -12,9 +12,12 @@ export function OwnerDeletions() {
   return <OwnerDeletionControl key={userData?.id ?? 'anonymous'} />;
 }
 
-/** Displays the owner queue and current review from the deletion controller. */
+/** Displays one exact account and current support review from the deletion controller. */
 function OwnerDeletionControl() {
   const state = useOwnerDeletions();
+  const [accountId, setAccountId] = useState('');
+  const [email, setEmail] = useState('');
+  const [verified, setVerified] = useState(false);
   if (state.status === 'loading') return <p role="status">Checking owner session…</p>;
   if (state.status === 'error')
     return (
@@ -32,36 +35,68 @@ function OwnerDeletionControl() {
     : undefined;
   return (
     <section>
-      <h1>Pending account deletions</h1>
+      <h1>Support account deletion</h1>
       <p>
-        Review exact billing identities and complete the Dashboard checklist before
-        deleting app identity.
+        Verify the request belongs to this account before starting. Billing closure is
+        required before completion.
       </p>
+      <label>
+        Account ID{' '}
+        <input
+          value={accountId}
+          readOnly={state.busy}
+          onChange={(event) => {
+            setAccountId(event.target.value);
+            setVerified(false);
+          }}
+        />
+      </label>
+      <label>
+        Account email{' '}
+        <input
+          type="email"
+          value={email}
+          readOnly={state.busy}
+          onChange={(event) => {
+            setEmail(event.target.value);
+            setVerified(false);
+          }}
+        />
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={verified}
+          disabled={state.busy}
+          onChange={(event) => setVerified(event.target.checked)}
+        />
+        I verified through support that the request belongs to this account.
+      </label>
       <Button
-        name="Refresh pending requests"
-        isDisabledMessage={unavailable}
+        name="Start account deletion"
+        isDisabledMessage={
+          unavailable ||
+          (!verified || !/^[1-9][0-9]{0,9}$/.test(accountId) || !email
+            ? 'Enter the account ID and email, then verify request ownership.'
+            : undefined)
+        }
         callback={() => {
-          void state.refreshRequests();
+          void state.initiate(Number(accountId), email);
+        }}
+      />
+      <Button
+        name="Open account review"
+        isDisabledMessage={
+          unavailable ||
+          (!/^[1-9][0-9]{0,9}$/.test(accountId) ? 'Enter an account ID.' : undefined)
+        }
+        callback={() => {
+          void state.reviewAccount(Number(accountId));
         }}
       />
       {state.busy && <p role="status">Checking owner request…</p>}
       {state.error && <p role="alert">{state.error}</p>}
       {state.message && <p role="status">{state.message}</p>}
-      <ul>
-        {state.requests.map((row) => (
-          <li key={row.id}>
-            {row.email} — {new Date(row.requestedAt).toLocaleString()} — notification:{' '}
-            {row.notification}
-            <Button
-              name={`Review ${row.email}`}
-              isDisabledMessage={unavailable}
-              callback={() => {
-                void state.reviewAccount(row.id);
-              }}
-            />
-          </li>
-        ))}
-      </ul>
       {state.review && (
         <DeletionReviewPanel
           key={state.reviewKey}
@@ -106,8 +141,7 @@ function DeletionReviewPanel({
       <h2>Review {review.account.email}</h2>
       <p>
         Account {review.account.id}; requested{' '}
-        {new Date(review.account.requestedAt).toLocaleString()}; notification:{' '}
-        {review.account.notification}
+        {new Date(review.account.requestedAt).toLocaleString()}
       </p>
       <p>
         Trusted binding:{' '}
@@ -178,7 +212,7 @@ function DeletionReviewPanel({
         }}
       />
       <Button
-        name="Withdraw deletion request through support"
+        name="Abandon support deletion"
         isDisabledMessage={unavailable}
         callback={() => {
           onWithdraw();

@@ -1,17 +1,16 @@
 import { init, sendForm } from 'emailjs-com';
 import type { ChangeEvent } from 'react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Section } from '../../components/Section/Section';
 import { useAuthContext } from '../../context/AuthContext';
-import { useNotificationContext } from '../../context/NotificationContext';
-import { getErrorMessage } from '../../util/getErrorMessage';
 import { Button } from '../Button/Button';
 import { Form } from '../Form/Form';
 import { Input } from '../Input/Input';
 
 init('user_sWNT4oROPiAoUGksmqFlD');
 
+/** Sends support requests through the existing configured EmailJS form. */
 export function SupportForm() {
   const { userData } = useAuthContext();
   const [helpInfo, setHelpInfo] = useState({
@@ -20,17 +19,22 @@ export function SupportForm() {
     message: '',
   });
 
-  function isFormComplete() {
-    if (helpInfo.name !== '' && helpInfo.email !== '' && helpInfo.message !== '') {
-      return true;
-    }
-    return false;
-  }
-  const isSubmitDisabled = !isFormComplete();
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState('');
+  const [failed, setFailed] = useState(false);
+  const pending = useRef(false);
+  const active = useRef(false);
+  useEffect(() => {
+    active.current = true;
+    return () => {
+      active.current = false;
+    };
+  }, []);
+  const isSubmitDisabled = busy || !helpInfo.name || !helpInfo.email || !helpInfo.message;
 
-  const { updateLoadingState, updateAlertMessage } = useNotificationContext();
-
+  /** Updates only local form fields while no send is pending. */
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (pending.current) return;
     const { name, value } = event.target;
 
     setHelpInfo((prevState) => ({
@@ -39,37 +43,43 @@ export function SupportForm() {
     }));
   };
 
+  /** Prevents duplicate sends and reports acceptance without promising inbox delivery. */
   async function handleFormSubmit() {
-    if (helpInfo.name !== '' && helpInfo.email !== '' && helpInfo.message !== '') {
-      updateLoadingState(true);
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const form = document.querySelector('#contact-form')! as HTMLFormElement;
-      await sendForm('rvdl_forms', 'template_xu5gbwo', '#contact-form').then(
-        (response) => {
-          updateLoadingState(false);
-          updateAlertMessage(['Message successfully sent']);
-          console.log('SUCCESS!', response.status, response.text);
-          form.reset();
-        },
-        (error) => {
-          updateLoadingState(false);
-          console.log('Failed to send support email', error);
-          console.log(error);
-          const errorMessage = getErrorMessage(error.text);
-          updateAlertMessage([`Support email failed to send: ${errorMessage}`]);
-        },
-      );
-    } else {
-      updateAlertMessage(['Please fill out the form before submitting.']);
+    if (pending.current || isSubmitDisabled) return;
+    pending.current = true;
+    setBusy(true);
+    setMessage('');
+    setFailed(false);
+    try {
+      await sendForm('rvdl_forms', 'template_xu5gbwo', '#contact-form');
+      if (active.current) {
+        setMessage(
+          'Your message was accepted for delivery. Keep your account email handy for support.',
+        );
+        setHelpInfo((current) => ({ ...current, message: '' }));
+      }
+    } catch {
+      if (active.current) {
+        setFailed(true);
+        setMessage(
+          'We could not confirm your message was sent. Please retry. If you already sent it, support may still receive it.',
+        );
+      }
+    } finally {
+      pending.current = false;
+      if (active.current) setBusy(false);
     }
   }
 
   return (
     <Section>
+      {busy && <p role="status">Sending your support message…</p>}
+      {message && <p role={failed ? 'alert' : 'status'}>{message}</p>}
       <Form
         id="contact-form"
         handleSubmit={handleFormSubmit}
-        isSubmitDisabled={isSubmitDisabled}
+        isSubmitDisabled={Boolean(isSubmitDisabled)}
+        aria-busy={busy}
       >
         <Input
           id="support-message--name-input"
@@ -99,7 +109,13 @@ export function SupportForm() {
           type="submit"
           name="Send Message"
           form="contact-form"
-          isDisabledMessage={isSubmitDisabled ? 'Please complete the form' : undefined}
+          isDisabledMessage={
+            busy
+              ? 'Sending your support message. Please wait.'
+              : isSubmitDisabled
+              ? 'Please complete the form'
+              : undefined
+          }
         />
       </Form>
     </Section>

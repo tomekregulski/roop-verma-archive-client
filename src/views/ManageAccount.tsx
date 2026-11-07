@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Button } from '../components/Button/Button';
@@ -11,20 +10,18 @@ import { hostedRedirect, purchaseMessage, usePurchase } from '../util/purchase';
 function AccountIdentity({ user }: { user: UserData }) {
   return (
     <p>
-      {user.firstName} {user.lastName} — {user.email}
+      {user.firstName} {user.lastName} — {user.email} (account reference: {user.id})
     </p>
   );
 }
 
-/** Displays server-owned billing actions and the explicit deletion-request control. */
+/** Displays server-owned billing actions and the existing support route. */
 export function ManageAccount({
   redirect = hostedRedirect,
 }: {
   redirect?: (url: string) => void;
 }) {
   const state = usePurchase(undefined, redirect);
-  const [confirmDeletion, setConfirmDeletion] = useState(false);
-  useEffect(() => setConfirmDeletion(false), [state.userData?.id, state.result?.reason]);
   if (state.status === 'loading') return <p role="status">Loading account…</p>;
   if (state.status === 'error')
     return (
@@ -96,48 +93,12 @@ export function ManageAccount({
         deletion is a separate, owner-assisted process. It does not automatically cancel
         billing, refund payments or immediately invalidate issued media links.
       </p>
-      {state.result?.reason === 'deletion_pending' ? (
-        <div>
-          <p role="status">
-            Deletion requested
-            {state.result.requestedAt
-              ? ` on ${new Date(state.result.requestedAt).toLocaleString()}`
-              : ''}
-            . New purchases are blocked. You can still log in and manage trusted billing.
-          </p>
-          <p>
-            To withdraw this request, contact support through Help. The owner will review
-            billing closure before deleting your account.
-          </p>
-          {state.result.notification && state.result.notification !== 'accepted' && (
-            <p>
-              Support notification delivery is unconfirmed. Your request is saved; contact
-              support through Help so the owner can follow up.
-            </p>
-          )}
-        </div>
-      ) : (
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              checked={confirmDeletion}
-              disabled={state.busy}
-              onChange={(event) => setConfirmDeletion(event.target.checked)}
-            />
-            I request account deletion and understand that billing needs owner review.
-          </label>
-          <Button
-            name="Request account deletion"
-            isDisabledMessage={
-              !confirmDeletion ? 'Confirm the deletion request first.' : unavailable
-            }
-            callback={() => {
-              void state.requestDeletion();
-            }}
-          />
-        </div>
-      )}
+      <p>
+        To delete your app account,{' '}
+        <Link to="/library">contact support through Help</Link> using your account email
+        and the account reference above. Support will verify your request and arrange
+        billing closure.
+      </p>
       <Link to="/library">Help</Link>
     </Section>
   );

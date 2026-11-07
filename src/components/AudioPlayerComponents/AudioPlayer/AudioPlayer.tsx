@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import { useAudioContext } from '../../../context/AudioContext';
-import { useAuthContext } from '../../../context/AuthContext';
 import { Button } from '../../Button/Button';
 import AudioControls from '../AudioControls/AudioControls';
 
+/** Displays the current audio controls and local playback position. */
 export function AudioPlayer() {
   const {
     filteredTracks,
@@ -12,7 +12,6 @@ export function AudioPlayer() {
     setCurrentTrackIndex,
     selectedTrack,
     setSelectedTrack,
-    incrementPlays,
     isPlaying,
     isReady,
     trackSrc,
@@ -24,16 +23,14 @@ export function AudioPlayer() {
     playPauseValidation,
   } = useAudioContext();
 
-  const { userData } = useAuthContext();
   const [trackProgress, setTrackProgress] = useState(0);
-  const [secondsPlayed, setSecondsPlayed] = useState(0);
 
+  /** Selects a catalog track without recording individual listening history. */
   const changeTrackIndex = (index: number) => {
     if (filteredTracks) {
       const newTrack = filteredTracks[index];
       setCurrentTrackIndex(index);
       setSelectedTrack(newTrack);
-      setSecondsPlayed(0);
     }
   };
 
@@ -42,6 +39,7 @@ export function AudioPlayer() {
     -webkit-gradient(linear, 0% 0%, 100% 0%, color-stop(${currentPercentage}, #fff), color-stop(${currentPercentage}, #777))
   `;
 
+  /** Updates the local progress display and advances after playback ends. */
   const startTimer = () => {
     // Clear any timers already running
     clearInterval(intervalRef.current);
@@ -55,10 +53,7 @@ export function AudioPlayer() {
     }, 1000);
   };
 
-  useEffect(() => {
-    setSecondsPlayed((prevState) => prevState + 1);
-  }, [trackProgress]);
-
+  /** Seeks authorized media while stopping progress updates during input. */
   const onScrub = (value: number) => {
     // Clear any timers already running
     clearInterval(intervalRef.current);
@@ -67,12 +62,15 @@ export function AudioPlayer() {
     setTrackProgress(audioRef.current.currentTime);
   };
 
+  /** Seeks authorized media while stopping progress updates during input. */
+  /** Resumes playback and the local progress timer after seeking. */
   const onScrubEnd = () => {
     // If not already playing, start
     if (!isPlaying && isReady) playPauseValidation();
     if (isReady) startTimer();
   };
 
+  /** Wraps backward through the filtered catalog. */
   const toPrevTrackIndex = () => {
     let index;
     if (currentTrackIndex !== null && filteredTracks?.length) {
@@ -86,6 +84,7 @@ export function AudioPlayer() {
     }
   };
 
+  /** Wraps forward through the filtered catalog. */
   const toNextTrackIndex = () => {
     let index;
     if (currentTrackIndex !== null && filteredTracks?.length) {
@@ -101,31 +100,13 @@ export function AudioPlayer() {
   useEffect(() => {
     if (isPlaying) {
       startTimer();
-    }
-  }, [isPlaying]);
-
-  useEffect(() => {
-    if (isPlaying) {
-      startTimer();
     } else if (isPlaying === false) {
       audioRef.current.pause();
     }
   }, [isPlaying]);
 
   useEffect(() => {
-    if (userData && selectedTrack && secondsPlayed > 0) {
-      incrementPlays({
-        userId: userData.id,
-        trackId: selectedTrack.id,
-        secondsListened: secondsPlayed,
-      });
-    }
-    setSecondsPlayed(0);
-  }, [selectedTrack]);
-
-  useEffect(() => {
     setTrackProgress(0);
-    setSecondsPlayed(0);
   }, [selectedTrack?.id, trackSrc]);
 
   useEffect(() => {
