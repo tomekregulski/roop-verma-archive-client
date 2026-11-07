@@ -102,14 +102,6 @@ export function usePurchase(sessionId?: string, redirect = hostedRedirect) {
       followHostedUrl,
     );
 
-  /** Requests deletion, then reloads persisted state while the session is current. */
-  const requestDeletion = () =>
-    perform(async (signal, current) => {
-      await billing.requestAccountDeletion(signal);
-      // A saved request survives mail failure. Read persisted state only for this session.
-      if (current()) return billing.readAccount(signal);
-    }, 'Unable to confirm the deletion request. Refresh account before retrying; your request may already be saved.');
-
   useEffect(() => {
     active.current = true;
     setResult(null);
@@ -132,7 +124,6 @@ export function usePurchase(sessionId?: string, redirect = hostedRedirect) {
     refresh,
     startCheckout,
     openPortal,
-    requestDeletion,
     refreshSession,
   };
 }
@@ -144,7 +135,7 @@ export const purchaseMessage = (result: PurchaseAction) => {
   if (result.action === 'help')
     return 'This purchase needs help before another can be started. Contact support with the reference below.';
   if (result.action === 'manage')
-    return 'Billing is available in Stripe. Playback eligibility is checked separately when you play a recording.';
+    return 'You can manage your subscription in Stripe. Play a recording to check access.';
   if (result.reason === 'checkout_open')
     return 'Checkout is unfinished. Continue the same purchase when ready.';
   if (result.action === 'pending')

@@ -1,3 +1,23 @@
+# Support-only deletion and simplified access — 2026-11-07
+
+Normal Account now directs deletion requests to existing Help support and shows
+an account reference. The protected owner screen handles one verified account
+with start/review/abandon/completion; customer request controls, notifications and
+queue are removed. Billing retry/session guards remain. Playback uses the server's
+bounded status policy; the player sends only one aggregate actual-start POST per
+selection, with no user/duration history. Existing Help has busy/retry/acceptance
+states; unused browser diagnostic storage/error emails are removed.
+
+Current evidence and database coordination live in the server's
+[canonical handoff](../roop-verma-archive-server/STRIPE_LED_PURCHASE_IMPLEMENTATION.md).
+38 purchase/owner/support React + 27 player + 14 unit checks, TypeScript, changed
+ESLint and build pass. The standalone harness fakes EmailJS and refuses the
+support regression page without that fake module. The canonical handoff records
+the brief hot-reload isolation caveat during test setup; actual EmailJS delivery
+was not verified. All historical results below retain their original scope.
+
+---
+
 # Readability and recovery cleanup — 2026-11-03
 
 Purchase and owner-deletion requests now have named API functions in
