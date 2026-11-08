@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { fork, spawnSync } from 'node:child_process';
+import { fork } from 'node:child_process';
 import fs from 'node:fs/promises';
 import http from 'node:http';
 import net from 'node:net';
@@ -217,18 +217,3 @@ for (const scenario of [
     { timeout: 25000 },
     () => lifecycle(scenario, scenario === 'cleanup-failure' ? 'SIGTERM' : undefined),
   );
-
-for (const mode of ['wrong-init', 'wrong-send', 'both-wrong', 'missing-send', 'fake'])
-  test('offline support entry guard: ' + mode, () => {
-    const result = spawnSync(
-      process.execPath,
-      ['--experimental-vm-modules', 'test/support/mail-guard-worker.mjs', mode],
-      {
-        cwd: path.resolve(testDirectory, '..'),
-        encoding: 'utf8',
-        env: { PATH: process.env.PATH, TMPDIR: process.env.TMPDIR, NODE_ENV: 'test' },
-        timeout: 10000,
-      },
-    );
-    assert.equal(result.status, 0, result.stderr);
-  });

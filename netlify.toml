@@ -1,4 +1,27 @@
+[build]
+  command = "pnpm build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "24.19.0"
+
+# Only the canonical shared TEST host receives the API proxy below.
+[context.production.environment]
+  VITE_API_ORIGIN = ""
+
+[context.deploy-preview.environment]
+  VITE_API_ORIGIN = "https://rvdl-preview-unavailable.invalid"
+
+[context.branch-deploy.environment]
+  VITE_API_ORIGIN = "https://rvdl-preview-unavailable.invalid"
+
+[[redirects]]
+  from = "https://www.roopvermalibrary.com/api/*"
+  to = "https://roop-verma-archive.herokuapp.com/api/:splat"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/*"
-  to = "/"
+  to = "/index.html"
   status = 200

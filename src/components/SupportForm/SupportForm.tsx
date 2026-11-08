@@ -1,16 +1,15 @@
-import { init, sendForm } from 'emailjs-com';
+import { isAxiosError } from 'axios';
 import type { ChangeEvent } from 'react';
 import { useEffect, useRef, useState } from 'react';
 
+import { sendSupportMessage } from '../../api/support';
 import { Section } from '../../components/Section/Section';
 import { useAuthContext } from '../../context/AuthContext';
 import { Button } from '../Button/Button';
 import { Form } from '../Form/Form';
 import { Input } from '../Input/Input';
 
-init('user_sWNT4oROPiAoUGksmqFlD');
-
-/** Sends support requests through the existing configured EmailJS form. */
+/** Send bounded support requests through the backend's fixed Resend destination. */
 export function SupportForm() {
   const { userData } = useAuthContext();
   const [helpInfo, setHelpInfo] = useState({
@@ -30,7 +29,8 @@ export function SupportForm() {
       active.current = false;
     };
   }, []);
-  const isSubmitDisabled = busy || !helpInfo.name || !helpInfo.email || !helpInfo.message;
+  const isSubmitDisabled =
+    busy || !helpInfo.name.trim() || !helpInfo.email.trim() || !helpInfo.message.trim();
 
   /** Updates only local form fields while no send is pending. */
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -51,18 +51,20 @@ export function SupportForm() {
     setMessage('');
     setFailed(false);
     try {
-      await sendForm('rvdl_forms', 'template_xu5gbwo', '#contact-form');
+      await sendSupportMessage(helpInfo);
       if (active.current) {
         setMessage(
           'Your message was accepted for delivery. Keep your account email handy for support.',
         );
         setHelpInfo((current) => ({ ...current, message: '' }));
       }
-    } catch {
+    } catch (error) {
       if (active.current) {
         setFailed(true);
         setMessage(
-          'We could not confirm your message was sent. Please retry. If you already sent it, support may still receive it.',
+          isAxiosError(error) && error.response?.status === 429
+            ? 'Too many support requests. Wait 15 minutes before trying again.'
+            : 'We could not confirm your message was sent. Please retry. If you already sent it, support may still receive it.',
         );
       }
     } finally {
@@ -87,6 +89,7 @@ export function SupportForm() {
           name="name"
           value={helpInfo.name}
           type="text"
+          maxLength={100}
           callback={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
         />
         <Input
@@ -95,6 +98,7 @@ export function SupportForm() {
           name="email"
           value={helpInfo.email}
           type="email"
+          maxLength={254}
           callback={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
         />
         <Input
@@ -103,6 +107,7 @@ export function SupportForm() {
           name="message"
           value={helpInfo.message}
           type="text"
+          maxLength={5000}
           callback={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
         />
         <Button

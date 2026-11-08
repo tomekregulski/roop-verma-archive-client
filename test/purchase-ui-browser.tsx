@@ -1,7 +1,6 @@
 // Focused component/race checks, separate from the real HTTP/PostgreSQL journey.
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { AxiosError } from 'axios';
-import { init as initializeMail, sendForm as sendSupportForm } from 'emailjs-com';
 import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
@@ -14,15 +13,6 @@ import { AuthProvider, useAuthContext } from '../src/context/AuthContext';
 import { CompleteRegistration } from '../src/views/CompleteRegistration';
 import { ManageAccount } from '../src/views/ManageAccount';
 import { OwnerDeletions } from '../src/views/OwnerDeletions';
-import {
-  init as fakeMailInit,
-  sendForm as fakeSendForm,
-  supportMail,
-} from './support-mail';
-
-// Refuse autorun under ordinary Vite or before an isolated harness restart.
-if (initializeMail !== fakeMailInit || sendSupportForm !== fakeSendForm)
-  throw Error('These checks require the fake-mail browser harness');
 
 let signedIn = true,
   userId = 1,
@@ -44,6 +34,7 @@ type Pending = {
   reject: (error: unknown) => void;
 };
 const pending: Pending[] = [];
+const supportRequests: Pending[] = [];
 
 /** Creates a synthetic Axios response for a recorded request. */
 const response = (config: InternalAxiosRequestConfig, data: unknown): AxiosResponse => ({
@@ -60,8 +51,13 @@ const failure = (config: InternalAxiosRequestConfig, status: number) =>
     ...response(config, {}),
     status,
   });
+/** Install before React mounts; every API request is handled locally or held, never sent. */
 api.defaults.adapter = async (config) => {
   calls.push(config);
+  if (config.url === '/support')
+    return new Promise((resolve, reject) =>
+      supportRequests.push({ config, resolve, reject }),
+    );
   if (config.url === '/auth/logout') {
     signedIn = false;
     return response(config, {});
@@ -489,6 +485,12 @@ try {
     document.querySelector('#support-message--email-input')!,
     'ui@example.invalid',
   );
+  fillInput(document.querySelector('#support-message--message-input')!, '   ');
+  await wait();
+  check(
+    button('Send Message')?.getAttribute('aria-disabled') === 'true',
+    'support requires meaningful message text before submission',
+  );
   fillInput(
     document.querySelector('#support-message--message-input')!,
     'Please help with my account',
@@ -496,20 +498,43 @@ try {
   await wait();
   button('Send Message')!.click();
   button('Send Message')!.click();
-  await until(() => supportMail.length === 1);
+  await until(() => supportRequests.length === 1);
   check(
     button('Send Message')?.getAttribute('aria-disabled') === 'true',
     'support sends once and exposes an accessible busy explanation',
   );
-  supportMail[0].reject(Error('synthetic private provider payload'));
+  check(
+    supportRequests[0].config.method === 'post' &&
+      supportRequests[0].config.headers['X-RVDL-CSRF'] === '1' &&
+      JSON.parse(supportRequests[0].config.data).message ===
+        'Please help with my account',
+    'support submits only contact fields through the shared guarded backend client',
+  );
+  supportRequests[0].reject(Error('synthetic private provider payload'));
   await until(() => document.body.textContent?.includes('We could not confirm') === true);
   check(
     !document.body.textContent?.includes('synthetic private provider payload'),
     'support failure offers retry without revealing provider details or claiming success',
   );
   button('Send Message')!.click();
-  await until(() => supportMail.length === 2);
-  supportMail[1].resolve({ status: 200, text: 'OK' });
+  await until(() => supportRequests.length === 2);
+  supportRequests[1].resolve(response(supportRequests[1].config, { accepted: false }));
+  await until(() => button('Send Message')?.getAttribute('aria-disabled') !== 'true');
+  check(
+    !document.body.textContent?.includes('accepted for delivery'),
+    'support refuses to claim success without explicit backend acceptance',
+  );
+  button('Send Message')!.click();
+  await until(() => supportRequests.length === 3);
+  supportRequests[2].reject(failure(supportRequests[2].config, 429));
+  await until(() => document.body.textContent?.includes('Wait 15 minutes') === true);
+  check(
+    !document.body.textContent?.includes('accepted for delivery'),
+    'rate-limited support explains when to retry without claiming delivery',
+  );
+  button('Send Message')!.click();
+  await until(() => supportRequests.length === 4);
+  supportRequests[3].resolve(response(supportRequests[3].config, { accepted: true }));
   await until(
     () => document.body.textContent?.includes('accepted for delivery') === true,
   );
@@ -523,10 +548,10 @@ try {
   );
   await wait();
   button('Send Message')!.click();
-  await until(() => supportMail.length === 3);
+  await until(() => supportRequests.length === 5);
   choose!('hidden');
   await wait();
-  supportMail[2].resolve({ status: 200, text: 'OK' });
+  supportRequests[4].resolve(response(supportRequests[4].config, { accepted: true }));
   await wait();
   check(
     !document.body.textContent?.includes('accepted for delivery'),
