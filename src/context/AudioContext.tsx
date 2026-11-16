@@ -181,7 +181,16 @@ export const AudioProvider = (props: AudioContextProps) => {
           stop();
           setPlaybackMessage('Unable to play this audio. Retry playback.');
         };
+
+        /** Marks natural completion as stopped without advancing or requesting access. */
+        const finish = () => {
+          if (!active) return;
+          clearInterval(intervalRef.current);
+          setIsPlaying(false);
+        };
+
         audio.onerror = fail;
+        audio.onended = finish;
         audio.onplaying = () => {
           if (!active || counted.current) return;
           counted.current = true;
@@ -222,6 +231,7 @@ export const AudioProvider = (props: AudioContextProps) => {
       window.clearTimeout(expiryTimer);
       audioRef.current.onplaying = null;
       audioRef.current.onerror = null;
+      audioRef.current.onended = null;
       audioRef.current.onloadedmetadata = null;
       stop();
     };

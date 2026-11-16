@@ -39,17 +39,13 @@ export function AudioPlayer() {
     -webkit-gradient(linear, 0% 0%, 100% 0%, color-stop(${currentPercentage}, #fff), color-stop(${currentPercentage}, #777))
   `;
 
-  /** Updates the local progress display and advances after playback ends. */
+  /** Updates local progress while natural completion is handled by the audio owner. */
   const startTimer = () => {
     // Clear any timers already running
     clearInterval(intervalRef.current);
 
     intervalRef.current = setInterval(() => {
-      if (audioRef.current.ended) {
-        toNextTrackIndex();
-      } else {
-        setTrackProgress(audioRef.current.currentTime);
-      }
+      setTrackProgress(audioRef.current.currentTime);
     }, 1000);
   };
 
@@ -102,6 +98,7 @@ export function AudioPlayer() {
       startTimer();
     } else if (isPlaying === false) {
       audioRef.current.pause();
+      if (audioRef.current.ended) setTrackProgress(audioRef.current.currentTime);
     }
   }, [isPlaying]);
 
