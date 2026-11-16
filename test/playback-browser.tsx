@@ -32,6 +32,7 @@ class FakeAudio {
   ended = false;
   paused = true;
   onerror: (() => void) | null = null;
+  onended: (() => void) | null = null;
   onplaying: (() => void) | null = null;
   onloadedmetadata: (() => void) | null = null;
 
@@ -43,6 +44,14 @@ class FakeAudio {
   /** Models the browser pause flag without scheduling playback. */
   pause() {
     this.paused = true;
+  }
+
+  /** Delivers natural completion with the final native position and stopped state. */
+  finish() {
+    this.currentTime = this.duration;
+    this.paused = true;
+    this.ended = true;
+    this.onended?.();
   }
 
   /** Emits actual-start events only after a successful synthetic play. */
@@ -388,11 +397,36 @@ try {
   const renewed = await retry();
   allow(renewed, 20);
   await until(() => getAudio().isReady);
+  getAudio().setFilteredTracks([track(20), track(30)]);
+  getAudio().setCurrentTrackIndex(0);
+  await wait();
   getAudio().playPauseValidation();
   await until(() => getAudio().isPlaying);
   check(
     calls.filter((call) => call.url?.includes('/listen/')).length === 1,
     'renewing a URL does not count a second start for the same selection',
+  );
+  const completed = getAudio().audioRef.current as unknown as FakeAudio;
+  const completedSelection = getAudio().selectedTrack;
+  const requestsBeforeEnd = pending.length;
+  completed.finish();
+  await until(() => !getAudio().isPlaying);
+  check(
+    completed.paused &&
+      !!document.querySelector('button[aria-label="Play"]') &&
+      !document.querySelector('button[aria-label="Pause"]') &&
+      document.querySelector<HTMLInputElement>('input[aria-label="Playback position"]')
+        ?.value === String(completed.duration),
+    'natural completion shows Play and the final position',
+  );
+  // Cross the former progress-timer tick to catch unintended continuation.
+  await wait(1100);
+  check(
+    getAudio().selectedTrack === completedSelection &&
+      getAudio().audioRef.current === (completed as unknown as HTMLAudioElement) &&
+      pending.length === requestsBeforeEnd &&
+      calls.filter((call) => call.url?.includes('/listen/')).length === 1,
+    'completion keeps the selection without continuation, renewal or another listen',
   );
   const count = pending.length;
   signedIn = true;

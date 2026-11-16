@@ -1,3 +1,97 @@
+# First private sample — revised scope, 2026-11-14
+
+The first slice is secure delivery of one sample through the **existing player**.
+Keep the planned two-hour link lifetime, current expiry stop and explicit Retry.
+Recordings are mostly 15–45 minutes. Automatic renewal, seamless position
+preservation and background-tab recovery are not part of this candidate. No
+ordinary-listening failure has yet demonstrated a need for those mechanisms.
+
+At the owner's request, the current scoped changes now live **unstaged on main**
+in the normal `/Users/tomekregulski/Desktop/rvdl/roop-verma-archive-client` checkout,
+from baseline `bf272a0`. Application changes are limited to the owner-approved
+2026-11-15 ended-state fix below; API client, dependencies and visual design are
+unchanged. Client additions are this handoff, a
+synthetic MP3 preparation script and an explicit isolated provider-test page/
+launcher with native diagnostics. The isolated minimal worktree remains a source
+copy. The completed expanded client implementation/tests remain intact at
+`/private/tmp/rvdl-private-audio-client`, branch `codex/private-audio-delivery`.
+Its 28 React / 27 unit / 9 native checks apply to that optional work, not this
+candidate. No optional recovery was copied into main.
+
+The normal sibling server checkout is also on `main`, with its scoped changes
+unstaged from baseline `8632b7a`: strict server-owned Track.id → content-addressed
+MP3 manifest and fixed private R2 HEAD/GET adapter. The maintained AWS S3 v3 SDK
+signs object-specific two-hour GETs. Existing
+identity, securely associated active/past_due subscription status, cache and final
+session/access checks remain authoritative. No migration, Track.url fallback,
+media proxy, DRM, download prevention or analytics change was added.
+
+Server evidence is 271 synthetic checks on Node 24.19.0, with prior 142 fresh
+disposable PostgreSQL checks retained. The separately approved R2 test has now
+passed real SDK authorization/range/CORS/expiry checks and actual existing-player
+playback, unbuffered forward/backward seeks, ordinary pause/resume and explicit
+Retry. The continuous 15-minute run and approved cleanup completed; the sibling
+server's [provider report](../roop-verma-archive-server/PRIVATE_AUDIO_PROVIDER_CHECK.md)
+is the canonical result and limitations record. This is real R2 media with native
+audio, synthetic local identity/billing and no existing database. It does not
+establish hosted application behavior or a full two-hour wall-clock expiry check.
+Client 29 React browser assertions (including the focused ended-state regression),
+14 unit checks, type-check, targeted touched-file lint and production build pass
+(existing browser-data/chunk-size warnings). Optional client results above remain
+separate from this existing-player candidate.
+
+## Verification scope and remaining activation
+
+The owner approved the provider plan/account and the read token at action time.
+The generated 15-minute MP3 was uploaded through the dashboard into a new private
+Standard bucket; no uploader credential was created. Continuous native playback
+completed with no media error; fresh access denied after cancellation/revocation.
+The sample/bucket/token/local secrets are removed and listeners stopped. The
+observed end-of-track UI issue was fixed with owner approval on 2026-11-15:
+AudioProvider handles native `ended`, clears the progress timer and synchronizes
+stopped state; AudioPlayer shows the final position and Play label. Completion
+retains the selection without automatic continuation or renewal; manual Next/
+Previous remain. The focused React regression uses an Audio double, checks the
+final controls/position and crosses the former timer tick to verify no new
+issuance/listen or selection change. The earlier real R2 results were not rerun.
+Hosted configuration/
+deployment and any actual-recording test remain separate. Email DNS is independent
+of this isolated test.
+
+Exercise the actual AudioPlayer against the existing authorized endpoint and
+actual R2 URL: anonymous public, protected allowed/denied cases, playback,
+unbuffered forward/back seek, ordinary pause/resume, wrong/unsigned object denial,
+provider expiry and current explicit Retry. Retain two-hour app links; label any
+separate short-lived SDK expiry probe distinctly. A full two-hour wall-clock test
+can be recorded separately. Expected manual Retry behavior (including restart at
+zero) is not itself a defect requiring seamless restoration.
+
+If ordinary 15–45 minute listening reveals a material failure, record the trigger,
+observed behavior and listener impact, then propose the smallest fix and its
+maintenance cost **before** implementing extra recovery. No problem has yet been
+established that warrants automatic renewal or a generalized recovery lifecycle.
+
+## Synthetic sample preparation
+
+Optional `lamejs@1.2.1` lives in an external test-tools directory, not application
+dependencies. The generated quiet tone defaults to 15 minutes (mono 22.05 kHz,
+64 kbps). The helper uses create-only output and reads no recording/provider:
+
+```sh
+node test/synthetic-mp3.mjs /absolute/tools/node_modules/lamejs/lame.all.js /absolute/new-sample.mp3
+```
+
+An optional final argument sets duration in seconds, bounded to 1–2700. This is
+sample preparation only; it neither uploads nor adds a playback API/test grant.
+Designer assets, hosted-support drafts, seven-migration target and historical
+rehearsal evidence remain unchanged. Normal main checkouts now contain only this
+slice’s scoped unstaged changes; their branch selections are unchanged. Source/config/docs
+merge coordination is recorded in the server Operations.md. No commit, push,
+deployment occurred. Approved R2 test actions/results are recorded separately in
+the provider report; no actual archive recording or existing DB was accessed.
+
+---
+
 # Current C1 playback boundary — 2026-11-02
 
 Normal backend playback now selects the Stripe-led shared access cache, current
