@@ -1,3 +1,30 @@
+# One-recording pilot verified — 2026-11-16
+
+The [server pilot results](../roop-verma-archive-server/ONE_RECORDING_R2_PILOT.md)
+selects existing subscriber Track.id **7** (catalog number 15), Chandrakaunsi
+Kanada, 1979-01-27, Yoga Society of Florida; catalog artist Kevin West Milburn.
+Owner-approved exact Cloudinary MP3 copy (46,673,192 bytes, v1650679366,
+**19:26.8**) is retained in private R2 Standard. Full read-back SHA-256 matched.
+Existing player/native media passed normal progression, unbuffered seeks,
+pause/resume, explicit Retry after a test-only storage failure, and browser
+range/CORS. Anonymous/unsubscribed/foreign-account issuance, unsigned media and
+write/delete attempts denied; synthetic cancellation/revocation denied fresh
+issuance. Final read-only DB snapshot, source, visibility and plays=0 unchanged.
+Server PR #70 (c5e791d) and client PR #109 (2b80f58) are merged in these clean
+starting checkouts; historical unstaged-state wording below is superseded.
+No branch switch or optional renewal work included. The plan retains two-hour
+links and explicit Retry, synthetic local identity/billing, the existing player,
+private durable manifest/configuration and a separate hosted-activation handoff.
+Only provider test fixtures were adapted for the single existing ID, a private
+locator-free catalog snapshot and one-shot storage failure; production player,
+identity/billing and request protections were unchanged. Twelve existing focused
+backend synthetic checks plus the isolated primary-ID regression, client types,
+touched fixture lint and launcher syntax pass. Retained manifest/read credential
+are private at `~/.config/rvdl/private-playback`; uploader revoked and temporary
+files/processes removed. Hosted integration remains instructions only. Prior
+generated-sample expiry/completion evidence is separate; no hosted playback,
+whole-recording completion, library-migration or archival-preservation claim.
+
 # First private sample — revised scope, 2026-11-14
 
 The first slice is secure delivery of one sample through the **existing player**.

@@ -1,5 +1,5 @@
 // Explicit local provider test. Production code never imports this launcher.
-import { mkdtemp, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -17,8 +17,8 @@ const { accountId, bucket, key, readCredentials } = require(path.join(
   'test/support/r2-sample',
 ));
 
-/** Starts the fixed, approved sample against real R2 and synthetic local identity. */
-export async function runProviderHarness(credentialsFile) {
+/** Starts one explicit approved object with real R2 and synthetic local identity. */
+export async function runProviderHarness(credentialsFile, pilotFile) {
   if (
     process.env.NODE_ENV === 'production' ||
     !credentialsFile ||
@@ -26,6 +26,13 @@ export async function runProviderHarness(credentialsFile) {
   )
     throw Error('Explicit local provider credentials file required');
   const credentials = readCredentials(credentialsFile);
+  let pilot;
+  if (pilotFile) {
+    if (!path.isAbsolute(pilotFile)) throw Error('Absolute private pilot file required');
+    pilot = JSON.parse(await readFile(pilotFile, 'utf8'));
+    if (!path.isAbsolute(pilot.manifestFile) || !path.isAbsolute(pilot.catalogTrackFile))
+      throw Error('Absolute private manifest and catalog snapshot required');
+  }
   const directory = await mkdtemp(path.join(tmpdir(), 'rvdl-r2-provider-'));
   let backend, vite, closing;
 
@@ -47,17 +54,27 @@ export async function runProviderHarness(credentialsFile) {
   }
 
   try {
-    const manifest = path.join(directory, 'assets.json');
-    await writeFile(manifest, JSON.stringify([{ trackId: 10, key }]), { mode: 0o600 });
+    const manifest = pilot?.manifestFile || path.join(directory, 'assets.json');
+    if (!pilot)
+      await writeFile(manifest, JSON.stringify([{ trackId: 10, key }]), { mode: 0o600 });
+    const catalogTrack = pilot
+      ? JSON.parse(await readFile(pilot.catalogTrackFile, 'utf8'))
+      : undefined;
+    if (pilot) {
+      const assets = require(path.join(serverRoot, 'playback/assets')).readAssets(manifest);
+      if (assets.size !== 1 || !assets.has(catalogTrack.id))
+        throw Error('Pilot must map exactly the selected catalog Track.id');
+    }
     const delivery = require(path.join(serverRoot, 'playback/r2')).createR2Delivery({
       PLAYBACK_ASSETS_FILE: manifest,
-      PLAYBACK_R2_ACCOUNT_ID: accountId,
-      PLAYBACK_R2_BUCKET: bucket,
+      PLAYBACK_R2_ACCOUNT_ID: pilot?.accountId || accountId,
+      PLAYBACK_R2_BUCKET: pilot?.bucket || bucket,
       PLAYBACK_R2_ACCESS_KEY_ID: credentials.accessKeyId,
       PLAYBACK_R2_SECRET_ACCESS_KEY: credentials.secretAccessKey,
     });
     backend = await require(path.join(serverRoot, 'test/support/provider-playback'))({
       delivery,
+      catalogTrack,
     });
     vite = await createHarnessVite({
       root,
@@ -101,7 +118,7 @@ export async function runProviderHarness(credentialsFile) {
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  runProviderHarness(process.argv[2])
+  runProviderHarness(process.argv[2], process.argv[3])
     .then((harness) => {
       console.log(
         'Private sample test ready: http://127.0.0.1:3180/test/r2-provider.html',

@@ -27,11 +27,11 @@ function Sample() {
   const [position, setPosition] = useState(0);
   const [nativeState, setNativeState] = useState('');
 
-  /** Selects the exact synthetic Track primary ID through the real catalog endpoint. */
+  /** Selects the fixture's sole approved Track.id through the real catalog endpoint. */
   async function select() {
     const response = await api.get<Track[]>(`/track/${legacyKey}`);
-    const sample = response.data.find((track) => track.id === 10);
-    if (!sample) throw Error('Synthetic track is missing');
+    const sample = response.data[0];
+    if (response.data.length !== 1 || !sample) throw Error('One approved track required');
     audio.setFilteredTracks([sample]);
     audio.setCurrentTrackIndex(0);
     audio.setSelectedTrack(sample);
@@ -52,7 +52,11 @@ function Sample() {
   /** Verifies browser CORS/ranges directly against R2 without displaying the capability. */
   async function range() {
     try {
-      const access = await requestPlaybackAccess(10, new AbortController().signal);
+      if (!audio.selectedTrack) throw Error('Select the approved track first');
+      const access = await requestPlaybackAccess(
+        audio.selectedTrack.id,
+        new AbortController().signal,
+      );
       const response = await fetch(access.url, {
         headers: { Range: 'bytes=100000-101023' },
       });
@@ -70,7 +74,7 @@ function Sample() {
   }
 
   useEffect(() => {
-    // Silence the generated tone without replacing native playback or decoding.
+    // Keep operator checks quiet without replacing native playback or decoding.
     audio.audioRef.current.muted = true;
   }, [audio.trackSrc]);
 
@@ -126,7 +130,17 @@ function Sample() {
         <button onClick={() => void control('revoke')}>Revoke synthetic sessions</button>{' '}
         <button onClick={() => void state()}>Read sanitized evidence</button>
         <button onClick={() => void range()}>Check browser range</button>
+        <button onClick={() => void control('fail-next')}>
+          Fail next delivery check
+        </button>
       </p>
+      {audio.selectedTrack && (
+        <p id="selected-track">
+          Track primary ID: {audio.selectedTrack.id}; catalog number:{' '}
+          {audio.selectedTrack.trackId}; raga: {audio.selectedTrack.raga.name}; date:{' '}
+          {audio.selectedTrack.tape.event.date}
+        </p>
+      )}
       <p>
         Native position: <output id="native-position">{position.toFixed(1)}</output>{' '}
         seconds; duration: {audio.duration.toFixed(1)}; playing: {String(audio.isPlaying)}
