@@ -1,3 +1,45 @@
+# Resend support remap — completed locally, 2026-11-07
+
+Help now posts to the backend `/api/v1/support` instead of EmailJS. Resend uses
+one fixed server recipient and the existing verified login sender/key. Anonymous
+support remains available; validation, origin/CSRF and shared PostgreSQL limits
+protect delivery. No support-message database, queue or deletion notification was
+introduced. The UI requires explicit acceptance, preserves the draft on uncertain
+failure, explains throttling and guards duplicate clicks/unmounted results.
+EmailJS's dependency, initializer, harness alias and obsolete SDK guard are removed.
+
+42 React checks, 14 unit checks, seven harness lifecycle checks, TypeScript,
+changed-file lint and build pass. Backend: 284 synthetic checks (24 support) and
+one focused shared-limiter test on PostgreSQL 15.18 pass. All providers were fake.
+The source/lock change is local and uncommitted; no deployment or real mail send
+occurred. DNS verification remains the gate for real Resend delivery, not coding.
+Exact configuration, updated source/archive and activation status are maintained
+in [Operations.md](../roop-verma-archive-server/Operations.md). Earlier EmailJS
+and activation descriptions below are historical where superseded by this remap.
+
+---
+
+# Shared hosted TEST activation — prepared 2026-11-07
+
+Stage 1 confirms both Netlify published sites at main `bf272a0`; `rvdl-ui` targets
+the existing Heroku API and `rvdl-ui-sb` still targets the absent sandbox API.
+Only canonical `https://www.roopvermalibrary.com` is proposed for shared testing.
+Prepared local .nvmrc/TOML changes select Node 24.19.0, a canonical-host API proxy
+with same-origin client requests, and unavailable preview/branch API targets.
+The proxy avoids relying on third-party cookies; real hosted cookie forwarding,
+identity, provider mail/Stripe/support and persisted owner authority still need
+Stage 2 verification. TypeScript, same-origin build and Netlify's actual redirect
+parser/matcher pass locally. No provider settings or published deployments changed.
+
+The exact targets, pinned source/archive, backup/retirement/seven-migration order,
+provider configuration, acceptance checks, stop conditions and recovery limits
+are in the server's [current execution plan](../roop-verma-archive-server/Operations.md).
+Stage 2 was explicitly approved on 2026-11-07; provider prerequisites are in
+progress before database writes. Media mapping/signing/public-URL retirement and
+streaming remain separate work; account/billing success will not establish launch readiness.
+
+---
+
 # Support-only deletion and simplified access — 2026-11-07
 
 Normal Account now directs deletion requests to existing Help support and shows

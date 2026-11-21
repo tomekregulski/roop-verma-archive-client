@@ -147,7 +147,6 @@ export async function runBrowserHarness({
       root,
       envDir,
       cacheDir: path.join(envDir, 'vite-cache'),
-      resolve: { alias: { 'emailjs-com': path.join(root, 'test/support-mail.ts') } },
       server: { host: '127.0.0.1', port: ports.ui, strictPort: true },
       define: {
         'import.meta.env.VITE_API_ORIGIN': JSON.stringify(
