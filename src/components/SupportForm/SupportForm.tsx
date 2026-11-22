@@ -59,12 +59,21 @@ export function SupportForm() {
         setHelpInfo((current) => ({ ...current, message: '' }));
       }
     } catch (error) {
-      if (active.current) {
-        setFailed(true);
+      if (!active.current) return;
+      setFailed(true);
+      const response = isAxiosError(error) ? error.response : undefined;
+      if (
+        response?.status === 403 &&
+        response.data?.error?.code === 'TEST_SUPPORT_RESTRICTED'
+      ) {
         setMessage(
-          isAxiosError(error) && error.response?.status === 429
-            ? 'Too many support requests. Wait 15 minutes before trying again.'
-            : 'We could not confirm your message was sent. Please retry. If you already sent it, support may still receive it.',
+          'The archive is in testing. Sign in with an invited account to send a support message.',
+        );
+      } else if (response?.status === 429) {
+        setMessage('Too many support requests. Wait 15 minutes before trying again.');
+      } else {
+        setMessage(
+          'We could not confirm your message was sent. Please retry. If you already sent it, support may still receive it.',
         );
       }
     } finally {

@@ -11,8 +11,10 @@ import type { DeletionReview } from '../src/api/ownerDeletions';
 import { SupportForm } from '../src/components/SupportForm/SupportForm';
 import { AuthProvider, useAuthContext } from '../src/context/AuthContext';
 import { CompleteRegistration } from '../src/views/CompleteRegistration';
+import { Login } from '../src/views/Login';
 import { ManageAccount } from '../src/views/ManageAccount';
 import { OwnerDeletions } from '../src/views/OwnerDeletions';
+import { Signup } from '../src/views/Signup';
 
 let signedIn = true,
   userId = 1,
@@ -46,9 +48,13 @@ const response = (config: InternalAxiosRequestConfig, data: unknown): AxiosRespo
 });
 
 /** Creates a synthetic Axios failure without contacting a provider. */
-const failure = (config: InternalAxiosRequestConfig, status: number) =>
+const failure = (
+  config: InternalAxiosRequestConfig,
+  status: number,
+  data: unknown = {},
+) =>
   new AxiosError('synthetic request failure', undefined, config, undefined, {
-    ...response(config, {}),
+    ...response(config, data),
     status,
   });
 /** Install before React mounts; every API request is handled locally or held, never sent. */
@@ -58,6 +64,13 @@ api.defaults.adapter = async (config) => {
     return new Promise((resolve, reject) =>
       supportRequests.push({ config, resolve, reject }),
     );
+  if (
+    config.url === '/auth/login' ||
+    (config.method === 'post' &&
+      config.url?.startsWith('/user/') &&
+      config.url.split('/').length === 3)
+  )
+    return response(config, { testing: true });
   if (config.url === '/auth/logout') {
     signedIn = false;
     return response(config, {});
@@ -121,6 +134,10 @@ function Harness() {
     <SupportForm />
   ) : view === 'owner' ? (
     <OwnerDeletions />
+  ) : view === 'login' ? (
+    <Login />
+  ) : view === 'signup' ? (
+    <Signup />
   ) : view === 'return' ? (
     <CompleteRegistration redirect={redirect} />
   ) : null;
@@ -587,6 +604,59 @@ try {
       .filter((c) => c.url?.includes('/payment/checkout/'))
       .every((c) => c.data === '{}'),
     'browser never supplies customer, price or subscription authority',
+  );
+  choose!('support');
+  await until(() => Boolean(button('Send Message')));
+  fillInput(document.querySelector('#support-message--message-input')!, 'TEST draft');
+  await wait();
+  button('Send Message')!.click();
+  await until(() => supportRequests.length === 6);
+  supportRequests[5].reject(
+    failure(supportRequests[5].config, 403, {
+      error: { code: 'TEST_SUPPORT_RESTRICTED' },
+    }),
+  );
+  await until(
+    () =>
+      document
+        .querySelector('[role="alert"]')
+        ?.textContent?.includes('Sign in with an invited account') === true,
+  );
+  check(
+    document.querySelector<HTMLInputElement>('#support-message--message-input')?.value ===
+      'TEST draft',
+    'restricted support explains TEST access and keeps the unsent draft',
+  );
+
+  await auth!.logout();
+  choose!('login');
+  await until(() => Boolean(button('Request login link')));
+  fillInput(document.querySelector('#email-login-input')!, 'uninvited@example.invalid');
+  await wait();
+  button('Request login link')!.click();
+  await until(
+    () =>
+      document.body.textContent?.includes('Signup and login are by invitation.') === true,
+  );
+  check(
+    document.body.textContent?.includes('If an eligible account exists'),
+    'restricted login explains testing without disclosing account status',
+  );
+
+  choose!('signup');
+  await until(() => Boolean(button('Sign up')));
+  fillInput(document.querySelector('#signup-firstName')!, 'Test');
+  fillInput(document.querySelector('#signup-lastName')!, 'Listener');
+  fillInput(document.querySelector('#signup-email')!, 'uninvited@example.invalid');
+  await wait();
+  button('Sign up')!.click();
+  await until(
+    () =>
+      document.body.textContent?.includes('Signup and login are by invitation.') === true,
+  );
+  check(
+    !document.body.textContent?.includes('Your account request is ready'),
+    'restricted signup shows the TEST notice without claiming account creation',
   );
   document.getElementById('results')!.textContent =
     lines.join('\n') + '\n' + lines.length + ' checks passed';
