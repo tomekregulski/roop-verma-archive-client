@@ -8,21 +8,25 @@ import { Input } from '../components/Input/Input';
 import { useAuthContext } from '../context/AuthContext';
 import { Login } from './Login';
 
+/** Requests an account and hands off to mailbox verification. */
 export function Signup() {
   const { isAuth } = useAuthContext();
   const [fields, setFields] = useState({ firstName: '', lastName: '', email: '' });
-  const [submittedEmail, setSubmittedEmail] = useState('');
+  const [submitted, setSubmitted] = useState<{ email: string; testing?: boolean }>();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
+  /** Passes along the TEST notice without inferring that the server created an account. */
   async function handleSubmit() {
     if (busy) return;
     setBusy(true);
     setError('');
     try {
-      await api.post(`/user/${legacyKey}`, fields);
-      // Signup creates an unprivileged app account; email proof is still required.
-      setSubmittedEmail(fields.email);
+      const { data } = await api.post<{ testing?: boolean }>(
+        `/user/${legacyKey}`,
+        fields,
+      );
+      setSubmitted({ email: fields.email, testing: data?.testing });
     } catch (failure) {
       setError(
         requestError(
@@ -42,7 +46,13 @@ export function Signup() {
         <Link to="/manage-account">Continue to your account and subscription</Link>.
       </p>
     );
-  if (submittedEmail) return <Login registrationEmail={submittedEmail} />;
+  if (submitted)
+    return (
+      <Login
+        registrationEmail={submitted.email}
+        registrationTesting={submitted.testing}
+      />
+    );
   return (
     <div className="max-w-lg mx-auto mt-8">
       <p>Create an account, verify your email, then continue to hosted Checkout.</p>

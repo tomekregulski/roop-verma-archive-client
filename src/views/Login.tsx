@@ -7,8 +7,17 @@ import { Form } from '../components/Form/Form';
 import { Input } from '../components/Input/Input';
 
 const supportEmail = import.meta.env.VITE_RVDL_EMAIL_ADDRESS;
-export function Login({ registrationEmail }: { registrationEmail?: string }) {
+
+/** Requests login links and displays the server's public TEST notice when enabled. */
+export function Login({
+  registrationEmail,
+  registrationTesting = false,
+}: {
+  registrationEmail?: string;
+  registrationTesting?: boolean;
+}) {
   const [email, setEmail] = useState(registrationEmail ?? '');
+  const [testing, setTesting] = useState(registrationTesting);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -17,13 +26,17 @@ export function Login({ registrationEmail }: { registrationEmail?: string }) {
   const started = useRef(false);
   const requestPending = useRef(false);
 
+  /** Requests one link at a time without inferring that a mailbox received it. */
   async function requestLogin(address: string) {
     if (requestPending.current) return false;
     requestPending.current = true;
     setBusy(true);
     setError('');
     try {
-      await api.post('/auth/login', { email: address.trim() });
+      const { data } = await api.post<{ testing?: boolean }>('/auth/login', {
+        email: address.trim(),
+      });
+      setTesting(data?.testing === true);
       setMessage(
         'If an eligible account exists, a login link may arrive. Check your inbox and spam folder. Links expire after 15 minutes and work once.',
       );
@@ -44,7 +57,7 @@ export function Login({ registrationEmail }: { registrationEmail?: string }) {
     }
   }
 
-  // Registration is local and synchronous. Request one email proof, including in StrictMode.
+  // Request one email proof after signup, including in StrictMode.
   useEffect(() => {
     if (!registrationEmail || started.current) return;
     started.current = true;
@@ -69,7 +82,12 @@ export function Login({ registrationEmail }: { registrationEmail?: string }) {
     : undefined;
   return (
     <div className="max-w-lg mx-auto mt-8">
-      {registrationEmail && (
+      {testing && (
+        <p role="status">
+          The archive is in testing. Signup and login are by invitation.
+        </p>
+      )}
+      {registrationEmail && !testing && (
         <p>
           Your account request is ready. Verify your email using the login link before
           continuing to Checkout.
